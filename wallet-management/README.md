@@ -1,25 +1,29 @@
-# Creating Cryptocurrency wallet with Web3
+# vue-ecosystem
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This template should help get you started developing with Vue 3 in Vite.
 
-This is a react application used to view your cryptocurrency balance of an account and also transfer some token to another account. In this application we will be making use of a custom crypto token called `Nice Token` but the concept would remain pretty much the same as communicating with Ethereum. 
+## Recommended IDE Setup
 
-We make use of `Web3` dependency to communicate with a local Blockcaain Network called [Ganache](https://trufflesuite.com/ganache/). 
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-Using Web3, we can view the current account balance and also transfer tokens from one account to another. 
+## Customize configuration
 
-You can first run the build using the following command :
+See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-- `npm run build`
+## Project Setup
 
-    Builds the app for production to the `build` folder.
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```sh
+npm install
+```
 
-Next, you can start the application using the folowing command: 
-- `npm start`
+### Compile and Hot-Reload for Development
 
-    This runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```sh
+npm run dev
+```
 
+### Compile and Minify for Production
 
-You can read the full development flow on my article at [https://Refactorfirst.com](https://refactorfirst.com/create-cryptocurrency-wallet-with-web3)
+```sh
+npm run build
+```

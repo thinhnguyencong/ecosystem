@@ -7,7 +7,7 @@ const transactionSchema = new Schema({
         required: true,
     },
     blockNumber: {
-        type: Schema.Types.Number,
+        type: Schema.Types.String,
         required: true,
     },
 })

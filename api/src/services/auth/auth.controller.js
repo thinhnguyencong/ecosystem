@@ -3,18 +3,18 @@ import requestPromise from "request-promise";
 import jwt from "jsonwebtoken";
 
 export const authUrl = async (req, res, next) => {
+	console.log("api call");
 	const { clientId, redirect_uri } = req.query;
 	const oAuthStrategies = new OAuthStrategies(clientId, redirect_uri);
 	const authStrategy = oAuthStrategies.getStrategy();
 
 	res.send({
-		url: authStrategy.getAuthUrl({state : uuid()})
+		url: authStrategy.getAuthUrl()
 	});
 }
 
 export const authToken = async (req, res, next) => {
 	const {code, clientId, redirect_uri} = req.body.data;
-	console.log("body", req.body);
 	const oAuthStrategies = new OAuthStrategies(clientId, redirect_uri);
 	const authStrategy = oAuthStrategies.getStrategy();
 
@@ -46,12 +46,9 @@ export const reAuth = async (req, res, next) => {
 	const oAuthStrategies = new OAuthStrategies(clientId);
 	const authStrategy = oAuthStrategies.getStrategy();
 	let token = req.headers.authorization.split(" ")[1]
-  
 	requestPromise(authStrategy.getTokenUrlOptions(token))
 	.then(response => {
-		console.log(JSON.parse(response));
 		// if the request status isn't "OK", the token is invalid
-		console.log("Cookies", req.cookies)
 		if (JSON.parse(response).active !== true) {
 			res.status(401).json({
 				error: `Unauthorized`,
@@ -59,7 +56,10 @@ export const reAuth = async (req, res, next) => {
 		}else {
 			res.status(200).send({
 				//authToken: token,
-				userId: JSON.parse(response).username,
+				user: {
+					username: JSON.parse(response).preferred_username,
+					name: JSON.parse(response).name
+				},
 			});
 		}
 		
@@ -76,7 +76,6 @@ export const refreshToken = async (req, res, next) => {
 	const oAuthStrategies = new OAuthStrategies(clientId);
 	const authStrategy = oAuthStrategies.getStrategy();
 	let refreshToken = req.cookies.refresh_token
-	console.log("refreshToken", refreshToken);
 	requestPromise(authStrategy.getATfromRTOptions(refreshToken))
 	.then(response => {
 		// console.log(JSON.parse(response));
@@ -96,6 +95,13 @@ export const refreshToken = async (req, res, next) => {
 	
 }
 
-function uuid() {
-	return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+export const logout = async (req, res, next) => {
+	const { clientId } = req.query;
+	const oAuthStrategies = new OAuthStrategies(clientId);
+	const authStrategy = oAuthStrategies.getStrategy();
+
+	res.send({
+		url: authStrategy.getLogoutUrl()
+	});
 }

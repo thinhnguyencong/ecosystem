@@ -38,6 +38,7 @@ export const getUserInfo = async (req, res, next) => {
 			const userEmail = req.jwtDecoded.email
 			let user = await User.findOne({email: userEmail})
 			let balance = await web3.eth.getBalance(user.publicAddress)
+			console.log("tokens", tokens);
 			for (const address in tokens) {
 				// load Contract
 				if(address !== "0x0000000000000000000000000000000000000000") {
@@ -61,6 +62,9 @@ export const getUserInfo = async (req, res, next) => {
 				balance: web3.utils.fromWei(balance),
 				assets: assets
 			})
+		}
+		else {
+			res.json({msg: "No ERC Token provided"})
 		}
 		
 		

@@ -3,6 +3,24 @@ import axios from 'axios'
 export const sendRequest = async ({url, method, params, data}) => {
     const axiosApiInstance = axios.create();
     
+    const refreshAccessToken = async () => {
+        const params = {
+            clientId: import.meta.env.VITE_CLIENT_ID
+        };
+        console.log("Refresh token............");
+        return axiosApiInstance
+            .get(`${import.meta.env.VITE_SERVER_URL}/api/auth/refreshToken`,{params: params, withCredentials: true})
+            .then(result => {
+                const { authToken } = result.data
+                window.sessionStorage.setItem("authToken", authToken)
+                return authToken
+            })
+            .catch(error => {
+                console.error(error)
+                alert("Something's wrong, please refresh page");
+                window.location.reload()
+            })
+    }
     // Request interceptor for API calls
     axiosApiInstance.interceptors.request.use(
         async config => {
@@ -35,33 +53,15 @@ export const sendRequest = async ({url, method, params, data}) => {
     });
 
     if(method === "GET"){
-        const resp = await axiosApiInstance.get(url, {params: params})
-		return resp.data;
+        const response = await axiosApiInstance.get(url, {params: params})
+		return response;
     } else if(method === "POST"){
-        const resp = await axiosApiInstance.post(url, {data: data})
-        console.log(resp)
-		return resp.data;
+        const response = await axiosApiInstance.post(url, {data: data})
+        console.log(response)
+		return response;
     } else if(method === "PUT"){
 
     } else if(method === "DELETE"){
 
-    }
-
-    const refreshAccessToken = async () => {
-        const params = {
-            clientId: process.env.REACT_APP_CLIENT_ID
-        };
-        return axiosApiInstance
-            .get(`${process.env.REACT_APP_SERVER_URL}/auth/refreshToken`,{params: params, withCredentials: true})
-            .then(result => {
-                const { authToken } = result.data
-                window.sessionStorage.setItem("authToken", authToken)
-                return authToken
-            })
-            .catch(error => {
-                console.error(error)
-                alert("Something's wrong, please refresh page");
-                window.location.reload()
-            })
     }
 }

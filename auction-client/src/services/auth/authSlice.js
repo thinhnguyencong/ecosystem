@@ -73,16 +73,28 @@ export const reAuth = createAsyncThunk(
 	}
 );
 
+export const logout = createAsyncThunk(
+	'LOGOUT',
+	async (data, thunkAPI) => {
+		try {
+			const params = {
+				clientId: process.env.REACT_APP_CLIENT_ID,
+			};
+			return await sendRequest({
+				url: url+"logout",
+				method: "GET",
+				params: params
+			})
+		} catch (error) {
+			console.log(error.response.data.msg ?? "Error obtaining Logout URL!")
+			return thunkAPI.rejectWithValue(error.response.data.msg ?? "Internal server error!");
+		}
+	}
+);
 
 export const authSlice = createSlice({
 	name: 'auth',
 	initialState,
-	reducers: {
-		logout: (state) => {
-			window.sessionStorage.clear();
-    		window.location = `http://localhost:8080/realms/demo/protocol/openid-connect/logout?post_logout_redirect_uri=${process.env.REACT_APP_CLIENT_URL}/home&client_id=${process.env.REACT_APP_CLIENT_ID}`
-		},
-	},
 	extraReducers: {
 		[doAuthRedirect.pending]: (state, action) => {
 			console.log(action);
@@ -141,11 +153,29 @@ export const authSlice = createSlice({
 			window.sessionStorage.clear();
 			window.location.reload()
 		},
+
+		///////////////////
+
+		[logout.pending]: (state, action) => {
+			console.log(action);
+			state.isLoading = true;
+		},
+		[logout.fulfilled]: (state, action) => {
+			console.log(action);
+			console.log(action.payload);
+			state.isLoading = false;
+			window.sessionStorage.clear();
+			window.location.assign(action.payload.url)
+		},
+		[logout.rejected]: (state, action) => {
+			console.log(action);
+			state.isLoading = false;
+			toast.error(action.payload)
+		},
+
 		
 	},
 	
 })
-
-export const {logout} = authSlice.actions
 
 export default authSlice.reducer

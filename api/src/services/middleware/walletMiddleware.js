@@ -1,4 +1,3 @@
-import jwtHelper from "../helpers/jwt.helper.js"
 import jwt from "jsonwebtoken"
  // secretKey
  const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET

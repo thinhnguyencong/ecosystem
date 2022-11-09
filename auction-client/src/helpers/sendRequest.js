@@ -2,7 +2,24 @@ import axios from 'axios'
 
 export const sendRequest = async ({url, method, params, data}) => {
     const axiosApiInstance = axios.create();
-    const API_URI = process.env.REACT_APP_SERVER_URL;
+
+    const refreshAccessToken = async () => {
+        const params = {
+            clientId: process.env.REACT_APP_CLIENT_ID
+        };
+        return axiosApiInstance
+            .get(`${process.env.REACT_APP_SERVER_URL}/api/auth/refreshToken`,{params: params, withCredentials: true})
+            .then(result => {
+                const { authToken } = result.data
+                window.sessionStorage.setItem("authToken", authToken)
+                return authToken
+            })
+            .catch(error => {
+                console.error(error)
+                alert("Something's wrong, please refresh page");
+                window.location.reload()
+            })
+    }
 
     axiosApiInstance.interceptors.request.use(
         async config => {
@@ -47,21 +64,5 @@ export const sendRequest = async ({url, method, params, data}) => {
 
     }
 
-    const refreshAccessToken = async () => {
-        const params = {
-            clientId: process.env.REACT_APP_CLIENT_ID
-        };
-        return axiosApiInstance
-            .get(`${API_URI}/auth/refreshToken`,{params: params, withCredentials: true})
-            .then(result => {
-                const { authToken } = result.data
-                window.sessionStorage.setItem("authToken", authToken)
-                return authToken
-            })
-            .catch(error => {
-                console.error(error)
-                alert("Something's wrong, please refresh page");
-                window.location.reload()
-            })
-    }
+    
 }

@@ -13,10 +13,15 @@ export class KeycloakOAuthStrategy extends OAuthStrategy {
     this.redirectUri = options.redirectUri;
     this.tokenUrl = options.tokenUrl;
     this.tokenIntrospectUrl = options.tokenIntrospectUrl;
+    this.logoutUrl = options.logoutUrl
   }
 
-  getAuthUrl(options) {
+  getAuthUrl() {
     return `${this.authUrl}?response_type=code&client_id=${this.clientId}&scope=${this.scope}&redirect_uri=${this.redirectUri}`;
+  }
+
+  getLogoutUrl() {
+    return `${this.logoutUrl}?post_logout_redirect_uri=${this.redirectUri}/home&client_id=${this.clientId}`;
   }
 
   getAuthTokenOptions(code) {
