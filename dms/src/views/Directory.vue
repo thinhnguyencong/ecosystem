@@ -55,32 +55,7 @@
             <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
             <ModalUploadFile/>
             <div v-if="layout == 'grid'">
-                <br>
-                <h4 class="font-weight-bold">Folders</h4>
-                <hr>
-                <div v-if="documentState.children.length > 0" class="item-grid-card">
-                    <FolderVue
-                        v-for="(folder, index) in documentState.children"
-                        :key="index"
-                        :name="folder.name"
-                        :id="folder._id"
-                    />
-                </div>
-                <br>
-                <br>
-                <h4 class="font-weight-bold">File</h4>
-                <hr>
-                
-                <div class="item-grid-card">
-                    <FileVue
-                        v-for="(file, index) in documentState.folder.files"
-                        :key="index"
-                        :name="JSON.parse(file.tokenURI).name"
-                        :fileType="JSON.parse(file.tokenURI).fileType"
-                        :id="file._id"
-                    />
-
-                </div>
+                <GridViewVue :folders="documentState.children" :files="documentState.folder.files"/>
             </div>
             <div v-if="layout == 'list'">
                 <ListTableVue :folders="documentState.children" :files="documentState.folder.files"/>
@@ -99,6 +74,7 @@
     import ModalUploadFile from './ModalUploadFile.vue'
     import ManageKey from '../components/ManageKey.vue'
     import ListTableVue from '../components/ListView.vue';
+    import GridViewVue from '../components/GridView.vue';
 </script>
 <script>
 export default {

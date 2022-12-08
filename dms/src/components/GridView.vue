@@ -1,9 +1,11 @@
 <template>
     <div>
         <br>
+        <h4 class="font-weight-bold">Folders</h4>
+        <hr>
+        
         <div v-if="folders.length > 0" class="item-grid-card">
-            <h4 class="font-weight-bold">Folders</h4>
-            <hr>
+            
             <FolderVue
                 v-for="(folder, index) in folders"
                 :key="index"

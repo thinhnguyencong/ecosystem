@@ -26,14 +26,7 @@
 
         <div v-if="!documentState.isLoading">
             <div v-if="layout == 'grid'">
-                <div v-if="documentState.children.length > 0" class="item-grid-card">
-                    <FolderVue
-                        v-for="(folder, index) in documentState.children"
-                        :key="index"
-                        :name="folder.name"
-                        :id="folder._id"
-                    />
-                </div>
+                <GridViewVue :folders="documentState.children" :files="[]"/>
             </div>
             <div v-if="layout == 'list'">
                 <div class="table-responsive">

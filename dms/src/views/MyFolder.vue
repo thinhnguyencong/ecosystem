@@ -125,10 +125,10 @@ export default {
 .float-right {
     float: right;
 }
-.text-custom-color-blue {
+/* .text-custom-color-blue {
     color: #00A8FF
-}
-.tile {
+} */
+/* .tile {
     border-radius: 3px;
     width: 200px;
     height: 100%;
@@ -154,5 +154,5 @@ export default {
     display: block;
     line-height: 54px;
     cursor: pointer;
-}
+} */
 </style>
