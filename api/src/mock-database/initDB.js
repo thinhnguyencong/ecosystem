@@ -223,7 +223,7 @@ if(rolesAdded) {
 console.timeEnd();
 
 
-process.exit()
+//process.exit()
 
 const accountTest = [
     {

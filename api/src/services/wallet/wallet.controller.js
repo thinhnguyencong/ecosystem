@@ -255,7 +255,7 @@ export const signDoc = async (req, res, next) => {
 	
 }
 
-// export const initRequestKey = async (req, res, next) => { 
+export const initRequestKey = async (req, res, next) => { 
 // 	let nonce = crypto.randomBytes(32); 
 // 	// Prints random bytes of generated data
 // 	console.log("The random bytes of data generated is: "
@@ -263,10 +263,10 @@ export const signDoc = async (req, res, next) => {
 // 	res.json({
 // 		result: nonce.toString('hex')
 // 	})
-// }
+}
 
 
-// export const requestKey = async (req, res, next) => { 
+export const requestKey = async (req, res, next) => { 
 // 	let {pubWallet, nonce, sigWallet, fgp} = req.body
 // 	const web3 = new Web3(
 // 		new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER)
@@ -335,7 +335,7 @@ export const signDoc = async (req, res, next) => {
 
 
 
-// }
+}
 var arr = []
 
 export const getFoldersInMyFolder = async (req, res, next) => { 

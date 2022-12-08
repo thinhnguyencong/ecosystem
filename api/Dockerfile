@@ -11,7 +11,7 @@ RUN apk update && apk upgrade && \
 # # RUN cd rust-2 && cargo build --release
 # RUN npm install -g node-gyp
 RUN npm install
-RUN npm run init
+# RUN npm run init
 EXPOSE 5555
 
 CMD ["npm", "run", "dev"]

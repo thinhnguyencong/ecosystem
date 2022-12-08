@@ -2,7 +2,7 @@ import User from "../../models/user.model.js";
 import lightwallet from "eth-lightwallet"
 import fs from "fs"
 import crypto from "crypto"
-import ffi from "ffi-napi"
+// import ffi from "ffi-napi"
 import { getWeb3 } from "../../config/web3Connection.js";
 import Department from "../../models/department.model.js";
 import Role from "../../models/role.model.js";
@@ -220,117 +220,117 @@ export const exportPrivateKey = async (req, res, next) => {
 }
 
 export const initRequestKey = async (req, res, next) => { 
-	const userEmail = req.jwtDecoded.email
-	let user = await User.findOne({email: userEmail})
-	const {publicAddress, username} = user
-	let nonce = crypto.randomBytes(32); 
-	// Prints random bytes of generated data
-	//console.log("The random bytes of data generated is: " + nonce.toString('hex'));
-	res.json({
-		data: {
-			publicAddress: publicAddress,
-			nonce: nonce.toString('hex'),
-			username: username
-		},
-		msg: "Get nonce successfully"
-	})
+	// const userEmail = req.jwtDecoded.email
+	// let user = await User.findOne({email: userEmail})
+	// const {publicAddress, username} = user
+	// let nonce = crypto.randomBytes(32); 
+	// // Prints random bytes of generated data
+	// //console.log("The random bytes of data generated is: " + nonce.toString('hex'));
+	// res.json({
+	// 	data: {
+	// 		publicAddress: publicAddress,
+	// 		nonce: nonce.toString('hex'),
+	// 		username: username
+	// 	},
+	// 	msg: "Get nonce successfully"
+	// })
 }
 
 
 export const requestKey = async (req, res, next) => { 
-	let {pubWallet, nonce, sigWallet, fgp} = req.body.data
-	//console.log(req.body);
-	const web3Connection = await getWeb3()
-	if(!web3Connection.status) {
-		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	}
-	const web3 = web3Connection.web3
-	let lib;
-	if(process.platform === "win32") {
-		lib = ffi.Library('rust/target/release/abe_native.dll', {
-			'verify': ['bool', ['string', 'string']],
-			'generate_key': ['string', ['string', 'string', 'string']],
-			'encrypt': ['string', ['string', 'string']]
-		})
-	} else {
-		lib = ffi.Library('rust-2/target/release/libabe_native.so', {
-			'verify': ['bool', ['string', 'string']],
-			'generate_key': ['string', ['string', 'string', 'string']],
-			'encrypt': ['string', ['string', 'string']]
-		})
-	}
-	const userEmail = req.jwtDecoded.email
-	let user = await User.findOne({email: userEmail})
-	const {publicAddress, keystore, username, position, dept, name} = user
-	//console.log("x", web3.eth.accounts.recover(nonce, sigWallet));
-	let isSigVerified = pubWallet.toLowerCase() === web3.eth.accounts.recover(nonce, sigWallet).toLowerCase() ? true : false;
-	// console.log("isSigVerified", isSigVerified);
-	if(!isSigVerified) {
-		return res.status(400).json({
-			msg: "Signature is not verified"
-		})
-	}
+	// let {pubWallet, nonce, sigWallet, fgp} = req.body.data
+	// //console.log(req.body);
+	// const web3Connection = await getWeb3()
+	// if(!web3Connection.status) {
+	// 	return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+	// }
+	// const web3 = web3Connection.web3
+	// let lib;
+	// if(process.platform === "win32") {
+	// 	lib = ffi.Library('rust/target/release/abe_native.dll', {
+	// 		'verify': ['bool', ['string', 'string']],
+	// 		'generate_key': ['string', ['string', 'string', 'string']],
+	// 		'encrypt': ['string', ['string', 'string']]
+	// 	})
+	// } else {
+	// 	lib = ffi.Library('rust-2/target/release/libabe_native.so', {
+	// 		'verify': ['bool', ['string', 'string']],
+	// 		'generate_key': ['string', ['string', 'string', 'string']],
+	// 		'encrypt': ['string', ['string', 'string']]
+	// 	})
+	// }
+	// const userEmail = req.jwtDecoded.email
+	// let user = await User.findOne({email: userEmail})
+	// const {publicAddress, keystore, username, position, dept, name} = user
+	// //console.log("x", web3.eth.accounts.recover(nonce, sigWallet));
+	// let isSigVerified = pubWallet.toLowerCase() === web3.eth.accounts.recover(nonce, sigWallet).toLowerCase() ? true : false;
+	// // console.log("isSigVerified", isSigVerified);
+	// if(!isSigVerified) {
+	// 	return res.status(400).json({
+	// 		msg: "Signature is not verified"
+	// 	})
+	// }
 
-	let isReqVerified = lib.verify(nonce, fgp);
-	//console.log("isReqVerified", isReqVerified);
-	if(!isReqVerified) {
-		return res.status(400).json({
-			msg: "Request is not verified"
-		})
-	}
+	// let isReqVerified = lib.verify(nonce, fgp);
+	// //console.log("isReqVerified", isReqVerified);
+	// if(!isReqVerified) {
+	// 	return res.status(400).json({
+	// 		msg: "Request is not verified"
+	// 	})
+	// }
 
-	let attributes = [
-		'username:'+username, 
-		'wallet:'+publicAddress, 
-		'position:'+position, 
-		'dept:'+dept, 
-		'name:'+name
-	]
+	// let attributes = [
+	// 	'username:'+username, 
+	// 	'wallet:'+publicAddress, 
+	// 	'position:'+position, 
+	// 	'dept:'+dept, 
+	// 	'name:'+name
+	// ]
 	
-	attributes.push("GroooDMS")
-	let attributesStr = attributes.join("::")
-	let key = lib.generate_key(attributesStr, pubWallet.toLowerCase().replace("0x", ""), username)
-	let encryptedKey = lib.encrypt(nonce.substring(64), key);
-	//console.log("encryptedKey", encryptedKey);
-	if(!encryptedKey || encryptedKey.startsWith("!!!")){
-		return res.status(400).json({
-			msg: "Unable to generate key"
-		})
-	}
-	return res.json({
-		data: {
-			encryptedKey: encryptedKey
-		},
-		msg: "OK"
-	})
+	// attributes.push("GroooDMS")
+	// let attributesStr = attributes.join("::")
+	// let key = lib.generate_key(attributesStr, pubWallet.toLowerCase().replace("0x", ""), username)
+	// let encryptedKey = lib.encrypt(nonce.substring(64), key);
+	// //console.log("encryptedKey", encryptedKey);
+	// if(!encryptedKey || encryptedKey.startsWith("!!!")){
+	// 	return res.status(400).json({
+	// 		msg: "Unable to generate key"
+	// 	})
+	// }
+	// return res.json({
+	// 	data: {
+	// 		encryptedKey: encryptedKey
+	// 	},
+	// 	msg: "OK"
+	// })
 	
 }
 
 export const signMessage = async (req, res, next) => {
-	const web3Connection = await getWeb3()
-	if(!web3Connection.status) {
-		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	}
-	const web3 = web3Connection.web3
-	let {message} = req.body.data
-	//console.log(req.body.data);
-	const userEmail = req.jwtDecoded.email
-	let user = await User.findOne({email: userEmail})
-	const {publicAddress, keystore} = user
-	const ks = lightwallet.keystore.deserialize(keystore)
-	ks.keyFromPassword(process.env.SECRET, async function (err, pwDerivedKey) {
-		ks.generateNewAddress(pwDerivedKey, 1)
-		if (err) throw err;
-		let privateKey = ks.exportPrivateKey(ks.getAddresses()[0], pwDerivedKey)
-		let sig = web3.eth.accounts.sign(message, privateKey)
-		//console.log(sig)
-		return res.status(200).json({
-			data: {
-				signature: sig.signature
-			},
-			msg: "Sign message successfully"
-		})
-	})
+	// const web3Connection = await getWeb3()
+	// if(!web3Connection.status) {
+	// 	return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+	// }
+	// const web3 = web3Connection.web3
+	// let {message} = req.body.data
+	// //console.log(req.body.data);
+	// const userEmail = req.jwtDecoded.email
+	// let user = await User.findOne({email: userEmail})
+	// const {publicAddress, keystore} = user
+	// const ks = lightwallet.keystore.deserialize(keystore)
+	// ks.keyFromPassword(process.env.SECRET, async function (err, pwDerivedKey) {
+	// 	ks.generateNewAddress(pwDerivedKey, 1)
+	// 	if (err) throw err;
+	// 	let privateKey = ks.exportPrivateKey(ks.getAddresses()[0], pwDerivedKey)
+	// 	let sig = web3.eth.accounts.sign(message, privateKey)
+	// 	//console.log(sig)
+	// 	return res.status(200).json({
+	// 		data: {
+	// 			signature: sig.signature
+	// 		},
+	// 		msg: "Sign message successfully"
+	// 	})
+	// })
 
 	
 }
