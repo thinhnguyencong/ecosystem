@@ -1,0 +1,20 @@
+{
+  "name": "abe-wasm",
+  "collaborators": [
+    "hg <quangnd@hiworld.com.vn>"
+  ],
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://git.grooo.vn/ca/abe-wasm"
+  },
+  "files": [
+    "abe_wasm_bg.wasm",
+    "abe_wasm.js",
+    "abe_wasm_bg.js",
+    "abe_wasm.d.ts"
+  ],
+  "module": "abe_wasm.js",
+  "types": "abe_wasm.d.ts",
+  "sideEffects": false
+}

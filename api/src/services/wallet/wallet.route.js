@@ -19,4 +19,10 @@ walletRouter.get('/doc-info/:id', controller.getDocInfo);
 walletRouter.post('/check-user-signed-status-time', controller.checkUserSignedStatusTime);
 walletRouter.post('/sign-doc', controller.signDoc);
 
+// tesst folder api
+walletRouter.get('/my-folder', controller.getFoldersInMyFolder);
+walletRouter.post('/create-folder', controller.createFolder);
+walletRouter.post('/share-folder', controller.shareFolder);
+walletRouter.get('/shared-with-me-folder', controller.getSharedWithMeFolder);
+
 export default walletRouter

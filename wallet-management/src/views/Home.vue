@@ -4,17 +4,23 @@
       <div class="col-sm-5">
         <div class="column h-100">
           <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{userState.publicAddress}}</h5>
-                <p class="card-text">Balance: {{Math.round(userState.balance*10000)/10000}} TBNB</p>
-                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalSendToken">Send</a>
+            <div class="card border border-primary">
+              <div v-if="!userState.isLoading" class="card-body">
+                <p class="card-title">{{userState.publicAddress}} <span class="material-icons fs-1r">
+                content_copy
+                </span></p>
+                
+                <h5 class="card-text font-weight-bold">Balance: {{formatAmount(userState.balance)}} TBNB</h5>
+                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalSendToken">Send <i class="mdi mdi-send text-light"></i></a>
+              </div>
+              <div v-else className="spinner-border text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
               </div>
             </div>
           </div>
           <br>
           <div class="col">
-            <div class="card h-100">
+            <div class="card h-100 border border-secondary">
               <div class="card-body">
                 <h5 class="card-title">Token</h5>
                 <ul class="list-group">
@@ -28,8 +34,8 @@
                   </li>
                   <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-action"
                       v-for="(item, index) in userState.assets" :key="index">
-                      <div>
-                        <img src="https://cdn1.iconfinder.com/data/icons/thincons/100/menu-128.png" width="40" />
+                      <div class="d-inline">
+                        <jazzicon :address="item.address" :diameter="40" />
                         <span>&nbsp; &nbsp;{{item.amount}} &nbsp; {{item.name}}</span>
                       </div>
                       <span @click="handleDeleteToken(item.address)" class="material-icons md-36 text-danger" role="button">delete</span>
@@ -41,7 +47,7 @@
         </div>
       </div>
       <div class="col-sm-7">
-        <div class="card h-100">
+        <div class="card h-100 border border-secondary">
           <div class="card-body">
             <h5 class="card-title">Transactions</h5>
             <div class="table-responsive">
@@ -60,7 +66,7 @@
                   <th scope="row">
                     <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
                   </th>
-                  <td>40 days 2 hrs ago</td>
+                  <td class="text-truncate">40 days 2 hrs ago</td>
                   <td>0x09876c96f802471849..</td>
                   <td>0xb8262489b64477e886..</td>
                   <td>0.00028181 BNB</td>
@@ -69,7 +75,7 @@
                   <th scope="row">
                     <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
                   </th>
-                  <td>40 days 2 hrs ago</td>
+                  <td class="text-truncate">40 days 2 hrs ago</td>
                   <td>0x09876c96f802471849..</td>
                    <td>0xb8262489b64477e886..</td>
                   <td>0.00028181 BNB</td>
@@ -78,7 +84,16 @@
                   <th scope="row">
                     <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
                   </th>
-                  <td>40 days 2 hrs ago</td>
+                  <td class="text-truncate">40 days 2 hrs ago</td>
+                  <td>0x09876c96f802471849..</td>
+                   <td>0xb8262489b64477e886..</td>
+                  <td>0.00028181 BNB</td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
+                  </th>
+                  <td class="text-truncate">40 days 2 hrs ago</td>
                   <td>0x09876c96f802471849..</td>
                    <td>0xb8262489b64477e886..</td>
                   <td>0.00028181 BNB</td>
@@ -86,6 +101,24 @@
               </tbody>
             </table>
             </div>
+            <nav aria-label="...">
+              <ul class="pagination justify-content-end">
+                <li class="page-item disabled">
+                  <span class="page-link">Previous</span>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item">
+                  <span class="page-link">
+                    2
+                    <span class="sr-only">(current)</span>
+                  </span>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">Next</a>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>  
@@ -107,6 +140,13 @@
                 <input v-model="address" type="text" class="form-control" id="address" placeholder="Public address">
               </div>
               <div class="form-group">
+                <label for="asset">Asset</label>
+                <select class="form-control" id="asset" v-model="assetSelected">
+                  <option selected disabled value="">Select token</option>
+                  <option v-for="(item, index) in assets" :key="index" :value="item" >{{item.name}} &nbsp; ({{formatAmount(item.amount)}})</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="amount">Amount</label>
                 <input v-model="amount" type="text" class="form-control" id="amount" placeholder="Public address">
               </div>
@@ -114,7 +154,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="handleSendToken">Save changes</button>
+            <button type="button" class="btn btn-primary" @click="handleSendToken" data-dismiss="modal">Send</button>
           </div>
         </div>
       </div>
@@ -157,38 +197,72 @@ export default {
     return {
       address: "",
       amount: 0,
+      assetSelected: "",
       tokenAddress: "",
-      tokenName: ""
+      tokenName: "",
+      assets: []
     }
   },
   methods: {
-   handleAddToken() {
-      let data = {
-        address: this.tokenAddress,
-        name: this.tokenName
-      }
-      this.$store.dispatch("user/addAsset", data)
+    handleAddToken() {
+        let data = {
+          address: this.tokenAddress,
+          name: this.tokenName
+        }
+        this.$store.dispatch("user/addAsset", data)
+        this.$store.dispatch("user/getUserInfo", {tokens: localStorage.getItem("tokenList") })
+        this.tokenAddress= ""
+        this.tokenName= ""
+    },
+    handleDeleteToken(address) {
+      this.$store.dispatch("user/removeAsset", address)
       this.$store.dispatch("user/getUserInfo", {tokens: localStorage.getItem("tokenList") })
-      this.tokenAddress= ""
-      this.tokenName= ""
-   },
-   handleDeleteToken(address) {
-    this.$store.dispatch("user/removeAsset", address)
-    this.$store.dispatch("user/getUserInfo", {tokens: localStorage.getItem("tokenList") })
-   },
-   handleSendToken() {
-
-  },
+    },
+    handleSendToken() {
+      console.log(this.assetSelected);
+      // let obj = assets.find(x => x.address === event.target.value)
+		  // console.log(obj);
+      let data = {
+        addressTo: this.address,
+        amount: this.amount,
+        asset: {
+          name: this.assetSelected.name,
+          address: this.assetSelected.address,
+          type: this.assetSelected.type
+        }
+      }
+      this.$store.dispatch("user/transferToken", data)
+    },
+    getAllAssets() {
+      // let tokenList = JSON.parse(localStorage.getItem("tokenList"))
+      // let output = Object.entries(tokenList).map(([key, value]) => ({address: key, name: value.name, type: value.type}));
+      // let result = output.map(o => ({}))
+      let assets =  JSON.parse(JSON.stringify(this.userState.assets))
+      assets.unshift({address: "0x0000000000000000000000000000000000000000", amount: this.userState.balance, name: "tBNB", type:"native" })
+      this.assets= assets
+      console.log(assets);
+    },
+    formatAmount(amount) {
+      return Math.round(amount*10000)/10000
+    }
   },
   mounted() {
     //this.$store.dispatch("auth/findUser")
     this.$store.dispatch("user/getUserInfo", {tokens: localStorage.getItem("tokenList") })
     this.$store.dispatch("user/getAsset")
   },
-   computed: {
+  computed: {
     userState() {return this.$store.state.user },
-    authState() {return this.$store.state.auth }
-   }
+    authState() {return this.$store.state.auth },
+  },
+  watch: {
+    '$store.state.user.assets': {
+      handler() {
+        this.getAllAssets();
+      },
+      immediate: true
+    } 
+  }
 }
 </script>
 
@@ -213,4 +287,8 @@ tr {
  .material-icons {
   font-size: 2rem;
  }
+ .fs-1r {
+  font-size: 1rem;
+ }
+
 </style>

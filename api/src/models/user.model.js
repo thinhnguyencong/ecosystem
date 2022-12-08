@@ -16,22 +16,42 @@ const userSchema = new Schema({
     },
     name: {
         type: Schema.Types.String,
+        required: true,
+    },
+    username: {
+        type: Schema.Types.String,
+        required: true,
+    },
+    dept: {
+        type: Schema.Types.String,
+        required: false,
+        default: null,
+    },
+    role:{
+        type: Schema.Types.String,
+        default: null,
+    },
+    position: {
+        type: Schema.Types.String,
         required: false,
     },
+    project:  [{
+        type: Schema.Types.String,
+        default: null,
+    }],
     servicesUsed: [
         {
             serviceId: {
                 type: Schema.Types.ObjectId,
                 ref: "Service"
             },
-            transactions: [
-                {
-                    type: Schema.Types.ObjectId,
-                    ref: "Transaction"
-                }
-            ]
+            transactions: [Schema.Types.String]
         }
-    ]
-})
+    ],
+}, 
+{
+    timestamps: true
+}
+)
 const User = mongoose.model('User', userSchema);
 export default User

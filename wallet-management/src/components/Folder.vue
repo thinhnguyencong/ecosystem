@@ -1,9 +1,22 @@
 <template>
-    <div class="tile folder">
+    <div @click="handleAccessFolder(id)" class="tile folder">
         <span class="material-icons">folder</span>
-      <h4>Folder name</h4>
+      <h4>{{name}}</h4>
     </div>
 </template>
+<script>
+export default {
+  props: {
+    id: String,
+    name: String
+  },
+   methods: {
+    handleAccessFolder() {
+      this.$router.push('/folder/' + this.id )
+    }
+   }
+}
+</script>
 <style scoped>
 .tile {
     border-radius: 3px;

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 export const authUrl = async (req, res, next) => {
 	console.log("api call");
 	const { clientId, redirect_uri } = req.query;
+	console.log("req.query", req.query);
 	const oAuthStrategies = new OAuthStrategies(clientId, redirect_uri);
 	const authStrategy = oAuthStrategies.getStrategy();
 

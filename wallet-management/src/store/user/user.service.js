@@ -10,8 +10,15 @@ function getUserInfo(data) {
         params: {tokens: data.tokens }
     })
 }
-
+function transferToken(data) {
+    return sendRequest({
+        url: url+"transfer-token",
+        method: "POST",
+        data: data
+    })
+}
 
 export const userService = {
     getUserInfo,
+    transferToken
 };

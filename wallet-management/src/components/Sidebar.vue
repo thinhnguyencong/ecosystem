@@ -21,10 +21,6 @@
 				<span class="text">Document</span>
 				
 			</router-link>
-			<!-- <router-link to="/applications" class="button">
-				<span class="material-icons">apps</span>
-				<span class="text">Applications</span>
-			</router-link> -->
 		</div>
 
 		<div class="flex"></div>

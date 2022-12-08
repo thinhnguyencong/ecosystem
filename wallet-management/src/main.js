@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import Vue from 'vue'
 import App from './App.vue'
 
 import router from './router'
@@ -6,8 +6,17 @@ import router from './router'
 import store from './store'
 import "bootstrap/scss/bootstrap.scss";
 import * as bootstrap from 'bootstrap'
+import '@mdi/font/css/materialdesignicons.css';
 
-const app = createApp(App)
-app.use(store)
-app.use(router)
-app.mount('#app')
+import "vue-toastification/dist/index.css";
+import Jazzicon from 'vue-jazzicon';
+
+Vue.component('jazzicon', Jazzicon); // or Vue.component(Jazzicon.name, Jazzicon);
+
+// Vue.use(Vuetify)
+// Vue.use(Toast, options);
+new Vue({
+    router,
+    store,
+    render: (h) => h(App)
+  }).$mount('#app')

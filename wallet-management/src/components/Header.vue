@@ -18,7 +18,7 @@
         <div id="mySidebar" class="sidebar">
           <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
           <a href="/">Home</a>
-          <a href="/applications">Applications</a>
+          <a href="/dms">Document Management</a>
         </div>
     </div>
 </template>

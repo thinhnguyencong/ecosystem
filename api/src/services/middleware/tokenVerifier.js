@@ -21,7 +21,7 @@ const tokenVerifier = (req, res, next) => {
        //if the response token is active, proceed to next action
       if(JSON.parse(response).active === true){
         req.jwtDecoded = JSON.parse(response);
-        // console.log(JSON.parse(response));
+        //console.log(JSON.parse(response));
         next();
       }
       else {

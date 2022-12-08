@@ -1,0 +1,342 @@
+{
+    "array": [
+        {
+            "item": {
+                "0": "{\"hash\":\"QmSsxRAmRmhBjXgQmt9YpRDwnuT5XLcY18oNp8yaM4gsZ7\",\"userId\":\"toannv\",\"time\":\"2022-08-10 10:45\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"anh1.jfif\",\"size\":6748,\"typeFile\":\"image/jpeg\",\"lastModified\":1659606307386,\"approvers\":[\"toannv\"],\"folder\":\"/folder9/folder14\"}",
+                "1": [
+                    "0x102f3CB5BFC07aA489Fadd5FA10b439A444e15b6"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmQsVy846QedCCBAYcuDjf25ABZmramLWVUuDHYqezw8DP\",\"userId\":\"toannv4\",\"time\":\"2022-08-10 16:47\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"NguyenManhCuong-CV.pdf\",\"size\":618455,\"typeFile\":\"application/pdf\",\"lastModified\":1657705140656,\"approvers\":[\"toannv5\"],\"folder\":\"/folder\"}",
+                "1": [
+                    "0xbe68Aa0bC6d1eA09BCB29e2cBc8E23618Bb10b03"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmZ5fbpsb3N79APcJeFeu6EzTkUja5iN6DcLMEusde63Rn\",\"userId\":\"toannv4\",\"time\":\"2022-08-10 16:52\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Metamask.vue\",\"size\":9489,\"typeFile\":\"\",\"lastModified\":1658999378105,\"approvers\":[\"toannv4\"],\"folder\":\"/folder\"}",
+                "1": [
+                    "0x4F7Aad9Ae9E3849884089a0a60C221Da73ab21fb"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmT98pH9NGbR1LeAxSaUt6mYoahbJPuHPrh4N3SBAEaV9u\",\"userId\":\"toannv\",\"time\":\"2022-08-11 09:06\",\"policy\":{\"name\":\"or\",\"children\":[{\"name\":\"userId:toannv\"},{\"name\":\"userId:toannv1\"},{\"name\":\"userId:toannv\"},{\"name\":\"userId:toannv1\"}]},\"name\":\"Screenshot.png\",\"size\":21064,\"typeFile\":\"image/png\",\"lastModified\":1660116868018,\"approvers\":[\"toannv\",\"toannv1\"],\"folder\":\"/folder9/folder14\"}",
+                "1": [
+                    "0x49480eEf9BA2c5771761DE7E0cA9D75a486B32C1",
+                    "0x3b323D3199bDd5b030a21009647a62d869b950EE"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"Qma9AxWsy518TPYwaaEz7CjGRiNQthMZJJkZR59iqyDbaf\",\"userId\":\"toannv1\",\"time\":\"2022-08-11 10:26\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Screenshot.png\",\"size\":21064,\"typeFile\":\"image/png\",\"lastModified\":1660116868018,\"approvers\":[\"toannv\"],\"folder\":\"/folder9/folder14\"}",
+                "1": [
+                    "0x3b323D3199bDd5b030a21009647a62d869b950EE"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmYznCfhxrfkjPQ1Xa9dEQcmcxbtTNbonLr5C6Cswnw3NW\",\"userId\":\"toannv6\",\"time\":\"2022-08-11 11:17\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"[DEV] Server configuration.docx\",\"size\":564352,\"typeFile\":\"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"lastModified\":1660188989677,\"approvers\":[\"toannv6\"],\"folder\":\"/folder\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"Qma2jR5WR5RH6eVeKsiTGpCvCqGaZSWHQkEpMULASAQw9C\",\"userId\":\"toannv\",\"time\":\"2022-08-11 16:29\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"ạm2.jfif\",\"size\":7939,\"typeFile\":\"image/jpeg\",\"lastModified\":1659606318022,\"approvers\":[\"toannv\"],\"folder\":\"/folder9/folder14\"}",
+                "1": [
+                    "0x1FE3Eb2EBf3fD49989CAccc9f20b84DE737C89df"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmNipL4tbXfeTHxdYKJcCLP7Ma3tGs4UKG4mdtjYs6THQU\",\"userId\":\"toannv\",\"time\":\"2022-08-11 16:32\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"images (3).jfif\",\"size\":11002,\"typeFile\":\"image/jpeg\",\"lastModified\":1659605627543,\"approvers\":[\"toannv\"],\"folder\":\"/folder9/folder14\"}",
+                "1": [
+                    "0x1FE3Eb2EBf3fD49989CAccc9f20b84DE737C89df"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmNQmEbr9XMZTxN26PgMhAfdkUASQpF3gadtKxyu8vhyjX\",\"userId\":\"toannv\",\"time\":\"2022-08-11 16:36\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"download.jfif\",\"size\":10951,\"typeFile\":\"image/jpeg\",\"lastModified\":1659082797597,\"approvers\":[\"toannv\"],\"folder\":\"/folder9/folder14\"}",
+                "1": [
+                    "0x1FE3Eb2EBf3fD49989CAccc9f20b84DE737C89df"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmULzLk9LtGrCgLQuth4Lout1ATgb6ubStbi996D7TkeUu\",\"userId\":\"toannv6\",\"time\":\"2022-08-12 09:45\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"BAoEPaymentGateway (1).php\",\"size\":29143,\"typeFile\":\"\",\"lastModified\":1660198237918,\"approvers\":[\"toannv6\"],\"folder\":\"/folder\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmVNeEEwk8h4a8hmxKbC7Ueu3UHJAvmkhMEBDqWux9AS31\",\"userId\":\"toannv6\",\"time\":\"2022-08-12 11:32\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"_23_moon-live-wallpaper_1680929985.jpg\",\"size\":56309,\"typeFile\":\"image/jpeg\",\"lastModified\":1660275548882,\"approvers\":[\"toannv3\"],\"folder\":\"/folder/folder10/folder15/folder17/folder21\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmQ8D7ok5WfSCAmBoQG6r9rGLk2f3mvzvM2U6XMR51xRRk\",\"userId\":\"toannv6\",\"time\":\"2022-08-12 11:33\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"dms-3.sql\",\"size\":10691,\"typeFile\":\"\",\"lastModified\":1659509423828,\"approvers\":[\"toannv5\"],\"folder\":\"/folder/folder10/folder15/folder17/folder21\"}",
+                "1": [
+                    "0xbe68Aa0bC6d1eA09BCB29e2cBc8E23618Bb10b03"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTAAcwdAyPygQKcop27e1fWQc117E6y4awiz6yH8UXK9x\",\"userId\":\"luyendv\",\"time\":\"2022-08-12 16:05\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"mac.png\",\"size\":392556,\"typeFile\":\"image/png\",\"lastModified\":1650524788831,\"approvers\":[\"quangnd\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTZfmBymkUaMvNCVnXExfdHbRt269gBE691X9mquWNoZw\",\"userId\":\"baclv\",\"time\":\"2022-08-12 16:30\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"poly.txt\",\"size\":119,\"typeFile\":\"text/plain\",\"lastModified\":1659928112468,\"approvers\":[\"quangnd\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmWDMzko7233sVFaYuNboEi8GNuFhLd18PN5Z3BAzu8SbG\",\"userId\":\"thinhnc\",\"time\":\"2022-08-16 09:54\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Flow.png\",\"size\":414119,\"typeFile\":\"image/png\",\"lastModified\":1660614741561,\"approvers\":[\"quangnd\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmerH1bdBRn8wggRU7XGYMFyBp8iq64WQ13vr6WVFpKmZZ\",\"userId\":\"quangnd\",\"time\":\"2022-08-16 09:56\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"1.txt\",\"size\":8,\"typeFile\":\"text/plain\",\"lastModified\":1660535448696,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0x3b323D3199bDd5b030a21009647a62d869b950EE"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmUiVKZz2ZLCoufMDFijkSVKNriqKnAKZwWVTLUczUFPUE\",\"userId\":\"thinhnc\",\"time\":\"2022-08-16 10:01\",\"policy\":{\"name\":\"or\",\"children\":[{\"name\":\"manager:quangnd\"},{\"name\":\"userId:quangnd\"}]},\"name\":\"data_structure.png\",\"size\":240963,\"typeFile\":\"image/png\",\"lastModified\":1660615619167,\"approvers\":[\"quangnd\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmcLMra3AMVwdtVjpWABuk7bqm3776uB8wEniPR5kwjbGv\",\"userId\":\"thinhnc\",\"time\":\"2022-08-16 15:05\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Mark-Newman-Networks-Oxford-University-Press-2018.pdf\",\"size\":25862122,\"typeFile\":\"application/pdf\",\"lastModified\":1644887227900,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0x3b323D3199bDd5b030a21009647a62d869b950EE"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmcULuxkKQuDf2gmmLVngf934N8fAURVKFEAz5vVQA6HST\",\"userId\":\"thinhnc\",\"time\":\"2022-08-18 08:31\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"document.md\",\"size\":2136,\"typeFile\":\"\",\"lastModified\":1660719744696,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0x3b323D3199bDd5b030a21009647a62d869b950EE"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmX9n7aw6ZnGEMyAkkhvggg6TQ2Bz5ZhQ1Wsq1WcmmxJwE\",\"userId\":\"luyendv\",\"time\":\"2022-08-18 11:35\",\"policy\":{\"name\":\"or\",\"children\":[{\"name\":\"dept:CA\"},{\"name\":\"userId:quangnd\"}]},\"name\":\"z3001358819578_42ef3324251655a04813a215a3fc35b2.jpg\",\"size\":1194018,\"typeFile\":\"image/jpeg\",\"lastModified\":1638869319945,\"approvers\":[\"quangnd\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmT9op5KarwsCfLcGuWma5Pa8hKXap645gKiXRmmJfk4hb\",\"userId\":\"dampv\",\"time\":\"2022-08-20 17:38\",\"policy\":{\"name\":\"or\",\"children\":[{\"name\":\"dept:CA\"},{\"name\":\"dept:AI\"},{\"name\":\"userId:dampv\"}]},\"name\":\"1.cer\",\"size\":1188,\"typeFile\":\"application/x-x509-ca-cert\",\"lastModified\":1658657972212,\"approvers\":[\"dampv\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0x37dAC998a36113C7c410Db29352677Acbd1d0f3F"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTHJZ9361szDp3hFYxyAofFgAsMmPKWjZWepVxbUTfGYM\",\"userId\":\"quangnd\",\"time\":\"2022-08-23 08:35\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Tim_hiu_cac_vn_d_an_toan_trong_SDN.pdf\",\"size\":714244,\"typeFile\":\"application/pdf\",\"lastModified\":1661164794196,\"approvers\":[\"dampv\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0x37dAC998a36113C7c410Db29352677Acbd1d0f3F"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmQfbDiZBtwzCiFB8nKg1ZkJqBCXbvgxAkfGtDeuPFZ1Fi\",\"userId\":\"quangnd\",\"time\":\"2022-08-23 08:38\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Image Pasted at 2022-8-19 16-43.png\",\"size\":289732,\"typeFile\":\"image/png\",\"lastModified\":1660902451558,\"approvers\":[\"quangnd\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0xd891F3cb51195808f472ED395BD92ccf62874caC"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTPGG4zFotuAscyWqwCL8h5WLaDQxC1VB16tFCvWdsaAN\",\"userId\":\"thinhnc\",\"time\":\"2022-09-19 14:25\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"keymap.txt\",\"size\":212,\"typeFile\":\"text/plain\",\"lastModified\":1134945502000,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0x2227537e32427174C5F56eaaf2CFb716B72333A0"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmRpFZ84xvhLajbmwenozBQy34DheTuf34NNCwiGwkKNRt\",\"userId\":\"thinhnc\",\"time\":\"2022-09-19 14:41\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"node-v16.16.0-x64.msi\",\"size\":28577792,\"typeFile\":\"\",\"lastModified\":1660546893255,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0x2227537e32427174C5F56eaaf2CFb716B72333A0"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmSKsSfVcnznmwsNSR73fAf1YJKGeqTHND3SpcvqHAk7oV\",\"userId\":\"thinhnc\",\"time\":\"2022-09-19 15:03\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"MAoE.json\",\"size\":1375286,\"typeFile\":\"application/json\",\"lastModified\":1661153652706,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0x2227537e32427174C5F56eaaf2CFb716B72333A0"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmRbXwa4VyomDqiq7tDoKaaLNbMcpLFiQS91wXndVYSMdw\",\"userId\":\"thinhnc\",\"time\":\"2022-09-19 16:12\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"eth-lightwallet-master.zip\",\"size\":1668468,\"typeFile\":\"application/x-zip-compressed\",\"lastModified\":1660553195210,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0x2227537e32427174C5F56eaaf2CFb716B72333A0"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmSxRuLYB232hJfhGuUrLTWEJxmFMkXAmAhS85pzDjaieQ\",\"userId\":\"thinhnc\",\"time\":\"2022-09-21 08:06\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"NFT_projects.pdf\",\"size\":1826823,\"typeFile\":\"application/pdf\",\"lastModified\":1660791217809,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0x2227537e32427174C5F56eaaf2CFb716B72333A0"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmUrsUbngh4eBDUvnahmKXGXqZprfZmWEP2zNUXdvNHEE7\",\"userId\":\"thinhnc\",\"time\":\"2022-09-27 15:05\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"CPA.xlsx\",\"size\":15464,\"typeFile\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"lastModified\":1661914966948,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xFdaDE66FfaeE6Be357Ba5649A22B6bd3077Dd3E2"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmRffWEJyeRYkJYdHxf7QPWwvbnNpwPqDQmB6F7yNXDYnb\",\"userId\":\"thinhnc\",\"time\":\"2022-09-27 15:13\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"abc.drawio\",\"size\":2227,\"typeFile\":\"\",\"lastModified\":1661393957725,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xFdaDE66FfaeE6Be357Ba5649A22B6bd3077Dd3E2"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmQn5HZiEhdu6oh6BgjbzRHAdgxf1roMeXhtCV3Hb11rfj\",\"userId\":\"thinhnc\",\"time\":\"2022-09-27 16:14\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Ralph-Kimball-Margy-Ross-The-Data-Warehouse-Toolkit-3rd-Edition_-The-Definitive-Guide-to-Dimensional-Modeling-Wiley-2013.pdf\",\"size\":6890959,\"typeFile\":\"application/pdf\",\"lastModified\":1664252068210,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xFdaDE66FfaeE6Be357Ba5649A22B6bd3077Dd3E2"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmZbHpi4f39VtZiomvdxNi8PS3VTQbsuQMPHAoJA2isH3c\",\"userId\":\"thinhnc\",\"time\":\"2022-09-27 16:22\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"y2mate.com - FULL ALBUM B L A C K P I N K  블랙핑크  B O R N P I N K 2022_320kbps.mp3\",\"size\":58989109,\"typeFile\":\"audio/mpeg\",\"lastModified\":1663577674751,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/CA\"}",
+                "1": [
+                    "0xFdaDE66FfaeE6Be357Ba5649A22B6bd3077Dd3E2"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTW2ktYV74VgM39yHDwXPvbf5iAUiMt1QmrEGBHDVduDP\",\"userId\":\"nguyenln\",\"time\":\"2022-10-18 17:13\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"COMPSAC.2017.198.pdf\",\"size\":806948,\"typeFile\":\"application/pdf\",\"lastModified\":1663815694754,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmWKhFTXMg1zjHrAvTjwkmnNn4PY8YYrN37pG7DW7QyZoV\",\"userId\":\"nguyenln\",\"time\":\"2022-10-19 08:19\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"realm-export.json\",\"size\":72285,\"typeFile\":\"application/json\",\"lastModified\":1666076889032,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmWTgcPu545upb1imwJLwE6Y3UtdoSdz5ovNcoX4bn98S2\",\"userId\":\"thinhnc\",\"time\":\"2022-10-19 11:40\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"cryptography4020016.pdf\",\"size\":1113299,\"typeFile\":\"application/pdf\",\"lastModified\":1665051054008,\"approvers\":[\"thinhnc\"],\"folder\":\"/Manager\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmfQkE65VHxBmxp9gZ1SMRsuVp5rENTAaDZxfh66eBXP1s\",\"userId\":\"nguyenln\",\"time\":\"2022-10-19 13:03\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"MCOM.2016.7514160.pdf\",\"size\":322244,\"typeFile\":\"application/pdf\",\"lastModified\":1665050889407,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI/Research\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmWW3tHgiaxVV2mj7qeTa7YeY2PzM1GdFh5cFiBMwYLFcS\",\"userId\":\"nguyenln\",\"time\":\"2022-10-19 13:04\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Paper_53-Blockchain_in_Insurance.pdf\",\"size\":886964,\"typeFile\":\"application/pdf\",\"lastModified\":1664155431000,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/AI/Research\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmSshkBuufaaEqaqxijXTtAG4J2Wg1jnoFsCqcw1KwmpH1\",\"userId\":\"thinhnc\",\"time\":\"2022-10-19 16:35\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"thư mời.png\",\"size\":283189,\"typeFile\":\"image/png\",\"lastModified\":1666164177917,\"approvers\":[\"nguyenln\"],\"folder\":\"/Manager\"}",
+                "1": [
+                    "0x57aDD32F1888DeCe0EbFa667DE80dF426119419A"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTJGTeSwCHzyxLfCosr4X72ooAG9SjBHpuwdQSRNqUXtc\",\"userId\":\"nguyenln\",\"time\":\"2022-10-20 13:41\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"Create wallet.png\",\"size\":64872,\"typeFile\":\"image/png\",\"lastModified\":1660612877110,\"approvers\":[\"nguyenln\"],\"folder\":\"/Manager\"}",
+                "1": [
+                    "0x57aDD32F1888DeCe0EbFa667DE80dF426119419A"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTvo19mv1widXStLic7M5q5jVanmnwiVYq8dxyqFJ9dKQ\",\"userId\":\"thinhnc\",\"time\":\"2022-10-25 10:56\",\"policy\":{\"name\":\"or\",\"children\":[{\"name\":\":\"},{\"name\":\"userId:thinhnc\"}]},\"name\":\"ABlockchainFrameworkforInsuranceProcesses.pdf\",\"size\":196993,\"typeFile\":\"application/pdf\",\"lastModified\":1664156289452,\"approvers\":[\"thinhnc\"],\"folder\":\"/Manager\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"QmTUm1nWfeMdMgHDDRi5yCoAJYMARnQmkag5vBF7saNXBY\",\"userId\":\"nguyenln\",\"time\":\"2022-10-25 14:03\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"ABCDE.pdf\",\"size\":628393,\"typeFile\":\"application/pdf\",\"lastModified\":1661315308048,\"approvers\":[\"thinhnc\",\"nguyenln\"],\"folder\":\"/Director\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e",
+                    "0x57aDD32F1888DeCe0EbFa667DE80dF426119419A"
+                ]
+            }
+        },
+        {
+            "item": {
+                "0": "{\"hash\":\"Qmcu5SuRob3VcoVDN41VHWTL9894TgZHmEaAFnhSWb1eK5\",\"userId\":\"thinhnc\",\"time\":\"2022-10-31 11:20\",\"policy\":{\"name\":\"GroooDMS\"},\"name\":\"dms.sql\",\"size\":8696,\"typeFile\":\"\",\"lastModified\":1665976526611,\"approvers\":[\"thinhnc\"],\"folder\":\"/Public/Web\"}",
+                "1": [
+                    "0xae49BA3BE5303638A899580fDCb5Ebdc073Dd77e"
+                ]
+            }
+        }
+    ]
+}

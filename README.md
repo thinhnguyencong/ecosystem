@@ -1,4 +1,16 @@
-# SSO with Keycloak and ReactJs, Nodejs
+# Set up
+Configurate all the .env file(based on .env.example) then run the following command:
+- `docker-compose up -d`
+
+Go to the [Keycloak Admin Console](http://localhost:8080) and login with the username and password you created earlier. (In this example we use admin/admin)
+
+Add some users.
+
+In `Client Details`, switch `On` in Client authentication, so that we can enable the `Credentials tab`. In `Credentials Tab`, we copy the client secret into .env file in api/.env
+
+Open [http://localhost:3000](http://localhost:3000) and [http://localhost:3001](http://localhost:3001) to view it in your browser.
+
+# (Old) SSO with Keycloak and ReactJs, Nodejs
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

@@ -1,5 +1,5 @@
 import {userService} from './user.service';
-
+import { toast } from '../../plugins/toast';
 const NATIVE_TOKEN = {
 	name: "tBNB",
 	address: "0x0000000000000000000000000000000000000000",
@@ -33,6 +33,19 @@ export const user = {
         }
       );
     },
+    transferToken({ commit }, data) {
+      commit('transferToken');
+      return userService.transferToken(data)
+      .then(
+        res => {
+          console.log("res", res);
+          commit('transferTokenSuccess', res);
+        },
+        error => {
+          commit('transferTokenFailure', error);
+        }
+      );
+    },
     getAsset({commit}){
       commit('getAsset');
     },
@@ -57,6 +70,7 @@ export const user = {
     getUserInfoFailure(state, error){
       state.isLoading = false
       console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
     getAsset(){
       let tokenList = JSON.parse(localStorage.getItem('tokenList'))
@@ -87,6 +101,22 @@ export const user = {
 			let tokenList = JSON.parse(localStorage.getItem('tokenList'))
 			delete tokenList[data]
 			localStorage.setItem('tokenList', JSON.stringify(tokenList));
+    },
+
+    // ------------------transferToken-----------------------------
+    transferToken(state){
+      state.isLoading = true
+    },
+    transferTokenSuccess(state, result){
+      state.isLoading = false;
+      toast.success(result.data.msg)
+			//window.location.reload()
+      // state.balance= state.balance - result.data.data
+    },
+    transferTokenFailure(state, error){
+      state.isLoading = false
+      console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
   }
 };

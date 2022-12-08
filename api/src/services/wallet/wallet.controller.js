@@ -5,15 +5,16 @@ import lightwallet from "eth-lightwallet"
 import fs from "fs"
 import crypto from "crypto"
 import ffi from "ffi-napi"
-import {dirname} from "path";
-import { fileURLToPath } from 'url';
+import Folder from "../../models/folder.model.js";
+import { isValidObjectId } from "mongoose";
+import requestPromise from "request-promise";
 
-const NFT_ADDRESS = "0xA53DE6658D258A96fA7a5f0ed66F84439fFDDD2A"
+const NFT_ADDRESS = "0x5281c02A833a491B764a704D3907373B20E7F482"
 
 const web3 = new Web3(
 	new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER)
 );
-const DMS = JSON.parse(fs.readFileSync("src/abis/DMSSign.json"));
+const DMS = JSON.parse(fs.readFileSync("src/abis/DMS.json"));
 const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 export const wallet = async (req, res, next) => {
 	try {
@@ -85,7 +86,7 @@ export const signMessage = async (req, res, next) => {
 	ks.keyFromPassword(process.env.SECRET, async function (err, pwDerivedKey) {
 		ks.generateNewAddress(pwDerivedKey, 1)
 		if (err) throw err;
-		let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
+		let privateKey = ks.exportPrivateKey(ks.getAddresses()[0], pwDerivedKey)
 		let sig = web3.eth.accounts.sign(message, privateKey)
 		console.log(sig)
 		return res.status(200).json({signature: sig.signature})
@@ -96,6 +97,11 @@ export const signMessage = async (req, res, next) => {
 
 export const mint = async (req, res, next) => { 
 	// let {message, ethKey} = req.body.data
+	const web3Connection = await getWeb3()
+	if(!web3Connection.status) {
+		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+	}
+	const web3 = web3Connection.web3
 	console.log(req.body)
 	let {tokenURI, signerList} = req.body
 	let userEmail = "thinhnc"
@@ -111,7 +117,7 @@ export const mint = async (req, res, next) => {
 			from: publicAddress,
 			to: NFT_ADDRESS,
 			value: "0x0",
-			gas: 6000000,
+			gas: await dmsContract.methods.mintNFT(publicAddress, tokenURI, signerList).estimateGas({ from: publicAddress }),
 			nonce: nonce,
 			data: dmsContract.methods.mintNFT(publicAddress, tokenURI, signerList).encodeABI(),
 		};
@@ -228,7 +234,7 @@ export const signDoc = async (req, res, next) => {
 			from: publicAddress,
 			to: NFT_ADDRESS,
 			value: "0x0",
-			gas: 6000000,
+			gas: await dmsContract.methods.sign(NFT_ADDRESS, id).estimateGas({ from: publicAddress }),
 			nonce: nonce,
 			data: dmsContract.methods.sign(NFT_ADDRESS, id).encodeABI(),
 		};
@@ -330,21 +336,167 @@ export const requestKey = async (req, res, next) => {
 
 
 }
+var arr = []
+
+export const getFoldersInMyFolder = async (req, res, next) => { 
+	let user_id = req.query.user_id
+	if(isValidObjectId(user_id)) {
+		let myFolder = await Folder.findOne({ parent: null, owner: user_id })
+		if(!myFolder){
+			return res.status(500).send({
+				msg: "Folder not exist"
+			})
+		}
+		let myFolderItems = await Folder.find({ parent: myFolder._id })
+
+		res.send({
+			myFolder: myFolderItems
+		})
+	}else {
+		return res.status(404).send({
+			msg: "Folder not found"
+		})
+	}
+	
+}
+
+export const createFolder = async (req, res, next) => { 
+	let {parent_id, name, user_id} = req.body
+	console.log(req.body);
+	//check if id is valid
+	if(isValidObjectId(parent_id)) {
+		// check if parent folder exist
+		let parentFolder = await Folder.findById(parent_id)
+		if(!parentFolder){
+			return res.status(500).send({
+				msg: "Folder not exist"
+			})
+		}
+		console.log(parentFolder.owner == user_id);
+		console.log(parentFolder.shared.includes(user_id));
+		// check if user has permission to create new folder in this folder
+		if(parentFolder.owner == user_id || parentFolder.shared.includes(user_id)) {
+			let newFolder = new Folder({
+				name: name,
+				parent: parent_id,
+				ancestors: [...parentFolder.ancestors, parent_id],
+				owner: user_id,
+			})
+			Folder.create(newFolder, function (err, newFolderCreated) {
+				if (err) {
+					console.log(err);
+					return res.status(500).send({
+						msg: "Error when connect to database"
+					})
+				}
+				res.status(200).send({
+					msg: "Create folder successfully!",
+					data: newFolderCreated
+				})
+			});
+
+		}else {
+			return res.status(400).send({
+				msg: "Bad Request"
+			})
+		}
+	}else {
+		return res.status(404).send({
+			msg: "Folder not found"
+		})
+	}
+}
+export const shareFolder = async (req, res, next) => {
+	// get from token
+	let {folder_id, sharedList, owner} = req.body
+	let folder = await Folder.findById(folder_id)
+
+	// check if owner own this folder
+	if(folder.owner !== owner) {
+		return res.status(400).send({
+			msg: "Bad request"
+		})
+	}
+
+	// check if folder is "My Folder"
+	if(folder.parent == owner) {
+		return res.status(400).send({
+			msg: "This folder cannot be shared"
+		})
+	}
+
+	// check if participants is already in this list, if true remove duplicate
+	const newSharedList = [...new Set([...sharedList,...folder.shared])];
+	const update = { shared: newSharedList };
+	console.log(newSharedList);
+	let updatedFolder = await Folder.findByIdAndUpdate(folder_id, update, {new: true});
+	return res.status(200).send({
+		updatedFolder: updatedFolder
+	})
+}
+
+export const getSharedWithMeFolder = async (req, res, next) => {
+	let userId = req.query.userId
+	if(isValidObjectId(userId)) {
+		let sharedWithMeFolders = await Folder.find({ shared: userId })
+
+		return res.status(200).send({
+			sharedWithMeFolders: sharedWithMeFolders
+		})
+	}else {
+		return res.status(400).send({
+			msg: "Bad request"
+		})
+	}
+}
+
 export const test = async (req, res, next) => { 
 	const web3 = new Web3(
 		new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER)
 	);
-	let userEmail = "thinhnc"
-	let user = await User.findOne({email: userEmail})
-	const {publicAddress, keystore} = user
+	// let userEmail = "hr_manager@dms-grooo.com.vn"
+	// let user = await User.findOne({email: userEmail})
+	// const {publicAddress, keystore} = user
 
+	//người ký
+	const publicAddress = "0x55fC5fD1d569Da536b15e3d9258aC61731b8699D"
+	const address = "0xD4Fe7aaCA926ec860f52db695782e8fD1E43415A"
+
+	//người tạo
+		const creator = "0x09876c96F80247184921f24547c861c99083f602"
 	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	let arr= [];
-	for(let i=1; i<=42; i++) {
-		let info = await dmsContract.methods.getDocInfo(i).call({ from: publicAddress });
-		arr.push({item: info})
-	}
+	// for(let i=1; i<=3; i++) {
+	// 	let info = await dmsContract.methods.getDocInfo(i).call({ from: publicAddress });
+	// 	arr.push({item: info})
+	// }
+
+	// những tài liệu mà user có public address chưa kí
+	let x = await dmsContract.methods.getUserNotSignedList().call({ from: publicAddress });
+
+	// // văn bản đã được ký của người tạo
+	// let y = await dmsContract.methods.getUserSignedDoc().call({ from: publicAddress });
+
+	// // những tài liệu đã kí của publicaddress
+	// let z = await dmsContract.methods.getUserSignedList().call({ from: publicAddress });
+
+	// list: do người này đã làm gì (kí, reject)
+	// doc: của người này (đã được kí, đã bị reject)
+
+
+	// chưa hiểu 0,1,2 là gì
+	let a = await dmsContract.methods.checkUserSignedStatus(1, "0x3b323d3199bdd5b030a21009647a62d869b950ee").call({ from: "0x3b323d3199bdd5b030a21009647a62d869b950ee" });
+
+	// tất cả doc của người này 
+	let b = await dmsContract.methods.getUserCollectionList(creator).call({ from: creator });
+
 	res.json({
-		array: arr
+		getUserNotSignedList: x,
+		// getUserSignedDoc: y,
+		// getUserSignedList: z,
+		checkUserSignedStatus: a,
+		getUserCollectionList: b
 	})
+	
 }
+
