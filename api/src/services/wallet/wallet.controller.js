@@ -4,7 +4,7 @@ import User from "../../models/user.model.js";
 import lightwallet from "eth-lightwallet"
 import fs from "fs"
 import crypto from "crypto"
-import ffi from "ffi-napi"
+// import ffi from "ffi-napi"
 import Folder from "../../models/folder.model.js";
 import { isValidObjectId } from "mongoose";
 import requestPromise from "request-promise";
@@ -255,87 +255,87 @@ export const signDoc = async (req, res, next) => {
 	
 }
 
-export const initRequestKey = async (req, res, next) => { 
-	let nonce = crypto.randomBytes(32); 
-	// Prints random bytes of generated data
-	console.log("The random bytes of data generated is: "
-	+ nonce.toString('hex'));
-	res.json({
-		result: nonce.toString('hex')
-	})
-}
+// export const initRequestKey = async (req, res, next) => { 
+// 	let nonce = crypto.randomBytes(32); 
+// 	// Prints random bytes of generated data
+// 	console.log("The random bytes of data generated is: "
+// 	+ nonce.toString('hex'));
+// 	res.json({
+// 		result: nonce.toString('hex')
+// 	})
+// }
 
 
-export const requestKey = async (req, res, next) => { 
-	let {pubWallet, nonce, sigWallet, fgp} = req.body
-	const web3 = new Web3(
-		new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER)
-	);
-	console.log(process.platform);
-	let lib;
-	if(process.platform === "win32") {
-		lib = ffi.Library('rust/target/release/abe_native.dll', {
-			'verify': ['bool', ['string', 'string']],
-			'generate_key': ['string', ['string', 'string', 'string']],
-			'encrypt': ['string', ['string', 'string']]
-		})
-	} else {
-		lib = ffi.Library('rust-2/target/release/libabe_native.so', {
-			'verify': ['bool', ['string', 'string']],
-			'generate_key': ['string', ['string', 'string', 'string']],
-			'encrypt': ['string', ['string', 'string']]
-		})
-	}
+// export const requestKey = async (req, res, next) => { 
+// 	let {pubWallet, nonce, sigWallet, fgp} = req.body
+// 	const web3 = new Web3(
+// 		new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER)
+// 	);
+// 	console.log(process.platform);
+// 	let lib;
+// 	if(process.platform === "win32") {
+// 		lib = ffi.Library('rust/target/release/abe_native.dll', {
+// 			'verify': ['bool', ['string', 'string']],
+// 			'generate_key': ['string', ['string', 'string', 'string']],
+// 			'encrypt': ['string', ['string', 'string']]
+// 		})
+// 	} else {
+// 		lib = ffi.Library('rust-2/target/release/libabe_native.so', {
+// 			'verify': ['bool', ['string', 'string']],
+// 			'generate_key': ['string', ['string', 'string', 'string']],
+// 			'encrypt': ['string', ['string', 'string']]
+// 		})
+// 	}
 	
-	console.log("lib", lib);
-	console.log("req.body", req.body);
-	const signature = web3.eth.accounts.sign(nonce, "28eb42b6c1fd2b665e8e119a8eeb3d1cecd7d39f40b50eee0f7e28f52621130c");
-	console.log("signature w3", signature);
-	let isSigVerified = pubWallet === web3.eth.accounts.recover(nonce, signature.signature) ? true : false;
-	console.log("isSigVerified", isSigVerified);
-	if(!isSigVerified) {
-		res.json({
-			msg: "Signature is not verified"
-		})
-	}
+// 	console.log("lib", lib);
+// 	console.log("req.body", req.body);
+// 	const signature = web3.eth.accounts.sign(nonce, "28eb42b6c1fd2b665e8e119a8eeb3d1cecd7d39f40b50eee0f7e28f52621130c");
+// 	console.log("signature w3", signature);
+// 	let isSigVerified = pubWallet === web3.eth.accounts.recover(nonce, signature.signature) ? true : false;
+// 	console.log("isSigVerified", isSigVerified);
+// 	if(!isSigVerified) {
+// 		res.json({
+// 			msg: "Signature is not verified"
+// 		})
+// 	}
 
-	let isReqVerified = lib.verify(nonce, fgp);
-	console.log("isReqVerified", isReqVerified);
-	if(!isReqVerified) {
-		res.json({
-			msg: "Request is not verified"
-		})
-	}
+// 	let isReqVerified = lib.verify(nonce, fgp);
+// 	console.log("isReqVerified", isReqVerified);
+// 	if(!isReqVerified) {
+// 		res.json({
+// 			msg: "Request is not verified"
+// 		})
+// 	}
 
-	let attributes = [
-		'userId:nguyenln', 
-		'wallet:0x57add32f1888dece0ebfa667de80df426119419a', 
-		'address:null', 
-		'position:Developer', 
-		'dept:AI', 
-		'manager:thinhnc', 
-		'name:Nguyễn Lương Nguyên'
-	]
+// 	let attributes = [
+// 		'userId:nguyenln', 
+// 		'wallet:0x57add32f1888dece0ebfa667de80df426119419a', 
+// 		'address:null', 
+// 		'position:Developer', 
+// 		'dept:AI', 
+// 		'manager:thinhnc', 
+// 		'name:Nguyễn Lương Nguyên'
+// 	]
 
-	attributes.push("GroooDMS")
-	let attributesStr = attributes.join("::")
-	console.log(attributesStr);
-	let key = lib.generate_key(attributesStr, pubWallet.toLowerCase(), "nguyenln")
-	console.log("key", key);
-	let encryptedKey = lib.encrypt(nonce.substring(64), key);
-	console.log("encryptedKey", encryptedKey);
-	if(!encryptedKey || encryptedKey.startsWith("!!!")){
-		res.json({
-			msg: "Unable to generate key"
-		})
-	}
-	res.json({
-		result: encryptedKey
-	})
+// 	attributes.push("GroooDMS")
+// 	let attributesStr = attributes.join("::")
+// 	console.log(attributesStr);
+// 	let key = lib.generate_key(attributesStr, pubWallet.toLowerCase(), "nguyenln")
+// 	console.log("key", key);
+// 	let encryptedKey = lib.encrypt(nonce.substring(64), key);
+// 	console.log("encryptedKey", encryptedKey);
+// 	if(!encryptedKey || encryptedKey.startsWith("!!!")){
+// 		res.json({
+// 			msg: "Unable to generate key"
+// 		})
+// 	}
+// 	res.json({
+// 		result: encryptedKey
+// 	})
 
 
 
-}
+// }
 var arr = []
 
 export const getFoldersInMyFolder = async (req, res, next) => { 
