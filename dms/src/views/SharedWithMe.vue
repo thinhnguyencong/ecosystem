@@ -55,7 +55,7 @@
 <script setup>
 import FileVue from '../components/File.vue'
 import FolderVue from '../components/Folder.vue';
-
+import GridViewVue from '../components/GridView.vue';
 </script>
 <script>
 

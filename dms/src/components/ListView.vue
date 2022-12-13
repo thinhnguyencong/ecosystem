@@ -6,6 +6,7 @@
                 <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
                 <th scope="col">Token Id</th>
                 <th scope="col">Date Modified</th>
+                <th scope="col">Status</th>
                 <th scope="col">Owner</th>
                 <th scope="col">Size</th>
                 <th scope="col">Action</th>
@@ -18,6 +19,7 @@
                     </th>
                     <td>-</td>
                     <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
+                    <td>-</td>
                     <td>{{folder.owner}}</td>
                     <td>-</td>
                     <td></td>
@@ -28,8 +30,9 @@
                     </th>
                     <td>{{file.tokenId}}</td>
                     <td>{{(new Date(file.createdAt)).toDateString()}}</td>
+                    <td>{{file.status}}</td>
                     <td>{{file.owner}}</td>
-                    <td>{{(JSON.parse(file.tokenURI).size /1000000)}} MB</td>
+                    <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                     <td>
                         <span class="material-icons" @click="openModal(file._id)">visibility</span>&nbsp;&nbsp;
                         <span class="material-icons" @click="download1(file._id)">download</span>&nbsp;&nbsp;
@@ -72,6 +75,16 @@ export default {
         },
         openModal(id) {
             $("#"+id).modal('toggle');
+        },
+        niceBytes(bytes) {
+            const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+            let l = 0, n = parseInt(bytes, 10) || 0;
+
+            while(n >= 1024 && ++l){
+                n = n/1024;
+            }
+            
+            return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
         },
         download1(id) {
             console.log(this.$refs[id]);

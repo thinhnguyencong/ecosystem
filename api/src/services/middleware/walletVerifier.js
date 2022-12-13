@@ -13,7 +13,6 @@ const walletVerifier = async (req, res, next) => {
 		let userEmail = req.jwtDecoded.email;
 		let client_id = req.jwtDecoded.client_id
 		const user = await User.findOne({email: userEmail})
-		console.log('user', user);
 		const service = await Service.findOne({client_id: client_id})
 		//check if user has logged to this service before
 		if(user.servicesUsed.some(s => service._id.toString() === s.serviceId.toString())){

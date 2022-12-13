@@ -24,6 +24,7 @@
     "vite-plugin-top-level-await": "^1.2.2",
     "vite-plugin-wasm": "^3.1.0",
     "vue": "^2.7.7",
+    "vue-doc-preview": "^0.3.2",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.5.4",
     "vue-sweetalert2": "^5.0.5",

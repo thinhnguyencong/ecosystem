@@ -18,7 +18,6 @@ export const authToken = async (req, res, next) => {
 	const {code, clientId, redirect_uri} = req.body.data;
 	const oAuthStrategies = new OAuthStrategies(clientId, redirect_uri);
 	const authStrategy = oAuthStrategies.getStrategy();
-
 	requestPromise(authStrategy.getAuthTokenOptions(code))
 	.then(tokenRes => {
 		const jwtAccessToken = jwt.decode(JSON.parse(tokenRes).access_token);
@@ -38,7 +37,8 @@ export const authToken = async (req, res, next) => {
 	})
 	.catch(error => {
 		console.error("Error in Auth Token", error.error);
-		res.sendStatus(error.statusCode);
+		const status = error.statusCode || 500
+		res.sendStatus(status);
 	});
 }
 

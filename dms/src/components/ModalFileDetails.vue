@@ -12,8 +12,10 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-7">
-                                <div class="vh-90">
-                                    <iframe :src="link" class="w-100 vh-190" height="600px" frameborder="0"></iframe>
+                                <div class="">
+                                    <!-- <embed :src="'https://drive.google.com/viewer?url='+ link + '.pdf&embedded=true'" class="w-100 vh-190" height="600px" frameborder="0"/> -->
+                                    <!-- <VueDocPreview :url="link" type="office" /> -->
+                                    <embed :src="link" class="w-100" height="600px" frameborder="0" id='embedDocument'>
                                 </div>
                             </div>
                             <div class="col-5">
@@ -40,11 +42,11 @@
                                                     <span>Status: </span>
                                                     <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
                                                     <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
-                                                    <span v-if="file.status === 'rejected'" class="font-weight-bold text-warning">Rejected</span>
+                                                    <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
                                                     <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
-
                                                 </div>
-                                                <div class="row">
+                                            </div>
+                                            <div class="row">
                                                     <div class="col-md-4 text-center">
                                                         
                                                     </div>
@@ -60,9 +62,6 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                
-                                                
-                                            </div>
                                         </v-tab-item>
                                         <v-tab-item :key="2">
                                             <div class="card border border-info">
@@ -103,11 +102,15 @@
     </div>
 </template>
 <script>
+import VueDocPreview from 'vue-doc-preview'
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 export default {
     props: {
         fileProps: Object,
+    },
+    components: {
+        VueDocPreview
     },
     data() {
         return {
@@ -152,6 +155,7 @@ export default {
             const base64Response = await fetch(`${typeNew},${base64}`)
             const blob1 = await base64Response.blob()
             const blob = new Blob([blob1], { type: type })
+            console.log("blob", blob);
             const link = window.URL.createObjectURL(blob)
             console.log(link);
             return link

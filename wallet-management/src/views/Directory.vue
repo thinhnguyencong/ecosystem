@@ -170,8 +170,8 @@
                 </div>
             </div>
         </div>
-        <div v-else className="spinner-border text-dark" role="status">
-            <span className="sr-only">Loading...</span>
+        <div v-else class="spinner-border text-dark" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
         
 	</div>

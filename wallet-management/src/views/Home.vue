@@ -13,8 +13,8 @@
                 <h5 class="card-text font-weight-bold">Balance: {{formatAmount(userState.balance)}} TBNB</h5>
                 <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalSendToken">Send <i class="mdi mdi-send text-light"></i></a>
               </div>
-              <div v-else className="spinner-border text-dark" role="status">
-                    <span className="sr-only">Loading...</span>
+              <div v-else class="spinner-border text-dark" role="status">
+                    <span class="sr-only">Loading...</span>
               </div>
             </div>
           </div>

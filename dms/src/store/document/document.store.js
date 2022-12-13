@@ -280,7 +280,9 @@ export const document = {
     signDocSuccess(state, result){
         state.isLoading = false;
         toast.success(result.data.msg)
-        window.location.reload()
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000);
     },
     signDocFailure(state, error){
         state.isLoading = false
@@ -295,7 +297,9 @@ export const document = {
     rejectDocSuccess(state, result){
         state.isLoading = false;
         toast.success(result.data.msg)
-        window.location.reload()
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000);
     },
     rejectDocFailure(state, error){
         state.isLoading = false

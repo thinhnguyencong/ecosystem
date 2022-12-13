@@ -10,7 +10,7 @@ services:
   #     KEYCLOAK_ADMIN: admin
   #     KEYCLOAK_ADMIN_PASSWORD: admin
   #   command:
-  #     - start
+  #     - start-dev
   #     - --import-realm
   #     - --features=preview
   #   volumes:
