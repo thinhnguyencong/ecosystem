@@ -124,7 +124,7 @@ export const createUser = async (req, res, next) => {
 			}
 		})
 		.catch(function (error) {
-			console.error("Error in Re Auth Token", error.response.data.errorMessage);
+			console.error("Error in create user", error.response.data.errorMessage);
 			return res.status(error.response.status).send({
 				msg: error.response.data.errorMessage
 			});

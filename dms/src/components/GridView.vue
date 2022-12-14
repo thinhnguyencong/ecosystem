@@ -37,7 +37,6 @@ import FolderVue from '../components/Folder.vue';
 </script>
 
 <script>
-import ModalFileDetails from './ModalFileDetails.vue';
 import $ from 'jquery' 
 
 export default {
@@ -58,7 +57,6 @@ export default {
         //     $("#"+id).modal('toggle');
         // },
     },
-    components: { ModalFileDetails }
 }
 </script>
 <style scoped>

@@ -58,10 +58,11 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        
+        <ModalFileDetails v-for="(file, index) in documentState.folder.files" :ref="(file._id)" :fileProps="file" :key="file._id"/>
 	</div>
 </template>
 <script setup>
+import ModalFileDetails from './ModalFileDetails.vue';
 import GridView from '../components/GridView.vue';
 import ListTable from '../components/ListView.vue';
 import ManageKey from '../components/ManageKey.vue'
@@ -71,7 +72,7 @@ import ModalUploadFile from './ModalUploadFile.vue';
 <script>
 
 export default {
-    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListTable, GridView },
+    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListTable, GridView, ModalFileDetails },
     mounted() {
         this.$router.push(this.$route.path)
     },
@@ -124,6 +125,13 @@ export default {
 <style scoped>
 .float-right {
     float: right;
+}
+.material-icons{
+    cursor: pointer;
+}
+.material-icons:hover {
+    background: transparent;
+	color: #0f85f4;
 }
 /* .text-custom-color-blue {
     color: #00A8FF

@@ -64,6 +64,7 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
+        <ModalFileDetails v-for="(file, index) in documentState.folder.files" :ref="(file._id)" :fileProps="file" :key="file._id"/>
         
 	</div>
 </template>
@@ -75,10 +76,11 @@
     import ManageKey from '../components/ManageKey.vue'
     import ListTableVue from '../components/ListView.vue';
     import GridViewVue from '../components/GridView.vue';
+    import ModalFileDetails from './ModalFileDetails.vue';
 </script>
 <script>
 export default {
-  components: { ModalAddNewFolder, ManageKey  },
+  components: { ModalAddNewFolder, ManageKey, ModalFileDetails  },
     mounted() {
         // Call the API query method on page load
         
@@ -172,5 +174,12 @@ export default {
 }
 .text-custom-color-blue {
     color: #00A8FF
+}
+.material-icons{
+    cursor: pointer;
+}
+.material-icons:hover {
+    background: transparent;
+	color: #0f85f4;
 }
 </style>

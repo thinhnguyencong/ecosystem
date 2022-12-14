@@ -37,11 +37,12 @@
     <div v-else class="spinner-border text-dark" role="status">
           <span class="sr-only">Loading...</span>
       </div>
-    
+    <ModalFileDetails v-for="(file, index) in documentState.files" :ref="(file._id)" :fileProps="file" :key="file._id"/>
   </div>
 
 </template>
 <script setup>
+import ModalFileDetails from './ModalFileDetails.vue';
 import GridView from '../components/GridView.vue';
 import ListTable from '../components/ListView.vue';
 import logoURL from '../assets/img-doc.png'
@@ -51,6 +52,7 @@ import { CID } from 'ipfs-http-client'
 </script>
 <script>
   export default {
+    components: {ModalFileDetails},
     data() {
       return {
         layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
@@ -86,5 +88,12 @@ import { CID } from 'ipfs-http-client'
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
+}
+.material-icons{
+    cursor: pointer;
+}
+.material-icons:hover {
+    background: transparent;
+	color: #0f85f4;
 }
 </style>

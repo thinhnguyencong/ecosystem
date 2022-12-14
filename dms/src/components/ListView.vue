@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody>
-                <tr v-if="(folders.length>0)" @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
+                <tr role='button' v-if="(folders.length>0)" @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
                     <th scope="row">
                         <i class="mdi mdi-folder text-custom-color-blue"></i> {{folder.name}}
                     </th>
@@ -35,11 +35,10 @@
                     <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                     <td>
                         <span class="material-icons" @click="openModal(file._id)">visibility</span>&nbsp;&nbsp;
-                        <span class="material-icons" @click="download1(file._id)">download</span>&nbsp;&nbsp;
+                        <span class="material-icons" @click="download(file)">download</span>&nbsp;&nbsp;
                         <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
                         <span class="material-icons text-success">edit_calendar</span> -->
                     </td>
-                    <ModalFileDetails :ref="(file._id)" :fileProps="file" :key="file._id"/>
                 </tr>
                 <tr v-if="(files.length + folders.length == 0)">
                     <td class="text-center" colspan="6" scope="row"><h5>Empty</h5></td>
@@ -53,8 +52,10 @@
     </div>
 </template>
 <script>
-import ModalFileDetails from './ModalFileDetails.vue';
+import ModalFileDetails from '../views/ModalFileDetails.vue';
 import $ from 'jquery' 
+import { IpfsClient } from "../helpers/ipfs";
+import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 
 export default {
     props: {
@@ -86,10 +87,6 @@ export default {
             
             return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
         },
-        download1(id) {
-            console.log(this.$refs[id]);
-            this.$refs[id][0].download();
-        },
         getClass(type) {
             switch(type) {
                 case 'application/pdf': return "mdi mdi-file-pdf-box text-danger"
@@ -106,9 +103,27 @@ export default {
                 default: return "mdi mdi-file text-secondary"
             }
         },
-        download() {
-
-        }
+        download(file) {
+            IpfsClient().get(file.hash).then(async (res) =>{
+                if(res) {
+                    console.log(res[0].content)
+                    let resultDecrypt = decrypt(res[0].content, file.key)
+                    console.log('resultDecrypt', resultDecrypt);
+                    let tokenUri = JSON.parse(file.tokenURI)
+                    console.log("tokenUri", tokenUri);
+                    let blob = new Blob([resultDecrypt.buffer], {type: tokenUri.fileType});
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    let fileName = tokenUri.name;
+                    link.download = fileName;
+                    console.log("link", link);
+                    link.click();
+                }
+                else {
+                    alert("No file to download")
+                }
+            })
+        },
     },
     components: { ModalFileDetails }
 }
@@ -122,5 +137,9 @@ export default {
 }
 .material-icons{
     cursor: pointer;
+}
+.material-icons:hover {
+    background: transparent;
+	color: #0f85f4;
 }
 </style>

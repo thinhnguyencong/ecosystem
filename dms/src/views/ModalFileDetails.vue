@@ -2,11 +2,13 @@
     <div class="modal fade" :id="file._id" tabindex="-1" role="dialog" aria-labelledby="modalDetailFileTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 v-if="file.tokenURI" class="modal-title text-center">{{JSON.parse(file.tokenURI).name}}</h5>
+                <div class="modal-header d-flex flex-row justify-content-center align-items-center text-center">
+                    <h5 v-if="file.tokenURI" class="modal-title w-100">{{JSON.parse(file.tokenURI).name}}</h5>
+                
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <p class="h1" aria-hidden="true">&times;</p>
                     </button>
+                    
                 </div>
                 <div class="modal-body">
                     <div class="container">
@@ -19,15 +21,17 @@
                                 </div>
                             </div>
                             <div class="col-5">
-                                <div>
-                                    <v-tabs color="#eee" slider-color="cyan">
-                                        <v-tab :key="1" ripple >
+                                    <v-tabs fixed-tabs grow v-model="active" color="#eee" slider-color="cyan" :ref="'tabs-'+file._id">
+                                        <v-tab :key="0" >
                                             Document Details
                                         </v-tab>
-                                        <v-tab :key="2" ripple>
+                                        <v-tab :key="1">
                                             Comments
                                         </v-tab>
-                                        <v-tab-item :key="1">
+                                        <v-tab :key="2">
+                                            Status
+                                        </v-tab>
+                                        <v-tab-item :key="0">
                                             <br>
                                             <h5 class="font-weight-bold">Description</h5>
                                             <div class="card border border-muted">
@@ -35,42 +39,15 @@
                                                     <div v-html="file.description"></div>
                                                 </div>
                                             </div>
-                                            <br>
-                                            <h5 class="font-weight-bold">Document Information</h5>
-                                            <div class="card border border-muted">
-                                                <div class="card-body">
-                                                    <span>Status: </span>
-                                                    <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
-                                                    <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
-                                                    <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
-                                                    <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                    <div class="col-md-4 text-center">
-                                                        
-                                                    </div>
-                                                    <div class="col-md-8 text-center">
-                                                        <span class="float-md-right">
-                                                            <a v-if="file.canSign" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('sign')">Reject</a>
-                                                            <a v-else-if="file.canReview" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('review')">Reject</a>
-                                                            <!-- <a v-else class="btn btn-danger btn-lg disabled" role="button" aria-disabled="true">Reject</a> -->
-                                                            <a v-if="file.canReview" class="btn btn-warning btn-lg" role="button" aria-disabled="false" @click="handleSign('review')">Review</a>
-                                                            <!-- <a v-else class="btn btn-warning btn-lg disabled" role="button" aria-disabled="true">Review</a> -->
-                                                            <a v-if="file.canSign" class="btn btn-success btn-lg" role="button" aria-disabled="false" @click="handleSign('sign')">Sign</a>
-                                                            <!-- <a v-else class="btn btn-success btn-lg disabled" role="button" aria-disabled="true">Sign</a> -->
-                                                        </span>
-                                                    </div>
-                                                </div>
                                         </v-tab-item>
-                                        <v-tab-item :key="2">
+                                        <v-tab-item :key="1">
                                             <div class="card border border-info">
-                                                <div class="card-body description">
-                                                    <div v-if="file?.comments?.length>0"> 
-                                                        <div v-for="(comment, index) in file.comments" :key="index" class="list-group">
+                                                <div class="card-body" :id="'comments-'+file._id">
+                                                    <div v-if="file?.comments?.length>0" class="comments"> 
+                                                        <div v-for="(comment, index) in file.comments" :key="index" class="list-group ">
                                                             <div class="d-flex w-100 justify-content-between">
                                                                 <h5 class="mb-1">{{comment.name}}</h5>
-                                                                <small>{{new Date(comment.createdAt).toLocaleDateString()}}</small>
+                                                                <small>{{customTime(comment.createdAt)}}</small>
                                                             </div>
                                                             <p class="font-weight-bold mb-1">{{comment.content}}</p>
                                                         </div>
@@ -83,34 +60,60 @@
                                             <br>
                                             <div v-if="file.canComment==true" class="input-group">
                                                 <textarea v-model="content" placeholder="Add a comment..." class="form-control" aria-label="With textarea"></textarea>
-                                                <button data-dismiss="modal" type="button" class="btn btn-primary" @click="handleAddComment">Add</button>
+                                                <button type="button" class="btn btn-primary" @click="handleAddComment">Add</button>
                                             </div>
                                         
                                         </v-tab-item>
+                                        <v-tab-item :key="2">
+                                            <br>
+                                            <h5 class="font-weight-bold">Document Information</h5>
+                                            <div class="card border border-muted">
+                                                <div class="card-body">
+                                                    <span>Status: </span>
+                                                    <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
+                                                    <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
+                                                    <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
+                                                    <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-md-4 text-center">
+                                                    
+                                                </div>
+                                                <div class="col-md-8 text-center">
+                                                    <span class="float-md-right">
+                                                        <a v-if="file.canSign" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('sign')">Reject</a>
+                                                        <a v-else-if="file.canReview" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('review')">Reject</a>
+                                                        <!-- <a v-else class="btn btn-danger btn-lg disabled" role="button" aria-disabled="true">Reject</a> -->
+                                                        <a v-if="file.canReview" class="btn btn-warning btn-lg" role="button" aria-disabled="false" @click="handleSign('review')">Review</a>
+                                                        <!-- <a v-else class="btn btn-warning btn-lg disabled" role="button" aria-disabled="true">Review</a> -->
+                                                        <a v-if="file.canSign" class="btn btn-success btn-lg" role="button" aria-disabled="false" @click="handleSign('sign')">Sign</a>
+                                                        <!-- <a v-else class="btn btn-success btn-lg disabled" role="button" aria-disabled="true">Sign</a> -->
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </v-tab-item>
                                     </v-tabs>
-                                </div>
                             </div>
                         </div>
                     </div>
                     
                 </div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
 </template>
 <script>
-import VueDocPreview from 'vue-doc-preview'
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
+// import dayjs from 'dayjs/esm/index.js'
 export default {
     props: {
         fileProps: Object,
-    },
-    components: {
-        VueDocPreview
     },
     data() {
         return {
@@ -118,7 +121,8 @@ export default {
             file: {},
             link: "",
             error: null,
-            content: ""
+            content: "",
+            active: 0
             // active: true
         }
     },
@@ -126,16 +130,15 @@ export default {
         
     },
     mounted() {
+        // this.scrollToEnd()
+        this.$refs['tabs-'+this.fileProps._id] && this.$refs['tabs-'+this.fileProps._id].onResize();
        this.$set(this, 'file', this.fileProps)
        if(this.file) {
             this.error=null
             IpfsClient().get(this.file.hash).then(async (res) =>{
                 if(res) {
-                    console.log(res[0].content)
                     let resultDecrypt = decrypt(res[0].content, this.file.key)
-                    console.log('resultDecrypt', resultDecrypt);
                     let tokenUri = JSON.parse(this.file.tokenURI)
-                    console.log("tokenUri", tokenUri);
                     let b64 = this.b64EncodeUnicode(resultDecrypt)
                     let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
                     this.link = abc
@@ -150,37 +153,24 @@ export default {
         }
     },
     methods: {
+        customTime(time)  {
+            return dayjs(time).fromNow();
+        },
+        scrollToEnd() {
+            var container = document.getElementById("comments-"+this.file._id)
+            container.style.overflowY = "scroll"
+            console.log("container", container);
+            var scrollHeight = container.scrollHeight
+            container.scrollTop = scrollHeight
+        },
         async bufferArrayToBlob(base64, type ) {
             const typeNew = 'data:' + type + ';base64'
             const base64Response = await fetch(`${typeNew},${base64}`)
             const blob1 = await base64Response.blob()
             const blob = new Blob([blob1], { type: type })
-            console.log("blob", blob);
             const link = window.URL.createObjectURL(blob)
             console.log(link);
             return link
-        },
-        download() {
-            IpfsClient().get(this.file.hash).then(async (res) =>{
-                if(res) {
-                    console.log(res[0].content)
-                    let resultDecrypt = decrypt(res[0].content, this.file.key)
-                    console.log('resultDecrypt', resultDecrypt);
-                    let tokenUri = JSON.parse(this.file.tokenURI)
-                    console.log("tokenUri", tokenUri);
-                    let blob = new Blob([resultDecrypt.buffer], {type: tokenUri.fileType});
-                    let link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    let fileName = tokenUri.name;
-                    link.download = fileName;
-                    console.log("link", link);
-                    link.click();
-                }
-                else {
-                    this.error="No file to preview"
-                }
-                // this.saveByteArray("Sample Report", res[0].content.buffer); // download button
-            })
         },
         b64EncodeUnicode(bytes) {
             // let bytes = new Uint8Array( data );
@@ -197,7 +187,8 @@ export default {
                 content: this.content,
             }
             this.$store.dispatch("document/addComment", data)
-            return false;
+            this.content = ""
+            // this.scrollToEnd()
         },
         handleSign(type) {
             this.$swal({
@@ -270,7 +261,11 @@ export default {
 }
 .description {
     height: 350px; 
-    overflow-y: scroll;
+    overflow: scroll;
+}
+.comments {
+    height: 350px; 
+    overflow: scroll;
 }
 /*  */
 </style>

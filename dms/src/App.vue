@@ -14,8 +14,8 @@
 </template>
 
 <script setup>
-import Sidebar from './components/Sidebar.vue'
-import Header from './components/Header.vue';
+import Sidebar from './components/layout/Sidebar.vue'
+import Header from './components/layout/Header.vue';
 import store from './store';
 
 </script>

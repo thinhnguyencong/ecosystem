@@ -72,8 +72,6 @@
 
 <script setup>
   // import Multiselect from '@vueform/multiselect'
-  import { ref } from "vue"
-  import { Filter } from "@syncfusion/ej2-vue-grids";
   import DataTableVue from "../components/DataTable.vue";
 </script>
 <script>

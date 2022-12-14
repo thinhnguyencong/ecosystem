@@ -17,14 +17,11 @@
             </span>
         <h5 class="truncate">{{name}}</h5>
         </div>
-        <ModalFileDetails :ref="(id)" :fileProps="file" :key="id"/>
     </div>
 </template>
 <script>
-import ModalFileDetails from './ModalFileDetails.vue';
 import $ from 'jquery' 
 export default {
-    components: {ModalFileDetails},
     props: {
         id: String,
         fileType: String,

@@ -502,7 +502,16 @@ export const signDoc = async (req, res, next) => {
 			if(type=="review") {
 				let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
 				const nonce = await web3.eth.getTransactionCount(publicAddress)
-				let estimateGasUsed = await dmsContract.methods.review(tokenId, "268").estimateGas({ from: publicAddress })
+				console.log(nonce);
+				let estimateGasUsed;
+				try {
+					estimateGasUsed = await dmsContract.methods.review(tokenId, "268").estimateGas({ from: publicAddress })
+				} catch (error) {
+					console.log(error.message);
+					return res.status(500).send({
+						msg: error.message
+					})
+				}
 				let balance = await web3.eth.getBalance(publicAddress)
 				const gasPrice = await web3.eth.getGasPrice()
 				let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
@@ -536,7 +545,15 @@ export const signDoc = async (req, res, next) => {
 			}else if(type =="sign") {
 				let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
 				const nonce = await web3.eth.getTransactionCount(publicAddress)
-				let estimateGasUsed = await dmsContract.methods.sign(tokenId, "268").estimateGas({ from: publicAddress })
+				let estimateGasUsed;
+				try {
+					estimateGasUsed = await dmsContract.methods.sign(tokenId, "268").estimateGas({ from: publicAddress })
+				} catch (error) {
+					console.log(error.message);
+					return res.status(500).send({
+						msg: error.message
+					})
+				}
 				let balance = await web3.eth.getBalance(publicAddress)
 				const gasPrice = await web3.eth.getGasPrice()
 				let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
@@ -608,7 +625,15 @@ export const rejectDoc = async (req, res, next) => {
 			if(type=="review") {
 				let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
 				const nonce = await web3.eth.getTransactionCount(publicAddress)
-				let estimateGasUsed = await dmsContract.methods.review(tokenId, 0).estimateGas({ from: publicAddress })
+				let estimateGasUsed;
+				try {
+					estimateGasUsed = await dmsContract.methods.review(tokenId, 0).estimateGas({ from: publicAddress })
+				} catch (error) {
+					console.log(error.message);
+					return res.status(500).send({
+						msg: error.message
+					})
+				}
 				let balance = await web3.eth.getBalance(publicAddress)
 				const gasPrice = await web3.eth.getGasPrice()
 				let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
@@ -642,7 +667,15 @@ export const rejectDoc = async (req, res, next) => {
 			}else if(type =="sign") {
 				let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
 				const nonce = await web3.eth.getTransactionCount(publicAddress)
-				let estimateGasUsed = await dmsContract.methods.sign(tokenId, 0).estimateGas({ from: publicAddress })
+				let estimateGasUsed;
+				try {
+					estimateGasUsed = await dmsContract.methods.sign(tokenId, 0).estimateGas({ from: publicAddress })
+				} catch (error) {
+					console.log(error.message);
+					return res.status(500).send({
+						msg: error.message
+					})
+				}
 				let balance = await web3.eth.getBalance(publicAddress)
 				const gasPrice = await web3.eth.getGasPrice()
 				let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
@@ -705,6 +738,12 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			let signerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, signer).call({ from: publicAddress });
 			signArr.push(signerStatus)
 		}
+		console.log("file.tokenId", file.tokenId, publicAddress);
+		console.log("reviewerList", reviewerList);
+		console.log("signerList", signerList);
+		console.log("reviewArr", reviewArr);
+		console.log("signArr", signArr);
+		//check if document has been rejected review
 		if(reviewArr.includes("3")) {
 			return {
 				...file,
@@ -714,13 +753,24 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 				canSign: false
 			}
 		}else {
+			// case check if anyone has ever review this file (all zeros means file has not been reviewed)
 			if(reviewArr.every(item => item === "0")){
+				// if user in reviewerList
 				if(reviewerList.includes(publicAddress.toLowerCase())){
+					if(reviewerList.indexOf(publicAddress.toLowerCase() === 0)){
+						return {
+							...file,
+							status: "waiting-to-review",
+							canComment: true,
+							canReview: true,
+							canSign: false
+						}
+					}
 					return {
 						...file,
 						status: "waiting-to-review",
 						canComment: true,
-						canReview: true,
+						canReview: false,
 						canSign: false
 					}
 				}
@@ -731,7 +781,9 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 					canReview: false,
 					canSign: false
 				}
+			// case check if all user has reviewed this file (all 1s means file has been reviewed by all reviewers)
 			}else if (reviewArr.every(item => item === "1")){
+				// check if document has been rejected sign
 				if(signArr.includes("3")) {
 					return {
 						...file,
@@ -741,6 +793,7 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 						canSign: false
 					}
 				}else {
+					// case check if one or more user has signed this file (all 2s means file has been signed by all signers)
 					if(signArr.every(item => item === "2")){
 						return {
 							...file,
@@ -750,6 +803,7 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 							canSign: false
 						}
 					}else {
+						// if user in signerList
 						if(signerList.includes(publicAddress.toLowerCase())){
 							return {
 								...file,
@@ -769,7 +823,9 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 						}
 					}
 				}
-			}else {
+			}
+			// 1 0 lẫn lộn ở trong reviewArr
+			else {
 				return {
 					...file,
 					status: "waiting-to-review",
@@ -780,4 +836,16 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			}
 		}
 	}))
+}
+function indexOfFirstOne(arr, n)
+{
+    // traverse the array from left to right
+    for (let i = 0; i < n; i++)
+ 
+        // if true, then return i
+        if (arr[i] == 0)
+            return i;
+ 
+    // 1's are not present in the array
+    return -1;
 }

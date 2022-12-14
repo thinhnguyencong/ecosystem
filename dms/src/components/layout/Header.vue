@@ -21,9 +21,13 @@
         </div> 
         <div id="mySidebar" class="sidebar">
           <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
+          <a v-if="$store.state.auth.role==='admin'" href="/admin">Admin</a>
           <a href="/">Home</a>
           <a href="/my-folder">My Folder</a>
           <a href="/shared-with-me">Shared With Me</a>
+          <a href="" @click="$store.dispatch('auth/logout')">
+				    Logout
+          </a>
         </div>
     </div>
 </template>
