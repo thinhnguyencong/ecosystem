@@ -15,7 +15,7 @@ const walletVerifier = async (req, res, next) => {
 		const user = await User.findOne({email: userEmail})
 		const service = await Service.findOne({client_id: client_id})
 		//check if user has logged to this service before
-		if(user.servicesUsed.some(s => service._id.toString() === s.serviceId.toString())){
+		if(user?.servicesUsed.some(s => service._id.toString() === s.serviceId.toString())){
 			next()
 		}else {
 			// if user login new service, update

@@ -757,15 +757,6 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			if(reviewArr.every(item => item === "0")){
 				// if user in reviewerList
 				if(reviewerList.includes(publicAddress.toLowerCase())){
-					if(reviewerList.indexOf(publicAddress.toLowerCase() === 0)){
-						return {
-							...file,
-							status: "waiting-to-review",
-							canComment: true,
-							canReview: true,
-							canSign: false
-						}
-					}
 					return {
 						...file,
 						status: "waiting-to-review",
@@ -805,6 +796,16 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 					}else {
 						// if user in signerList
 						if(signerList.includes(publicAddress.toLowerCase())){
+							let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, publicAddress).call({ from: publicAddress });
+							if(reviewerStatus == "2") {
+								return {
+									...file,
+									status: "waiting-to-sign",
+									canComment: true,
+									canReview: false,
+									canSign: false
+								}
+							}
 							return {
 								...file,
 								status: "waiting-to-sign",
@@ -826,11 +827,30 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			}
 			// 1 0 lẫn lộn ở trong reviewArr
 			else {
+				if(reviewerList.includes(publicAddress.toLowerCase())){
+					let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, publicAddress).call({ from: publicAddress });
+					if(reviewerStatus == "1") {
+						return {
+							...file,
+							status: "waiting-to-review",
+							canComment: true,
+							canReview: false,
+							canSign: false
+						}
+					}
+					return {
+						...file,
+						status: "waiting-to-review",
+						canComment: true,
+						canReview: true,
+						canSign: false
+					}
+				}
 				return {
 					...file,
 					status: "waiting-to-review",
 					canComment: true,
-					canReview: true,
+					canReview: false,
 					canSign: false
 				}
 			}
