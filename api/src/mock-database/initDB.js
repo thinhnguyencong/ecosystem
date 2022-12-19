@@ -13,52 +13,13 @@ import Service from '../models/service.model.js';
 
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
-
-const initDB = async () => {
-    const database = mongoose.connect('mongodb+srv://nguyen:nguyen@cluster0.28ie6ez.mongodb.net/ecosystem?retryWrites=true&w=majority', {
+const database = mongoose.connect(process.env.DATABASE_URI, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
     });
-    if (!database) throw ('Error! Cannot connect to MongoDB. Please check connection. :(');
-    // database.dropDatabase();
-    Folder.remove({}, function(err) { 
-        console.log('Folder collection removed') 
-    });
-    Project.remove({}, function(err) { 
-        console.log('Project collection removed') 
-    });
-    Department.remove({}, function(err) { 
-        console.log('Department collection removed') 
-    });
-    User.remove({}, function(err) { 
-        console.log('User collection removed') 
-    });
-    Role.remove({}, function(err) { 
-        console.log('Role collection removed') 
-    });
-    File.remove({}, function(err) { 
-        console.log('File collection removed') 
-    });
-    Service.remove({}, function(err) { 
-        console.log('Service collection removed') 
-    });
-    function isAdmin(role) {
-        return role.type === "admin";
-    }
-    function isBod(role) {
-        return role.type === "bod";
-    }
-    function isChairperson(role) {
-        return role.type === "chairperson";
-    }
-    function isManager(role) {
-        return role.type === "manager";
-    }
-    function isEmployee(role) {
-        return role.type === "employee";
-    }
-    // create admin account
+if (!database) throw ('Error! Cannot connect to MongoDB. Please check connection. :(');
 
+const initDB = async () => {
     const listDepts = [
         { name: "AI" }, 
         { name: "Blockchain" },
@@ -109,41 +70,77 @@ const initDB = async () => {
         { name: "Auction", client_id: "auction"},
         { name: "Document Management System", client_id: "dms"},
     ]
-    const listServiceAdded = await Service.insertMany(listService)
-    if(listServiceAdded) {
-        console.log("Insert successfully services");
-    } else {
-        console.error("Failed to insert services");
+    function isAdmin(role) {
+        return role.type === "admin";
     }
-    const deptsAdded = await Department.insertMany(listDepts)
-    if(deptsAdded) {
-        console.log("Insert successfully departments");
-    } else {
-        console.error("Failed to insert departments");
+    function isBod(role) {
+        return role.type === "bod";
     }
-    const projectAdded = await Project.insertMany(listProject)
-    if(projectAdded) {
-        console.log("Insert successfully projects");
-    } else {
-        console.error("Failed to insert projects");
+    function isChairperson(role) {
+        return role.type === "chairperson";
     }
-
-    const publicFolders = [
-        { name: "Public", type: "public" }, 
-        { name: "Paper", type: "public" }, 
-    ]
-    const internalFolders = listDepts.map(x=> ({name: x.name, type: "internal"}))
-    const rootFolders = publicFolders.concat(internalFolders)
-    const rootFoldersAdded = await Folder.insertMany(rootFolders)
-    if(rootFoldersAdded) {
-        console.log("Insert successfully public folders");
-        console.log("Insert successfully internal folders");
-    } else {
-        console.error("Failed to insert rootFolders");
+    function isManager(role) {
+        return role.type === "manager";
     }
+    function isEmployee(role) {
+        return role.type === "employee";
+    }
+    Folder.remove({}, async function(err) { 
+        console.log('Folder collection removed') 
+        const publicFolders = [
+            { name: "Public", type: "public" }, 
+            { name: "Paper", type: "public" }, 
+        ]
+        const internalFolders = listDepts.map(x=> ({name: x.name, type: "internal"}))
+        const rootFolders = publicFolders.concat(internalFolders)
+        const rootFoldersAdded = await Folder.insertMany(rootFolders)
+        if(rootFoldersAdded) {
+            console.log("Insert successfully public folders");
+            console.log("Insert successfully internal folders");
+        } else {
+            console.error("Failed to insert rootFolders");
+        }
+    });
+    Project.remove({}, async function(err) { 
+        console.log('Project collection removed') 
+        const projectAdded = await Project.insertMany(listProject)
+        if(projectAdded) {
+            console.log("Insert successfully projects");
+        } else {
+            console.error("Failed to insert projects");
+        }
+    });
+    Department.remove({}, async function(err) { 
+        console.log('Department collection removed') 
+        const deptsAdded = await Department.insertMany(listDepts)
+        if(deptsAdded) {
+            console.log("Insert successfully departments");
+        } else {
+            console.error("Failed to insert departments");
+        }
+    });
+    User.remove({}, function(err) { 
+        console.log('User collection removed') 
+    });
+    Role.remove({}, async function(err) { 
+        console.log('Role collection removed') 
+    });
+    File.remove({}, function(err) { 
+        console.log('File collection removed') 
+    });
+    Service.remove({}, async function(err) { 
+        console.log('Service collection removed') 
+        const listServiceAdded = await Service.insertMany(listService)
+        if(listServiceAdded) {
+            console.log("Insert successfully services");
+        } else {
+            console.error("Failed to insert services");
+        }
+    });
 
     const rolesAdded = await Role.insertMany(roles)
-    let listRoles = rolesAdded.map(x=> ({_id: x._id.valueOf(), name: x.name, type: x.type}))
+    const listRoles = rolesAdded.map(x=> ({_id: x._id.valueOf(), name: x.name, type: x.type}))
+    
     const userList = [
         {
             username: "admin",
@@ -218,7 +215,7 @@ const initDB = async () => {
                     username: user.username,
                     email: user.email,
                     keystore: user.keystore ? user.keystore : ks.serialize(),
-                    publicAddress: user.publicAddress ? user.publicAddress : addr[0],
+                    publicAddress: user.publicAddress ? user.publicAddress.toLowerCase() : addr[0].toLowerCase(),
                     name: user.lastName+ " " +user.firstName ,
                     role: user.role,
                 });

@@ -32,18 +32,48 @@
                                             Status
                                         </v-tab>
                                         <v-tab-item :key="0">
-                                            <br>
-                                            <h5 class="font-weight-bold">Description</h5>
-                                            <div class="card border border-muted">
-                                                <div class="card-body description">
-                                                    <div v-html="file.description"></div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <br>
+                                                    <h5 class="font-weight-bold">Description</h5>
+                                                    <div class="card border border-muted">
+                                                        <div class="card-body description scrollbar">
+                                                            <div v-html="file.description"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <br>
+                                            <div class="row">
+                                                <!-- <div class="col">
+                                                    <div class="font-weight-bold">Reviewer List</div>
+                                                    <ul class="list-group list-group-flush list">
+                                                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                                                        <li class="list-group-item">Morbi leo risus</li>
+                                                        <li class="list-group-item">Porta ac consectetur ac</li>
+                                                        <li class="list-group-item">Vestibulum at eros</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="font-weight-bold">Signer List</div>
+                                                    <ul class="list-group list-group-flush  list">
+                                                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                                                        <li class="list-group-item">Morbi leo risus</li>
+                                                        <li class="list-group-item">Porta ac consectetur ac</li>
+                                                        <li class="list-group-item">Vestibulum at eros</li>
+                                                    </ul>
+                                                </div> -->
+                                                
+                                            </div>
+                                            
+                                            
                                         </v-tab-item>
                                         <v-tab-item :key="1">
-                                            <div class="card border border-info">
+                                            <br>
+                                            <h5 class="font-weight-bold">All comments</h5>
+                                            <div class="card border border-muted">
                                                 <div class="card-body" :id="'comments-'+file._id">
-                                                    <div v-if="file?.comments?.length>0" class="comments"> 
+                                                    <div v-if="file?.comments?.length>0" class="comments scrollbar"> 
                                                         <div v-for="(comment, index) in file.comments" :key="index" class="list-group ">
                                                             <div class="d-flex w-100 justify-content-between">
                                                                 <h5 class="mb-1">{{comment.name}}</h5>
@@ -56,6 +86,9 @@
                                                         No comment yet
                                                     </div>
                                                 </div>
+                                                <button type="button" class="btn btn-primary" @click="openThis" >
+                                                    Launch demo modal
+                                                </button>
                                             </div>
                                             <br>
                                             <div v-if="file.canComment==true" class="input-group">
@@ -69,11 +102,24 @@
                                             <h5 class="font-weight-bold">Document Information</h5>
                                             <div class="card border border-muted">
                                                 <div class="card-body">
-                                                    <span>Status: </span>
+                                                    <span>Status: &nbsp;</span>
                                                     <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
                                                     <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
                                                     <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
                                                     <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
+                                                    <p></p>
+                                                    <p class="font-weight-bold">Review History: </p>
+                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList">{{reviewer.name}}: &nbsp; 
+                                                        <span v-if="reviewer.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
+                                                        <span v-if="reviewer.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer.time)}}</span>
+                                                        <span v-if="reviewer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer.time)}}</span>
+                                                    </p>
+                                                    <p class="font-weight-bold">Sign History: </p>
+                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList">{{signer.name}}: &nbsp; 
+                                                        <span v-if="signer.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
+                                                        <span v-if="signer.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer.time)}}</span>
+                                                        <span v-if="signer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer.time)}}</span>
+                                                    </p>
                                                 </div>
                                             </div>
                                             <br>
@@ -105,12 +151,15 @@
                 </div> -->
             </div>
         </div>
+
     </div>
 </template>
 <script>
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
+import $ from 'jquery' 
 // import dayjs from 'dayjs/esm/index.js'
+
 export default {
     props: {
         fileProps: Object,
@@ -130,8 +179,6 @@ export default {
         
     },
     mounted() {
-        // this.scrollToEnd()
-        this.$refs['tabs-'+this.fileProps._id] && this.$refs['tabs-'+this.fileProps._id].onResize();
        this.$set(this, 'file', this.fileProps)
        if(this.file) {
             this.error=null
@@ -153,8 +200,16 @@ export default {
         }
     },
     methods: {
+        openThis() {
+            $('#63a006aff195ec4567efe72d').modal({
+                show: true
+            })
+        },
         customTime(time)  {
             return dayjs(time).fromNow();
+        },
+        formatDateTime(time) {
+            return dayjs.unix(time).format('HH:mm:ss DD MMMM YYYY')
         },
         scrollToEnd() {
             var container = document.getElementById("comments-"+this.file._id)
@@ -261,11 +316,26 @@ export default {
 }
 .description {
     height: 350px; 
-    overflow: scroll;
 }
 .comments {
     height: 350px; 
-    overflow: scroll;
+}
+.list {
+    height: 110px;
+    overflow-y: scroll; /* Add the ability to scroll */
+}
+.scrollbar {
+    overflow-y: scroll; /* Add the ability to scroll */
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar::-webkit-scrollbar {
+    /* display: none; */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 /*  */
 </style>

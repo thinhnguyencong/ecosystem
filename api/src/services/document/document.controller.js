@@ -723,8 +723,13 @@ export const rejectDoc = async (req, res, next) => {
 // export const getAllComments = async (req, res, next) => {
 
 // }
+
 const getFileStatus = async (files, publicAddress, dmsContract) => {
 	return await Promise.all(files.map(async (file)=> {
+		let statusDetail = {
+			reviewerList: [],
+			signerList: []
+		}
 		let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: publicAddress });
 		let reviewerList = info[1].map(x=> x.toLowerCase())
 		let signerList = info[2].map(x=> x.toLowerCase())
@@ -732,12 +737,33 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 		let signArr = []
 		for(let reviewer of reviewerList) {
 			let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, reviewer).call({ from: publicAddress });
-			reviewArr.push(reviewerStatus)
+			let reviewTime = await dmsContract.methods.checkUserSignedTime(file.tokenId, reviewer).call({ from: publicAddress })
+			let user = await User.findOne({'publicAddress': reviewer.toLowerCase()})
+			if(user) {
+				reviewArr.push(reviewerStatus)
+				statusDetail.reviewerList.push({
+					name: user.name,
+					address: reviewer, 
+					status: reviewerStatus=='0' ? 'not-yet-reviewed' : reviewerStatus=='1' ? 'reviewed' : reviewerStatus=='3' ? 'rejected' : 'error',
+					time: reviewTime
+				})
+			}
 		}
 		for(let signer of signerList) {
 			let signerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, signer).call({ from: publicAddress });
-			signArr.push(signerStatus)
+			let signTime = await dmsContract.methods.checkUserSignedTime(file.tokenId, signer).call({ from: publicAddress })
+			let user = await User.findOne({'publicAddress': signer.toLowerCase()})
+			if(user) {
+				signArr.push(signerStatus)
+				statusDetail.signerList.push({
+					name: user.name,
+					address: signer, 
+					status: signerStatus=='0' ? 'not-yet-signed' : signerStatus=='2' ? 'signed' : signerStatus=='3' ? 'rejected' : 'error',
+					time: signTime
+				})
+			}
 		}
+		file.statusDetail = statusDetail
 		console.log("file.tokenId", file.tokenId, publicAddress);
 		console.log("reviewerList", reviewerList);
 		console.log("signerList", signerList);
@@ -761,7 +787,7 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 						...file,
 						status: "waiting-to-review",
 						canComment: true,
-						canReview: false,
+						canReview: true,
 						canSign: false
 					}
 				}

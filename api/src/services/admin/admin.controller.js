@@ -80,8 +80,8 @@ export const createUser = async (req, res, next) => {
 							username: username,
 							email: email,
 							keystore: ks.serialize(),
-							publicAddress: addr[0],
-							name: firstName + " " + lastName,
+							publicAddress: addr[0].toLowerCase(),
+							name: lastName + " " + firstName,
 							role: role,
 							dept: dept
 						});

@@ -26,11 +26,11 @@
                 </tr>
                 <tr v-if="(files.length>0)" v-for="(file, index) in files" :key="file._id">
                     <th scope="row">
-                        <i :class="getClass(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
+                        <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
                     </th>
                     <td>{{file.tokenId}}</td>
                     <td>{{(new Date(file.createdAt)).toDateString()}}</td>
-                    <td>{{file.status}}</td>
+                    <td :class="getClassStatus(file.status)">{{file.status}}</td>
                     <td>{{file.owner}}</td>
                     <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                     <td>
@@ -87,7 +87,7 @@ export default {
             
             return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
         },
-        getClass(type) {
+        getClassFileType(type) {
             switch(type) {
                 case 'application/pdf': return "mdi mdi-file-pdf-box text-danger"
                 case 'application/vnd.ms-powerpoint': return "mdi mdi-microsoft-powerpoint text-danger"
@@ -101,6 +101,16 @@ export default {
                 case 'text/html': return "mdi mdi-language-html5 text-warning"
                 case 'text/css': return "mdi mdi-language-css3 text-primary"
                 default: return "mdi mdi-file text-secondary"
+            }
+        },
+        getClassStatus(type) {
+            switch(type) {
+                case 'rejected': return "text-danger"
+                case 'waiting-to-review': return "text-warning"
+                case 'waiting-to-sign': return "text-info"
+                case 'signed': return "text-success"
+                
+                default: return "text-secondary"
             }
         },
         download(file) {

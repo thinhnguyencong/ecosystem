@@ -51,7 +51,7 @@ export const wallet = async (req, res, next) => {
 						const newUser = new User({
 							email: userEmail,
 							keystore: ks.serialize(),
-							publicAddress: addr[0] 
+							publicAddress: addr[0].toLowerCase() 
 						});
 						newUser.save(async (err, addedUser) => {
 							if (err) throw err;
