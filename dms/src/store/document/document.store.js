@@ -264,8 +264,8 @@ export const document = {
     },
     addCommentSuccess(state, result){
         state.isLoading = false;
-        if(state.files.length) state.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
-        if(state.folder.files.length) state.folder.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
+        if(state.files?.length) state.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
+        if(state.folder?.files?.length) state.folder.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
         toast.success(result.data.msg)
     },
     addCommentFailure(state, error){

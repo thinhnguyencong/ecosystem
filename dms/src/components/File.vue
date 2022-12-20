@@ -30,7 +30,7 @@ export default {
     },
    methods: {
     openModal() {
-        $("#"+this.id).modal('toggle');
+        $("#main-"+this.id).modal('toggle');
     }
    },
     mounted() {

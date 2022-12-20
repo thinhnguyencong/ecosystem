@@ -774,7 +774,7 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			return {
 				...file,
 				status: "rejected",
-				canComment: false,
+				canComment: true,
 				canReview: false,
 				canSign: false
 			}
@@ -805,7 +805,7 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 					return {
 						...file,
 						status: "rejected",
-						canComment: false,
+						canComment: true,
 						canReview: false,
 						canSign: false
 					}
@@ -882,16 +882,4 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			}
 		}
 	}))
-}
-function indexOfFirstOne(arr, n)
-{
-    // traverse the array from left to right
-    for (let i = 0; i < n; i++)
- 
-        // if true, then return i
-        if (arr[i] == 0)
-            return i;
- 
-    // 1's are not present in the array
-    return -1;
 }

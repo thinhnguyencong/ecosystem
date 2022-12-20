@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" :id="file._id" tabindex="-1" role="dialog" aria-labelledby="modalDetailFileTitle" aria-hidden="true">
+    <div class="modal fade" :id="modalId+'-'+file._id" tabindex="-1" role="dialog" aria-labelledby="modalDetailFileTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header d-flex flex-row justify-content-center align-items-center text-center">
@@ -74,27 +74,33 @@
                                             <div class="card border border-muted">
                                                 <div class="card-body" :id="'comments-'+file._id">
                                                     <div v-if="file?.comments?.length>0" class="comments scrollbar"> 
-                                                        <div v-for="(comment, index) in file.comments" :key="index" class="list-group ">
+                                                        <!-- <div v-for="(comment, index) in file.comments" :key="index" class="list-group ">
                                                             <div class="d-flex w-100 justify-content-between">
                                                                 <h5 class="mb-1">{{comment.name}}</h5>
                                                                 <small>{{customTime(comment.createdAt)}}</small>
                                                             </div>
                                                             <p class="font-weight-bold mb-1">{{comment.content}}</p>
-                                                        </div>
+                                                        </div> -->
+                                                        <CommentVue :commentsProp="file.comments"/>
                                                     </div>
                                                     <div v-else> 
                                                         No comment yet
                                                     </div>
                                                 </div>
-                                                <button type="button" class="btn btn-primary" @click="openThis" >
+                                                <!-- <button type="button" class="btn btn-primary" @click="openThis" >
                                                     Launch demo modal
-                                                </button>
+                                                </button> -->
                                             </div>
                                             <br>
                                             <div v-if="file.canComment==true" class="input-group">
-                                                <textarea v-model="content" placeholder="Add a comment..." class="form-control" aria-label="With textarea"></textarea>
-                                                <button type="button" class="btn btn-primary" @click="handleAddComment">Add</button>
+                                                <textarea v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Add a comment..." class="form-control" aria-label="With textarea"></textarea>
+                                                <button class="rounded" id="attachment-btn" data-toggle="tooltip" title="Add attachment">
+                                                    <span class="material-icons">
+                                                        attach_file
+                                                    </span> 
+                                                </button>
                                             </div>
+                                            <button type="button" class="btn btn-primary" @click="handleAddComment">Add</button>
                                         
                                         </v-tab-item>
                                         <v-tab-item :key="2">
@@ -154,7 +160,15 @@
 
     </div>
 </template>
+<script setup>
+$(document).on('show.bs.modal', '.modal', function() {
+  const zIndex = 1040 + 10 * $('.modal:visible').length;
+  $(this).css('z-index', zIndex);
+  setTimeout(() => $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'));
+});
+</script>
 <script>
+import CommentVue from "../components/Comment.vue"
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 import $ from 'jquery' 
@@ -163,6 +177,7 @@ import $ from 'jquery'
 export default {
     props: {
         fileProps: Object,
+        modal_id: String
     },
     data() {
         return {
@@ -171,8 +186,8 @@ export default {
             link: "",
             error: null,
             content: "",
-            active: 0
-            // active: true
+            active: 0,
+            modalId: ""
         }
     },
     created() {
@@ -180,6 +195,7 @@ export default {
     },
     mounted() {
        this.$set(this, 'file', this.fileProps)
+       this.$set(this, 'modalId', this.modal_id)
        if(this.file) {
             this.error=null
             IpfsClient().get(this.file.hash).then(async (res) =>{
@@ -204,9 +220,6 @@ export default {
             $('#63a006aff195ec4567efe72d').modal({
                 show: true
             })
-        },
-        customTime(time)  {
-            return dayjs(time).fromNow();
         },
         formatDateTime(time) {
             return dayjs.unix(time).format('HH:mm:ss DD MMMM YYYY')
@@ -328,14 +341,18 @@ export default {
     overflow-y: scroll; /* Add the ability to scroll */
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
-.scrollbar::-webkit-scrollbar {
-    /* display: none; */
-}
+/* .scrollbar::-webkit-scrollbar {
+    display: none;
+} */
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+#attachment-btn:hover {
+    background: rgb(244, 242, 238);
 }
 /*  */
 </style>

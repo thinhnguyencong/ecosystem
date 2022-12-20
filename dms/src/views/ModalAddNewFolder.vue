@@ -12,7 +12,7 @@
                     <form>
                         <div class="form-group">
                             <label for="name">Folder Name</label>
-                            <input v-model="name" type="text" class="form-control" id="newFolderName" placeholder="Folder name" autofocus>
+                            <input required v-on:keyup.enter="handleCreateFolder" v-model="name" type="text" class="form-control" id="newFolderName" placeholder="Folder name" autofocus>
                         </div>
                     </form>
                 </div>

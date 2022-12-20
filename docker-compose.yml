@@ -15,11 +15,11 @@ services:
   #     - --features=preview
   #   volumes:
   #     - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
-  wallet-server:
-    build: ./api
-    ports:
-      - "5555:5555"
-    restart: unless-stopped
+  # wallet-server:
+  #   build: ./api
+  #   ports:
+  #     - "5555:5555"
+  #   restart: unless-stopped
   auction-client:
     build: ./auction-client
     ports:
@@ -30,9 +30,9 @@ services:
     ports:
       - "3000:80"
     restart: unless-stopped
-  dms:
-    build: ./dms
-    ports:
-      - "3002:80"
-    restart: unless-stopped
+  # dms:
+  #   build: ./dms
+  #   ports:
+  #     - "3002:80"
+  #   restart: unless-stopped
   

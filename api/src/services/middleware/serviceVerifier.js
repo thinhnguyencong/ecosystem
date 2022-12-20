@@ -2,13 +2,13 @@ import User from "../../models/user.model.js";
 import Service from "../../models/service.model.js";
 
 /**
- * Function to check if user had wallet account, else create new wallet for user
+ * Function to check if user had access to service before
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  */
 
-const walletVerifier = async (req, res, next) => {
+const serviceVerifier = async (req, res, next) => {
 	try {
 		let userEmail = req.jwtDecoded.email;
 		let client_id = req.jwtDecoded.client_id
@@ -30,10 +30,10 @@ const walletVerifier = async (req, res, next) => {
 		}
 	} catch (error) {
 		console.log(error)
-		res.status(500).json({msg: "Error when verify wallet"})
+		res.status(500).json({msg: "Error when verify service"})
 	}
 };
 
 export default {
-	walletVerifier: walletVerifier,
+	serviceVerifier: serviceVerifier,
 };

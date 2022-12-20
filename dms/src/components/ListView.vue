@@ -52,7 +52,6 @@
     </div>
 </template>
 <script>
-import ModalFileDetails from '../views/ModalFileDetails.vue';
 import $ from 'jquery' 
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
@@ -75,7 +74,7 @@ export default {
             this.$router.push("/folder/" + id);
         },
         openModal(id) {
-            $("#"+id).modal('toggle');
+            $("#main-"+id).modal('toggle');
         },
         niceBytes(bytes) {
             const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -135,7 +134,6 @@ export default {
             })
         },
     },
-    components: { ModalFileDetails }
 }
 </script>
 <style scoped>

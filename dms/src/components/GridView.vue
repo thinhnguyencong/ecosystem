@@ -1,33 +1,42 @@
 <template>
     <div>
         <br>
-        <h4 class="font-weight-bold">Folders</h4>
-        <hr>
-        
-        <div v-if="folders.length > 0" class="item-grid-card">
+        <div v-if="folders.length > 0">
+            <h4 class="font-weight-bold">Folders</h4>
+            <hr>
             
-            <FolderVue
-                v-for="(folder, index) in folders"
-                :key="index"
-                :name="folder.name"
-                :id="folder._id"
-            />
+            <div class="item-grid-card">
+                
+                <FolderVue
+                    v-for="(folder, index) in folders"
+                    :key="index"
+                    :name="folder.name"
+                    :id="folder._id"
+                />
+            </div>
+            <br>
+            <br>
         </div>
-        <br>
-        <br>
-        <h4 class="font-weight-bold">File</h4>
-        <hr>
+        <div v-if="files.length > 0">
+            
+            <h4 class="font-weight-bold">Files</h4>
+            <hr>
+            
+            <div class="item-grid-card">
+                <FileVue
+                    v-for="(file, index) in files"
+                    :key="index"
+                    :name="JSON.parse(file.tokenURI).name"
+                    :fileType="JSON.parse(file.tokenURI).fileType"
+                    :id="file._id"
+                    :file="file"
+                />
+            </div>
+        </div>
+        <div v-if="files.length == 0 && folders.length == 0">
+            <h5>This folder is empty</h5>
+        </div>
         
-        <div v-if="files.length > 0" class="item-grid-card">
-            <FileVue
-                v-for="(file, index) in files"
-                :key="index"
-                :name="JSON.parse(file.tokenURI).name"
-                :fileType="JSON.parse(file.tokenURI).fileType"
-                :id="file._id"
-                :file="file"
-            />
-        </div>
     </div>
 </template>
 
