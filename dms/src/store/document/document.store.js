@@ -12,6 +12,7 @@ const initialState = {
   //   keyAttributes: [],
   // },
   files: [],
+  treeFolder: []
 };
 
 export const document = {
@@ -142,6 +143,18 @@ export const document = {
           }
         );
       },
+      getTreeFolder({ commit }) {
+        commit('getTreeFolder');
+        return documentService.getTreeFolder()
+        .then(
+          res => {
+            commit('getTreeFolderSuccess', res);
+          },
+          error => {
+            commit('getTreeFolderFailure', error);
+          }
+        );
+      },
   },
   mutations: {
     // ------------------getRootFolders-----------------------------
@@ -246,9 +259,11 @@ export const document = {
 
     // ------------------getAllFiles-----------------------------
     getAllFiles(state){
+      console.log(1);
       state.isLoading = true
     },
     getAllFilesSuccess(state, result){
+      console.log(2);
         state.isLoading = false;
         state.files = result.data.data.files;
     },
@@ -307,5 +322,23 @@ export const document = {
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
+
+    // ------------------getTreeFolder-----------------------------
+    getTreeFolder(state){
+      console.log(3);
+      state.isLoading = true
+    },
+    getTreeFolderSuccess(state, result){
+      console.log(4);
+        state.isLoading = false;
+        state.treeFolder = result.data.data;
+    },
+    getTreeFolderFailure(state, error){
+        state.isLoading = false
+        console.log(error);
+        toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
   }
+
+  
 };

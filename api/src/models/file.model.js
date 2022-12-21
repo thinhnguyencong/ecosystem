@@ -47,6 +47,13 @@ const fileSchema = new Schema({
             type: Schema.Types.String,
             default: null,
         },
+        attachments: {
+            type: [{
+                id: Schema.Types.String,
+                name: Schema.Types.String
+            }],
+            default: null,
+        },
         createdAt: {
             type: Number,
             default: new Date(),

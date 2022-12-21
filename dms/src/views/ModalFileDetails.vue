@@ -17,7 +17,7 @@
                                 <div class="">
                                     <!-- <embed :src="'https://drive.google.com/viewer?url='+ link + '.pdf&embedded=true'" class="w-100 vh-190" height="600px" frameborder="0"/> -->
                                     <!-- <VueDocPreview :url="link" type="office" /> -->
-                                    <embed :src="link" class="w-100" height="600px" frameborder="0" id='embedDocument'>
+                                    <embed :src="link" style="width:100%;height:70vh;" frameborder="0" id='embedDocument'>
                                 </div>
                             </div>
                             <div class="col-5">
@@ -70,6 +70,61 @@
                                         </v-tab-item>
                                         <v-tab-item :key="1">
                                             <br>
+                                            
+                                            <div class="card border border-muted">
+                                                <div v-if="file.canComment==true" class="input-group">
+                                                    <input v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Write your comment..." class="form-control shadow-none" autofocus="true">
+                                                </div>
+                                                <hr class="divider" />
+                                                
+                                                    <div class="row">
+                                                        <div class="col-1">
+                                                            <div class="align-self-center ">
+                                                                <v-badge
+                                                                    left
+                                                                    overlap
+                                                                    color="orange"
+                                                                    >
+                                                                    <template v-slot:badge v-if="attachments.length">
+                                                                        <span>{{ attachments.length }}</span>
+                                                                    </template>
+                                                                    <v-btn flat icon color="indigo">
+                                                                        <v-icon
+                                                                            data-toggle="tooltip" 
+                                                                            title="Add attachment"
+                                                                            @click="showAttach = !showAttach"
+                                                                            color="black"
+                                                                        >
+                                                                        attach_file
+                                                                        </v-icon>
+                                                                    </v-btn>
+                                                                </v-badge>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <div class="w-100 pt-2" v-if="showAttach">
+                                                                <Transition name="bounce">
+                                                                    <treeselect 
+                                                                        v-model="attachments" 
+                                                                        :multiple="true" 
+                                                                        :options="documentState.treeFolder" 
+                                                                        :value-consists-of="valueConsistsOf"
+                                                                        placeholder="Add attachments.." 
+                                                                        :normalizer="normalizer"
+                                                                        />
+                                                                </Transition>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="pt-2 align-self-center ml-auto ">
+                                                                <button style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment">Add Comment</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+                                                
+                                            </div>
+                                            <br>
                                             <h5 class="font-weight-bold">All comments</h5>
                                             <div class="card border border-muted">
                                                 <div class="card-body" :id="'comments-'+file._id">
@@ -92,16 +147,8 @@
                                                 </button> -->
                                             </div>
                                             <br>
-                                            <div v-if="file.canComment==true" class="input-group">
-                                                <textarea v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Add a comment..." class="form-control" aria-label="With textarea"></textarea>
-                                                <button class="rounded" id="attachment-btn" data-toggle="tooltip" title="Add attachment">
-                                                    <span class="material-icons">
-                                                        attach_file
-                                                    </span> 
-                                                </button>
-                                            </div>
-                                            <button type="button" class="btn btn-primary" @click="handleAddComment">Add</button>
-                                        
+                                            
+                                            
                                         </v-tab-item>
                                         <v-tab-item :key="2">
                                             <br>
@@ -173,21 +220,36 @@ import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 import $ from 'jquery' 
 // import dayjs from 'dayjs/esm/index.js'
+// import the component
+import Treeselect from '@riophae/vue-treeselect'
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
     props: {
         fileProps: Object,
         modal_id: String
     },
+    components: { Treeselect },
     data() {
         return {
+            showAttach: false,
             ipfs: null,
             file: {},
             link: "",
             error: null,
             content: "",
             active: 0,
-            modalId: ""
+            modalId: "",
+            normalizer(node) {
+                return {
+                    id: node._id,
+                    label: node.name,
+                    children: node.children,
+                }
+            },
+            attachments: [],
+            valueConsistsOf: 'LEAF_PRIORITY',
         }
     },
     created() {
@@ -221,6 +283,7 @@ export default {
                 show: true
             })
         },
+        
         formatDateTime(time) {
             return dayjs.unix(time).format('HH:mm:ss DD MMMM YYYY')
         },
@@ -250,12 +313,18 @@ export default {
             return btoa(  binary);
         },
         handleAddComment() {
+            if(!this.content) {
+                alert("Please write some content")
+                return
+            }
             let data = {
                 fileId: this.file._id,
                 content: this.content,
+                attachments: this.attachments
             }
             this.$store.dispatch("document/addComment", data)
             this.content = ""
+            this.attachments= []
             // this.scrollToEnd()
         },
         handleSign(type) {
@@ -290,9 +359,9 @@ export default {
             });
         },
     },
-    // computed: {
-        
-    // },
+    computed: {
+        documentState() {return this.$store.state.document },
+    },
     watch: { 
         fileProps: function(newVal, oldVal) { // watch it
             console.log("newVal", newVal);
@@ -319,6 +388,10 @@ export default {
                 this.error="No file to preview"
             }
         },
+        modal_id: function(newVal, oldVal) {
+            console.log(newVal);
+            this.$set(this, 'modalId', newVal)
+        }
     }
 }
 </script>
@@ -331,7 +404,7 @@ export default {
     height: 350px; 
 }
 .comments {
-    height: 350px; 
+    height: 300px; 
 }
 .list {
     height: 110px;
@@ -353,6 +426,35 @@ export default {
 
 #attachment-btn:hover {
     background: rgb(244, 242, 238);
+}
+
+.bounce-enter-active {
+  animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+hr.divider { 
+  margin: 0em;
+  border-width: 2px;
+  opacity: 0.5;
+} 
+.form-control {
+    border: 0;
+}
+.input-group {
+    min-height: 60px;
 }
 /*  */
 </style>

@@ -64,8 +64,10 @@ import { CID } from 'ipfs-http-client'
     },
     created() {
         this.$store.dispatch("auth/sidebarActive", "home")
-        // this.$store.dispatch("document/getRootFolders")   
-        this.$store.dispatch("document/getAllFiles") 
+        // this.$store.dispatch("document/getRootFolders")  
+        this.callAPI()
+        
+        
     },
     methods: {
       switchLayout() {
@@ -76,6 +78,10 @@ import { CID } from 'ipfs-http-client'
             this.layout = "list"
             localStorage.setItem("layout", "list")
         }
+      },
+      async callAPI() {
+        await this.$store.dispatch("document/getTreeFolder") 
+        await this.$store.dispatch("document/getAllFiles") 
       }
     },
     computed: {

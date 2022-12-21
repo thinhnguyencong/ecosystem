@@ -77,6 +77,12 @@ function rejectDoc(data) {
         data: data
     })
 }
+function getTreeFolder() {
+    return sendRequest({
+        url: url+"tree-folder",
+        method: "GET",
+    })
+}
 
 export const documentService = {
     getRootFolders,
@@ -88,5 +94,6 @@ export const documentService = {
     getAllFiles,
     addComment,
     signDoc,
-    rejectDoc
+    rejectDoc,
+    getTreeFolder
 };

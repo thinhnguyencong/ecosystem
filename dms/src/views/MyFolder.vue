@@ -23,27 +23,25 @@
             </ol>
              
         </nav>
-
-        <div v-if="!documentState.isLoading">
-            <div class="d-flex justify-content-between">
-                <div class="p-2">
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="mdi mdi-plus text-light"></i> New  
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
-                            <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
-                        </div>
+        <div class="d-flex justify-content-between">
+            <div class="p-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-plus text-light"></i> New  
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
+                        <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
                     </div>
                 </div>
-                <div class="p-2">
-                    <!-- <ManageKey/> -->
-                </div>
             </div>
-            
-            <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
-            <ModalUploadFile/>
+            <div class="p-2">
+                <!-- <ManageKey/> -->
+            </div>
+        </div>
+        <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
+        <ModalUploadFile/>
+        <div v-if="!documentState.isLoading">
             <!-- <div data-toggle="modal" data-target="#modalCreateFolder" class="tile folder">
                         <span class="material-icons">add</span>
                         <h4>Add</h4>
@@ -77,8 +75,7 @@ export default {
         this.$router.push(this.$route.path)
     },
     created() {
-        this.$store.dispatch("auth/sidebarActive", "my-folder")
-        this.$store.dispatch("document/getMyFolders")       
+        this.callAPI()
     },
     data() {
         return {
@@ -109,6 +106,11 @@ export default {
         documentState() {return this.$store.state.document },
     },
     methods: {
+        async callAPI() {
+            await this.$store.dispatch("auth/sidebarActive", "my-folder")
+            await this.$store.dispatch("document/getMyFolders") 
+            await this.$store.dispatch("document/getTreeFolder") 
+        },
         switchLayout() {
             if(this.layout === "list"){
                 this.layout = "grid"

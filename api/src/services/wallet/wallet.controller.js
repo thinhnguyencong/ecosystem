@@ -531,7 +531,7 @@ export const test = async (req, res, next) => {
 	const nest = (items, id = "63a004e8413df1816c2274e4", link = 'parent') => items.filter(item => item[link] === id).map(item => {
 		console.log("item", item);
 		return {
-			_id: item._id, name: item.name, parent: item.parent, files: item.files, children: nest(items, item._id)
+			...item, children: [...nest(items, item._id), ...item.files], isDisabled: nest(items, item._id).length ? false : true
 		}
 	})
 		

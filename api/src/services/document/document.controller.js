@@ -460,20 +460,51 @@ function getKeyByValue(object, value) {
 }
 
 export const addComment = async (req, res, next) => {
-	let {fileId, content} = req.body.data
+	let {fileId, content, attachments} = req.body.data
+	const web3Connection = await getWeb3()
+	if(!web3Connection.status) {
+		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+	}
+	const web3 = web3Connection.web3
+	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	const userEmail = req.jwtDecoded.email
-	let user = await User.findOne({email: userEmail}) 
-	let userId = user._id.valueOf()
-	let newComment = {content: content, userId: userId, name: user.name, createdAt: new Date()}
-	let update = { $push: {comments: newComment} };
-	let file = await File.findByIdAndUpdate(fileId, update, {new: true}).lean()
-	return res.status(200).send({
-		data: {
-			comments: file.comments,
-			fileId: fileId
-		},
-		msg: "Add comment successfully!"
-	})
+	try {
+		let user = await User.findOne({email: userEmail}) 
+		let userId = user._id.valueOf()
+		let newAttachment=[]
+		let file = await File.findById(fileId).lean()
+		let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: user.publicAddress });
+
+		//share attachment for reviewer and signer
+		if(!info) {
+			return res.status(500).json({msg: "Token ID is invalid"});
+		}
+		let signerAndReviewerListByAddress = await User.find({'publicAddress': {$in: [...new Set([...info[1], ...info[2]])]}})
+		let listIdShared = signerAndReviewerListByAddress.map(x=> x._id.valueOf())
+		for (let index = 0; index < attachments.length; index++) {
+			const attachment = attachments[index];
+			let file1 = await File.findById(attachment).lean()
+			newAttachment.push({id: attachment, name: JSON.parse(file1.tokenURI).name})
+			let newUpdate = {shared: [...new Set(...listIdShared, ...file1.shared)]}
+			await File.findByIdAndUpdate(attachment, newUpdate, {new: true}).lean()
+		}
+
+		// update new comment
+		let newComment = {content: content, userId: userId, name: user.name, createdAt: new Date(), attachments: newAttachment}
+		let update = { $push: {comments: newComment} };
+		let newFile = await File.findByIdAndUpdate(fileId, update, {new: true}).lean()
+		
+		return res.status(200).send({
+			data: {
+				comments: newFile.comments,
+				fileId: fileId
+			},
+			msg: "Add comment successfully!"
+		})
+	} catch (error) {
+		console.log(error);
+	}
+	
 }
 
 export const signDoc = async (req, res, next) => {
@@ -720,9 +751,51 @@ export const rejectDoc = async (req, res, next) => {
 		})
 	}
 }
-// export const getAllComments = async (req, res, next) => {
+export const getTreeFolder = async (req, res, next) => {
+	const userEmail = req.jwtDecoded.email
+	let user = await User.findOne({email: userEmail}) 
+	let userId = user._id.valueOf()
+	let myFolder = await Folder.findOne({ parent: null, owner: userId }).lean()
+	if(!myFolder){
+		return res.status(500).send({
+			msg: "Folder not exist"
+		})
+	}
+	let myFolderId = myFolder._id.valueOf()
+	let descendants = await Folder.find({ancestors: myFolderId}).lean()
+	const getName = async (files) => {
+		// console.log("files", files);
+		return await Promise.all(files.map(async (x) => {
+			// console.log(x);
+			let file = await File.findById(x).lean()
+			let name = JSON.parse(file.tokenURI).name
+			let fileType = JSON.parse(file.tokenURI).fileType
+			// console.log('name', name);
+			return {name: name, _id: x, fileType: fileType} 
+		}))
+	}
+	descendants = await Promise.all(descendants.map(async x=> ({_id: x._id.valueOf(), name: x.name, parent: x.parent, files: await getName(x.files)})))
 
-// }
+	const nest = (items, id = myFolderId, link = 'parent') => items.filter(item => item[link] === id).map(item => {
+		console.log("item", item);
+		return {
+			...item, children: [...nest(items, item._id), ...item.files], isDisabled: nest(items, item._id).length ? false : true
+		}
+	})
+	let result = await nest(descendants)
+	let myFolderFiles = await getName(myFolder.files)
+	return res.status(200).send({
+		msg: "OK",
+		data: [
+			{
+				_id: myFolderId,
+				name: myFolder.name,
+				children: [...result, ...myFolderFiles],
+				isDisabled: [...result, ...myFolderFiles].length ? false : true
+			}
+		]
+	})
+}
 
 const getFileStatus = async (files, publicAddress, dmsContract) => {
 	return await Promise.all(files.map(async (file)=> {

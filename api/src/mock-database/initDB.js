@@ -85,62 +85,60 @@ const initDB = async () => {
     function isEmployee(role) {
         return role.type === "employee";
     }
-    Folder.remove({}, async function(err) { 
-        console.log('Folder collection removed') 
-        const publicFolders = [
-            { name: "Public", type: "public" }, 
-            { name: "Paper", type: "public" }, 
-        ]
-        const internalFolders = listDepts.map(x=> ({name: x.name, type: "internal"}))
-        const rootFolders = publicFolders.concat(internalFolders)
-        const rootFoldersAdded = await Folder.insertMany(rootFolders)
-        if(rootFoldersAdded) {
-            console.log("Insert successfully public folders");
-            console.log("Insert successfully internal folders");
-        } else {
-            console.error("Failed to insert rootFolders");
-        }
-    });
-    Project.remove({}, async function(err) { 
-        console.log('Project collection removed') 
-        const projectAdded = await Project.insertMany(listProject)
-        if(projectAdded) {
-            console.log("Insert successfully projects");
-        } else {
-            console.error("Failed to insert projects");
-        }
-    });
-    Department.remove({}, async function(err) { 
-        console.log('Department collection removed') 
-        const deptsAdded = await Department.insertMany(listDepts)
-        if(deptsAdded) {
-            console.log("Insert successfully departments");
-        } else {
-            console.error("Failed to insert departments");
-        }
-    });
-    User.remove({}, function(err) { 
-        console.log('User collection removed') 
-    });
-    Role.remove({}, async function(err) { 
-        console.log('Role collection removed') 
-    });
-    File.remove({}, function(err) { 
-        console.log('File collection removed') 
-    });
-    Service.remove({}, async function(err) { 
-        console.log('Service collection removed') 
-        const listServiceAdded = await Service.insertMany(listService)
-        if(listServiceAdded) {
-            console.log("Insert successfully services");
-        } else {
-            console.error("Failed to insert services");
-        }
-    });
+
+    await Folder.deleteMany({})
+    console.log('Folder collection removed') 
+    await Project.deleteMany({})
+    console.log('Project collection removed') 
+    await Department.deleteMany({})
+    console.log('Department collection removed') 
+    await User.deleteMany({})
+    console.log('User collection removed') 
+    await Role.deleteMany({})
+    console.log('Role collection removed') 
+    await File.deleteMany({})
+    console.log('File collection removed') 
+    await Service.deleteMany({})
+    console.log('Service collection removed') 
+    
+    const publicFolders = [
+        { name: "Public", type: "public" }, 
+        { name: "Paper", type: "public" }, 
+    ]
+    const internalFolders = listDepts.map(x=> ({name: x.name, type: "internal"}))
+    const rootFolders = publicFolders.concat(internalFolders)
+    const rootFoldersAdded = await Folder.insertMany(rootFolders)
+    if(rootFoldersAdded) {
+        console.log("Insert successfully public folders");
+        console.log("Insert successfully internal folders");
+    } else {
+        console.error("Failed to insert rootFolders");
+    }
+  
+    const projectAdded = await Project.insertMany(listProject)
+    if(projectAdded) {
+        console.log("Insert successfully projects");
+    } else {
+        console.error("Failed to insert projects");
+    }
+     
+    const deptsAdded = await Department.insertMany(listDepts)
+    if(deptsAdded) {
+        console.log("Insert successfully departments");
+    } else {
+        console.error("Failed to insert departments");
+    }
 
     const rolesAdded = await Role.insertMany(roles)
     const listRoles = rolesAdded.map(x=> ({_id: x._id.valueOf(), name: x.name, type: x.type}))
-    
+
+    const listServiceAdded = await Service.insertMany(listService)
+    if(listServiceAdded) {
+        console.log("Insert successfully services");
+    } else {
+        console.error("Failed to insert services");
+    }
+
     const userList = [
         {
             username: "admin",

@@ -93,7 +93,8 @@ export const transferToken = async (req, res, next) => {
 		console.log(req.body.data)
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail})
-		const {publicAddress, keystore} = user
+		const {keystore} = user
+		let publicAddress = web3.utils.toChecksumAddress(user.publicAddress)
 		const ks = lightwallet.keystore.deserialize(keystore)
 		ks.keyFromPassword(process.env.SECRET, async function (err, pwDerivedKey) {
 			ks.generateNewAddress(pwDerivedKey, 1)
@@ -105,7 +106,7 @@ export const transferToken = async (req, res, next) => {
 				const gasPrice = await web3.eth.getGasPrice()
 				const transaction = {
 					from: publicAddress,
-					to: addressTo, // faucet address to return eth
+					to: web3.utils.toChecksumAddress(addressTo), // faucet address to return eth
 					value: web3.utils.toWei(amount, "ether"),
 					gas: estimateGasUsed,
 					// optional data field to send message or execute smart contract

@@ -100,18 +100,22 @@
     },
     mounted() {
         this.$router.push(this.$route.path)
-        this.$store.dispatch("admin/getAllUsers")
-        this.$store.dispatch("user/getDeptList")
-        this.$store.dispatch("user/getRoleList")
+        this.callAPI()
     },
     created() {
         this.$store.dispatch("auth/sidebarActive", "admin")      
     },
     methods: {
+      async callAPI() {
+        await this.$store.dispatch("admin/getAllUsers")
+        await this.$store.dispatch("user/getDeptList")
+        await this.$store.dispatch("user/getRoleList") 
+      },
       handleCreateUser() {
           let data = Object.assign({},this.userCreateForm)
           this.$store.dispatch("admin/createUser", data)
       },
+      
     },
     computed: {
       adminState() {return this.$store.state.admin},

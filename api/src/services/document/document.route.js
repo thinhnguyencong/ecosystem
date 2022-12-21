@@ -9,6 +9,7 @@ documentRouter.get('/my-folder', controller.getFoldersInMyFolder);
 documentRouter.post('/create-folder', controller.createFolder);
 documentRouter.post('/share-folder', controller.shareFolder);
 documentRouter.get('/shared-with-me-folder', controller.getSharedWithMeFolder);
+documentRouter.get('/tree-folder', controller.getTreeFolder);
 
 documentRouter.post('/upload-file', controller.uploadFile);
 documentRouter.get('/get-all-files', controller.getAllFiles);

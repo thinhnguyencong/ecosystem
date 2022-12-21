@@ -34,26 +34,25 @@
             </ol>
              
         </nav>
-
-        <div v-if="!documentState.isLoading">
-            <div class="d-flex justify-content-between">
-                <div class="p-2">
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="mdi mdi-plus text-light"></i> New  
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
-                            <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
-                        </div>
+        <div class="d-flex justify-content-between">
+            <div class="p-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-plus text-light"></i> New  
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
+                        <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
                     </div>
                 </div>
-                <!-- <div class="p-2">
-                    <ManageKey/>
-                </div> -->
             </div>
-            <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
-            <ModalUploadFile/>
+            <!-- <div class="p-2">
+                <ManageKey/>
+            </div> -->
+        </div>
+        <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
+        <ModalUploadFile/>
+        <div v-if="!documentState.isLoading">
             <div v-if="layout == 'grid'">
                 <GridViewVue :folders="documentState.children" :files="documentState.folder.files"/>
             </div>
@@ -86,53 +85,12 @@ export default {
         
     },
     created() {
-        this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})       
+        this.callAPI()
+        
     },
     data() {
         return {
            layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
-           mockData: [
-             {
-                name: "Head First python.pdf",
-                type: "pdf"
-            },
-            {
-                name: "Weekly Report.pptx",
-                type: "pptx"
-            },
-            {
-                name: "Monthly Report.pdf",
-                type: "pdf"
-            },
-            {
-                name: "Testcase.xlsx",
-                type: "xlsx"
-            },
-            {
-                name: "Reading CAM 13.docx",
-                type: "docx"
-            },
-            {
-                name: "index.html",
-                type: "html"
-            },
-            {
-                name: "style.css",
-                type: "css"
-            },
-            {
-                name: "Timetable 20221.xlsx",
-                type: "xlsx"
-            },
-            {
-                name: "script.js",
-                type: "javascript"
-            },
-            {
-                name: "Testcase 2.xlsx",
-                type: "xlsx"
-            },
-           ]
         }
     },
     computed: {
@@ -140,6 +98,10 @@ export default {
         authState() {return this.$store.state.auth },
     },
     methods: {
+        async callAPI() {
+            await this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})       
+            await this.$store.dispatch("document/getTreeFolder")
+        },
         switchLayout() {
             if(this.layout === "list"){
                 this.layout = "grid"
