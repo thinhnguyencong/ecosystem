@@ -50,7 +50,6 @@ export const reAuth = async (req, res, next) => {
 	requestPromise(authStrategy.getTokenUrlOptions(token))
 	.then(response => {
 		// if the request status isn't "OK", the token is invalid
-		console.log(JSON.parse(response));
 		if (JSON.parse(response).active !== true) {
 			res.status(401).json({
 				error: `Unauthorized`,

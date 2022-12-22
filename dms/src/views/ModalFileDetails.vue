@@ -142,9 +142,6 @@
                                                         No comment yet
                                                     </div>
                                                 </div>
-                                                <!-- <button type="button" class="btn btn-primary" @click="openThis" >
-                                                    Launch demo modal
-                                                </button> -->
                                             </div>
                                             <br>
                                             
@@ -256,44 +253,37 @@ export default {
         
     },
     mounted() {
-       this.$set(this, 'file', this.fileProps)
-       this.$set(this, 'modalId', this.modal_id)
-       if(this.file) {
-            this.error=null
-            IpfsClient().get(this.file.hash).then(async (res) =>{
-                if(res) {
-                    let resultDecrypt = decrypt(res[0].content, this.file.key)
-                    let tokenUri = JSON.parse(this.file.tokenURI)
-                    let b64 = this.b64EncodeUnicode(resultDecrypt)
-                    let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                    this.link = abc
-                }
-                else {
-                    this.error="No file to preview"
-                }
-                // this.saveByteArray("Sample Report", res[0].content.buffer); // download button
-            })
-        }else {
-            this.error="No file to preview"
-        }
+        this.initData()
+       
     },
     methods: {
-        openThis() {
-            $('#63a006aff195ec4567efe72d').modal({
-                show: true
-            })
+        async initData() {
+            this.file = this.fileProps
+            this.modalId = this.modal_id
+            if(this.file) {
+                this.error=null
+                IpfsClient().get(this.file.hash).then(async (res) =>{
+                    if(res) {
+                        let resultDecrypt = decrypt(res[0].content, this.file.key)
+                        let tokenUri = JSON.parse(this.file.tokenURI)
+                        let b64 = this.b64EncodeUnicode(resultDecrypt)
+                        let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
+                        this.link = abc
+                    }
+                    else {
+                        this.error="No file to preview"
+                    }
+                    // this.saveByteArray("Sample Report", res[0].content.buffer); // download button
+                })
+            }else {
+                this.error="No file to preview"
+            }
         },
-        
+
         formatDateTime(time) {
             return dayjs.unix(time).format('HH:mm:ss DD MMMM YYYY')
         },
-        scrollToEnd() {
-            var container = document.getElementById("comments-"+this.file._id)
-            container.style.overflowY = "scroll"
-            console.log("container", container);
-            var scrollHeight = container.scrollHeight
-            container.scrollTop = scrollHeight
-        },
+        
         async bufferArrayToBlob(base64, type ) {
             const typeNew = 'data:' + type + ';base64'
             const base64Response = await fetch(`${typeNew},${base64}`)
@@ -363,35 +353,7 @@ export default {
         documentState() {return this.$store.state.document },
     },
     watch: { 
-        fileProps: function(newVal, oldVal) { // watch it
-            console.log("newVal", newVal);
-            this.file = newVal
-            if(this.file) {
-                this.error=null
-                IpfsClient().get(this.file.hash).then(async (res) =>{
-                    if(res) {
-                        console.log(res[0].content)
-                        let resultDecrypt = decrypt(res[0].content, this.file.key)
-                        console.log('resultDecrypt', resultDecrypt);
-                        let tokenUri = JSON.parse(this.file.tokenURI)
-                        console.log("tokenUri", tokenUri);
-                        let b64 = this.b64EncodeUnicode(resultDecrypt)
-                        let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                        this.link = abc
-                    }
-                    else {
-                        this.error="No file to preview"
-                    }
-                    // this.saveByteArray("Sample Report", res[0].content.buffer); // download button
-                })
-            }else {
-                this.error="No file to preview"
-            }
-        },
-        modal_id: function(newVal, oldVal) {
-            console.log(newVal);
-            this.$set(this, 'modalId', newVal)
-        }
+        
     }
 }
 </script>

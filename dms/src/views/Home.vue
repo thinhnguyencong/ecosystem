@@ -31,20 +31,21 @@
           <GridView :folders="[]" :files="documentState.files"/>
       </div>
       <div v-if="layout == 'list'">
-          <ListTable :folders="[]" :files="documentState.files"/>
+          <ListView :folders="[]" :files="documentState.files"/>
       </div>
     </div>
     <div v-else class="spinner-border text-dark" role="status">
           <span class="sr-only">Loading...</span>
       </div>
-    <ModalFileDetails v-for="(file, index) in documentState.files" :ref="(file._id)" :fileProps="file" :key="file._id" modal_id='main'/>
+    <ModalFileDetails v-for="(file, index) in documentState.files" :fileProps="file" :key="'main'+file._id" modal_id='main'/>
+    <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/>
   </div>
 
 </template>
 <script setup>
 import ModalFileDetails from './ModalFileDetails.vue';
 import GridView from '../components/GridView.vue';
-import ListTable from '../components/ListView.vue';
+import ListView from '../components/ListView.vue';
 import logoURL from '../assets/img-doc.png'
 import FolderVue from '../components/Folder.vue';
 import { IpfsClient } from '../helpers/ipfs';

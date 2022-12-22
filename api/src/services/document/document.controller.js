@@ -48,9 +48,7 @@ export const getFolderById = async (req, res, next) => {
 		})
 	}
 	let files = await getFile(userId, folder)
-	console.time("get file status")
 	let newFiles = files.length ? await getFileStatus(files, user.publicAddress, dmsContract) : []
-	console.timeEnd("get file status")
 	// check if folder is public folder
 	if(folder.type == "public" || folder.shared.includes(userId) || folder.owner == userId) {
 		if(folder.type == "public") {
@@ -177,9 +175,7 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 		console.time("get file")
 		let files = await getFile(userId, myFolder)
 		console.timeEnd("get file")
-		console.time("get file status")
 		let newFiles = files.length ? await getFileStatus(files, user.publicAddress, dmsContract) : []
-		console.timeEnd("get file status")
 		return res.send({
 			msg: "Success",
 			data: {
@@ -431,29 +427,39 @@ export const getAllFiles = async (req, res, next) => {
 		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
 	}
 	const web3 = web3Connection.web3
-	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
-	const userEmail = req.jwtDecoded.email
-	let user = await User.findOne({email: userEmail}) 
-	const {publicAddress} = user
-	let userId = user._id.valueOf()
-	if(isValidObjectId(userId)) {
-		let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
-		console.time("get file status")
-		let newFiles = await getFileStatus(files, publicAddress, dmsContract)
-		//console.log("newFiles", newFiles);
-		console.timeEnd("get file status")
-		return res.status(200).send({
-			msg: "Success",
-			data: {
-				files: newFiles
-			},
-			
-		})
-	}else {
-		return res.status(400).send({
-			msg: "Bad request"
+	try {
+		const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
+		const userEmail = req.jwtDecoded.email
+		let user = await User.findOne({email: userEmail}) 
+		const {publicAddress} = user
+		let userId = user._id.valueOf()
+		if(isValidObjectId(userId)) {
+			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
+			const startTime = Date.now();
+			let newFiles = await getFileStatus(files, publicAddress, dmsContract)
+			const endTime = Date.now();
+			const timeTaken = endTime - startTime;
+  			console.log(`Time taken to perform addition = ${timeTaken} milliseconds`);
+			//console.log("newFiles", newFiles);
+			return res.status(200).send({
+				msg: "Success",
+				data: {
+					files: newFiles
+				},
+				
+			})
+		}else {
+			return res.status(400).send({
+				msg: "Bad request"
+			})
+		}
+	} catch (error) {
+		console.log(error);
+		return res.status(500).send({
+			msg: "Internal Server Error"
 		})
 	}
+	
 }
 function getKeyByValue(object, value) {
 	return Object.keys(object).find(key => object[key] === value);
@@ -485,7 +491,7 @@ export const addComment = async (req, res, next) => {
 			const attachment = attachments[index];
 			let file1 = await File.findById(attachment).lean()
 			newAttachment.push({id: attachment, name: JSON.parse(file1.tokenURI).name})
-			let newUpdate = {shared: [...new Set(...listIdShared, ...file1.shared)]}
+			let newUpdate = {shared: [...new Set([...listIdShared, ...file1.shared])]}
 			await File.findByIdAndUpdate(attachment, newUpdate, {new: true}).lean()
 		}
 
@@ -778,8 +784,9 @@ export const getTreeFolder = async (req, res, next) => {
 
 	const nest = (items, id = myFolderId, link = 'parent') => items.filter(item => item[link] === id).map(item => {
 		console.log("item", item);
+		let isDisabled = nest(items, item._id).length || item.files.length >0 ? false : true
 		return {
-			...item, children: [...nest(items, item._id), ...item.files], isDisabled: nest(items, item._id).length ? false : true
+			...item, children: [...nest(items, item._id), ...item.files], isDisabled: isDisabled
 		}
 	})
 	let result = await nest(descendants)
@@ -798,7 +805,7 @@ export const getTreeFolder = async (req, res, next) => {
 }
 
 const getFileStatus = async (files, publicAddress, dmsContract) => {
-	return await Promise.all(files.map(async (file)=> {
+	return await Promise.all(files.map(async (file, index)=> {
 		let statusDetail = {
 			reviewerList: [],
 			signerList: []
@@ -837,11 +844,11 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			}
 		}
 		file.statusDetail = statusDetail
-		console.log("file.tokenId", file.tokenId, publicAddress);
-		console.log("reviewerList", reviewerList);
-		console.log("signerList", signerList);
-		console.log("reviewArr", reviewArr);
-		console.log("signArr", signArr);
+		// console.log("file.tokenId", file.tokenId, publicAddress);
+		// console.log("reviewerList", reviewerList);
+		// console.log("signerList", signerList);
+		// console.log("reviewArr", reviewArr);
+		// console.log("signArr", signArr);
 		//check if document has been rejected review
 		if(reviewArr.includes("3")) {
 			return {

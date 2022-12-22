@@ -266,6 +266,7 @@ export const document = {
       console.log(2);
         state.isLoading = false;
         state.files = result.data.data.files;
+        state.attachFiles = result.data.data.files;
     },
     getAllFilesFailure(state, error){
         state.isLoading = false

@@ -63,7 +63,7 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        <ModalFileDetails v-for="(file, index) in documentState.folder.files" :ref="(file._id)" :fileProps="file" :key="file._id" modal_id='main'/>
+        <ModalFileDetails v-for="(file, index) in documentState.folder.files" :fileProps="file" :key="file._id" modal_id='main'/>
         
 	</div>
 </template>
