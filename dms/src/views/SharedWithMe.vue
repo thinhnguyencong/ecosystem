@@ -5,7 +5,7 @@
                 <li class="breadcrumb-item active" aria-current="page">
                     Shared with me
                 </li>
-                <li class="ml-auto pr-5">
+                <li class="ml-auto">
                     <button @click="switchLayout">
                         <span v-if="layout == 'grid'" class="material-icons ml-auto pr-4">
                             list
@@ -18,8 +18,7 @@
                         info
                     </span>
                 </li>
-                
-                
+
             </ol>
              
         </nav>

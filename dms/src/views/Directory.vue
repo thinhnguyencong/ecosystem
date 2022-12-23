@@ -16,7 +16,7 @@
                     <router-link :to="'/folder/'+ folder._id">{{folder.name}}</router-link>
                 </li>
                 <li v-if="documentState.folder" class="breadcrumb-item active" aria-current="page">{{documentState.folder.name}}</li>
-                <li class="ml-auto pr-5">
+                <li class="ml-auto">
                     <button @click="switchLayout">
                         <span v-if="layout == 'grid'" class="material-icons ml-auto pr-4">
                             list
@@ -64,6 +64,7 @@
             <span class="sr-only">Loading...</span>
         </div>
         <ModalFileDetails v-for="(file, index) in documentState.folder.files" :fileProps="file" :key="file._id" modal_id='main'/>
+        <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/>
         
 	</div>
 </template>

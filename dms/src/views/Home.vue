@@ -11,7 +11,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item active" aria-current="page">Home</li>
-        <li class="ml-auto pr-5">
+        <li class="ml-auto">
             <button @click="switchLayout">
                 <span v-if="layout == 'grid'" class="material-icons ml-auto pr-4">
                     list

@@ -181,6 +181,7 @@ export const document = {
         state.children = result.data.data.children
         state.ancestors = result.data.data.ancestors
         state.folder = result.data.data.folder
+        state.attachFiles = result.data.data.attachFiles
     },
     getFolderByIdFailure(state, error){
         state.isLoading = false
@@ -199,6 +200,7 @@ export const document = {
         state.isLoading = false;
         state.children = result.data.data.myFolders;
         state.folder = result.data.data.folder;
+        state.attachFiles = result.data.data.attachFiles
     },
     getMyFoldersFailure(state, error){
         state.isLoading = false
@@ -266,7 +268,7 @@ export const document = {
       console.log(2);
         state.isLoading = false;
         state.files = result.data.data.files;
-        state.attachFiles = result.data.data.files;
+        state.attachFiles = result.data.data.attachFiles;
     },
     getAllFilesFailure(state, error){
         state.isLoading = false

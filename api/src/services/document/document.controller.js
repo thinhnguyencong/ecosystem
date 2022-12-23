@@ -47,8 +47,12 @@ export const getFolderById = async (req, res, next) => {
 			msg: "Folder not exist"
 		})
 	}
-	let files = await getFile(userId, folder)
+	let files = await getFile(userId, folder.files)
 	let newFiles = files.length ? await getFileStatus(files, user.publicAddress, dmsContract) : []
+	
+	let attachmentIds = await getAttachFiles(files)
+	let attachments =  await getFile(userId, attachmentIds)
+	let attachFiles = attachments.length ? await getFileStatus(attachments, user.publicAddress, dmsContract) : []
 	// check if folder is public folder
 	if(folder.type == "public" || folder.shared.includes(userId) || folder.owner == userId) {
 		if(folder.type == "public") {
@@ -68,7 +72,8 @@ export const getFolderById = async (req, res, next) => {
 						shared: folder.shared,
 						createdAt: folder.createdAt,
 						updatedAt: folder.updatedAt,
-					}
+					},
+					attachFiles: attachFiles
 				},
 				
 			})
@@ -102,7 +107,8 @@ export const getFolderById = async (req, res, next) => {
 						shared: folder.shared,
 						createdAt: folder.createdAt,
 						updatedAt: folder.updatedAt,
-					}
+					},
+					attachFiles: attachFiles
 				},
 				
 			})
@@ -137,7 +143,8 @@ export const getFolderById = async (req, res, next) => {
 						shared: folder.shared,
 						createdAt: folder.createdAt,
 						updatedAt: folder.updatedAt,
-					}
+					},
+					attachFiles: attachFiles
 				},
 				
 			})
@@ -172,15 +179,24 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 		
 		// filter child folder
 		let result = myFolderItems.filter(item => !item.ancestors.some(a=> myFolderIds.includes(a)))
-		console.time("get file")
-		let files = await getFile(userId, myFolder)
-		console.timeEnd("get file")
+		const startTime = Date.now();
+		let files = await getFile(userId, myFolder.files)
+		
 		let newFiles = files.length ? await getFileStatus(files, user.publicAddress, dmsContract) : []
+
+		let attachmentIds = await getAttachFiles(files)
+		let attachments =  await getFile(userId, attachmentIds)
+		let attachFiles = attachments.length ? await getFileStatus(attachments, user.publicAddress, dmsContract) : []
+
+		const endTime = Date.now();
+		const timeTaken = endTime - startTime;
+  		console.log(`Time taken to perform get attachFiles = ${timeTaken} milliseconds`);
 		return res.send({
 			msg: "Success",
 			data: {
 				myFolders: result,
-				folder: {...myFolder, files: newFiles}
+				folder: {...myFolder, files: newFiles},
+				attachFiles: attachFiles
 			},
 		})
 	}else {
@@ -414,8 +430,7 @@ export const uploadFile = async (req, res, next) => {
 	})
 }
 
-const getFile = async (userId, folder) => {
-	let allFiles = folder.files
+const getFile = async (userId, allFiles) => {
 	const files = await File.find({'_id': {$in: allFiles}}).lean()
 	// console.log('files', files);
 	let permissionedFiles = files.filter(file => file.shared.includes(userId)|| file.owner == userId)
@@ -437,14 +452,18 @@ export const getAllFiles = async (req, res, next) => {
 			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
 			const startTime = Date.now();
 			let newFiles = await getFileStatus(files, publicAddress, dmsContract)
+			let attachmentIds = await getAttachFiles(newFiles)
+			let attachments =  await getFile(userId, attachmentIds)
+			let attachFiles = attachments.length ? await getFileStatus(attachments, user.publicAddress, dmsContract) : []
 			const endTime = Date.now();
 			const timeTaken = endTime - startTime;
-  			console.log(`Time taken to perform addition = ${timeTaken} milliseconds`);
+  			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
 			//console.log("newFiles", newFiles);
 			return res.status(200).send({
 				msg: "Success",
 				data: {
-					files: newFiles
+					files: newFiles,
+					attachFiles: attachFiles
 				},
 				
 			})
@@ -783,7 +802,6 @@ export const getTreeFolder = async (req, res, next) => {
 	descendants = await Promise.all(descendants.map(async x=> ({_id: x._id.valueOf(), name: x.name, parent: x.parent, files: await getName(x.files)})))
 
 	const nest = (items, id = myFolderId, link = 'parent') => items.filter(item => item[link] === id).map(item => {
-		console.log("item", item);
 		let isDisabled = nest(items, item._id).length || item.files.length >0 ? false : true
 		return {
 			...item, children: [...nest(items, item._id), ...item.files], isDisabled: isDisabled
@@ -962,4 +980,26 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 			}
 		}
 	}))
+}
+
+// get attach files from comment in file
+const getAttachFiles = async (files) => {
+	let attachments= []
+	for (let i = 0; i < files.length; i++) {
+		const comments = files[i].comments;
+		if(comments.length) {
+			for (let j = 0; j < comments.length; j++) {
+				const comment = comments[j];
+				attachments = [...new Set([...comment.attachments, ...attachments])]
+			}
+		}
+	}
+	let result = attachments.reduce((unique, o) => {
+		if(!unique.some(obj => obj.id === o.id)) {
+		  unique.push(o);
+		}
+		return unique;
+	},[]);
+
+	return result.map(x=> x.id)
 }

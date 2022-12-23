@@ -5,12 +5,13 @@
             <span class="material-icons menu-button">menu</span>
           </button>
         </div>
-        <div class="grid-item-2">
-            <button>
+        <!-- <div class="grid-item-2">
+            
+        </div> -->
+        <div class="grid-item-3">
+            <button class="pr-4">
                 <span class="material-icons"> notifications </span>
             </button>
-        </div>
-        <div class="grid-item-3">
             <button id="profileDropdown" data-toggle="dropdown">
                 <span class="material-icons">account_circle</span>
             </button>
@@ -51,7 +52,7 @@ function closeNav() {
   height: 4rem;
 }
 .material-icons {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: var(--primary);
 }
 .menu-button {
