@@ -6,6 +6,7 @@ import MyFolder from '../views/MyFolder.vue'
 import ShareWithMe from '../views/SharedWithMe.vue'
 import Directory from '../views/Directory.vue'
 import AdminPage from '../views/AdminPage.vue'
+import ModalFile from '../views/ModalFile.vue'
 import NotFound from '../components/NotFound.vue'
 import store from '../store'
 import {UrlParams} from '../helpers/UrlParams'
@@ -35,7 +36,17 @@ const routes = [
     path: '/home',
     name: 'LandingPage',
     component: LandingPage,
-	meta: { requiresAuth: false, requiresAdmin: false }
+	meta: { requiresAuth: false, requiresAdmin: false },
+	children: [
+		{
+		  // UserProfile will be rendered inside User's <router-view>
+		  // when /user/:id/profile is matched
+		  path: 'file/:id',
+		  name: 'ModalFile',
+		  component: ModalFile,
+		  meta: { requiresAuth: false, requiresAdmin: false }
+		},
+	  ],
   },
   {
     path: '/',
@@ -124,6 +135,7 @@ const handleRequestKey = async () => {
 
 }
 router.beforeEach(async (to, from, next) => {
+	console.log("to", to.matched.some(record => record.meta.requiresAuth));
 	if (to.matched.some(record => record.meta.requiresAuth)){
 		const HREF = window.location.href.trim();
 		const urlParams = new UrlParams(HREF);
