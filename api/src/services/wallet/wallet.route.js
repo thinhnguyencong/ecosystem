@@ -1,5 +1,5 @@
 import express from 'express';
-import walletMiddleware from '../middleware/walletMiddleware.js';
+// import walletMiddleware from '../middleware/walletMiddleware.js';
 import * as controller from './wallet.controller.js';
 
 const walletRouter = express.Router();

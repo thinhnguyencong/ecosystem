@@ -44,9 +44,10 @@ const routes = [
 		  path: 'file/:id',
 		  name: 'ModalFile',
 		  component: ModalFile,
-		  meta: { requiresAuth: false, requiresAdmin: false }
+		  props: true,
+		  meta: { requiresAuth: false, requiresAdmin: false, showModal: true }
 		},
-	  ],
+	],
   },
   {
     path: '/',
@@ -58,7 +59,18 @@ const routes = [
     path: '/my-folder',
     name: 'My Folder',
     component: MyFolder,
-	meta: { requiresAuth: true, requiresAdmin: false }
+	meta: { requiresAuth: true, requiresAdmin: false },
+	children: [
+		{
+		  // UserProfile will be rendered inside User's <router-view>
+		  // when /user/:id/profile is matched
+		  path: 'file/:id',
+		  name: 'ModalFile',
+		  component: ModalFile,
+		  props: true,
+		  meta: { requiresAuth: true, requiresAdmin: false, showModal: true }
+		},
+	],
   },
   {
     path: '/shared-with-me',
@@ -135,7 +147,6 @@ const handleRequestKey = async () => {
 
 }
 router.beforeEach(async (to, from, next) => {
-	console.log("to", to.matched.some(record => record.meta.requiresAuth));
 	if (to.matched.some(record => record.meta.requiresAuth)){
 		const HREF = window.location.href.trim();
 		const urlParams = new UrlParams(HREF);
