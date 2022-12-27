@@ -1,8 +1,7 @@
 <template>
-    <transition name="modal">
+    <Transition name="modal">
         <div :id="id" class="modal-mask">
             <div class="modal-wrapper" @click="$router.go(-1)">
-                <div tabindex="-1" role="dialog" @click.stop="">
                     <div class="modal-container" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -24,11 +23,11 @@
                                 </router-link>
                             </div>
                         </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
-    </transition>
+    </Transition>
 </template>
 <script>
 export default {
@@ -68,6 +67,11 @@ export default {
             },
             immediate: true
         } 
+    },
+    computed: {
+        documentState () {
+            return this.$store.state.document
+        }
     }
 }
 </script>
@@ -117,5 +121,6 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+  transition: opacity 0.5s ease;
 }
 </style>

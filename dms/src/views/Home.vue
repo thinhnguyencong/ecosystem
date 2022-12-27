@@ -35,10 +35,10 @@
       </div>
     </div>
     <div v-else class="spinner-border text-dark" role="status">
-          <span class="sr-only">Loading...</span>
-      </div>
-    <ModalFileDetails v-for="(file, index) in documentState.files" :fileProps="file" :key="'main'+file._id" modal_id='main'/>
-    <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/>
+        <span class="sr-only">Loading...</span>
+    </div>
+    <!-- <ModalFileDetails v-for="(file, index) in documentState.files" :fileProps="file" :key="'main'+file._id" modal_id='main'/>
+    <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/> -->
   </div>
 
 </template>
@@ -61,14 +61,12 @@ import { CID } from 'ipfs-http-client'
     },
     mounted() {
       this.$router.push(this.$route.path)
-  
+      console.log("acbccbcbhewiueyhrwiufhn");
     },
     created() {
         this.$store.dispatch("auth/sidebarActive", "home")
         // this.$store.dispatch("document/getRootFolders")  
         this.callAPI()
-        
-        
     },
     methods: {
       switchLayout() {
@@ -80,8 +78,7 @@ import { CID } from 'ipfs-http-client'
             localStorage.setItem("layout", "list")
         }
       },
-      async callAPI() {
-        await this.$store.dispatch("document/getTreeFolder") 
+      async callAPI() { 
         await this.$store.dispatch("document/getAllFiles") 
       }
     },

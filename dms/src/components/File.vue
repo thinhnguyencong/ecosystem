@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div @click="openModal(id)" class="tile file">
+        <div class="tile file">
             <span class="file-icon">
                 <i v-if="fileType=='application/pdf'" class="mdi mdi-file-pdf-box text-danger"></i>
                 <i v-else-if="fileType=='application/vnd.ms-powerpoint'" class="mdi mdi-microsoft-powerpoint text-danger"></i>
@@ -29,9 +29,9 @@ export default {
         file: Object
     },
    methods: {
-    openModal() {
-        $("#main-"+this.id).modal('toggle');
-    }
+    // openModal() {
+    //     $("#main-"+this.id).modal('toggle');
+    // }
    },
     mounted() {
         

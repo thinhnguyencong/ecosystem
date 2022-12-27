@@ -5,13 +5,22 @@
             <div class="p-2 comment-text w-100">
                 <h5 class="d-inline">{{ comment.name }}</h5> &nbsp; &nbsp; &nbsp;<small class="date">{{customTime(comment.createdAt)}}</small>
                 <p class="m-b-5 m-t-10">{{comment.content}}</p>
-                <a v-if="comment.attachments.length" href="#" @click="handleShow(comment)">{{ comment.attachments.length }} Attachment(s)</a>
+                <a class="attach-text" v-if="comment.attachments.length" role="button" @click="handleShow(comment)">{{ comment.attachments.length }} Attachment(s)</a>
                 <div v-show="comment.isActive">
                     
-                    <div class="list-group">
-                            <a v-for="(attachment, index) in comment.attachments" @click="openModal(attachment.id)" href="#" class="list-group-item list-group-item-action">
+                    <div class="">
+                        <router-link
+                            tag="div"
+                            class="list-group" 
+                            v-for="(attachment, index) in comment.attachments"
+                            :key="index"
+                            :to="`/file/${attachment.id}`"
+                        >
+                            <a class="list-group-item list-group-item-action">
                                 {{ (index+1)+". " }}{{attachment.name}}
                             </a>
+                        </router-link>
+                            
                     </div>
 
                 </div>
@@ -59,9 +68,12 @@ export default {
         this.$set(this, "comments", this.sortComment(this.commentsProp.map(x => ({ ...x, isActive: false }))));
     },
     watch: {
-        commentsProp: function (newVal, oldVal) {
-            this.$set(this, "comments", this.sortComment(newVal.map(x => ({ ...x, isActive: false }))));
-        },
+        commentsProp: {
+            handler(newVal, oldVal) {
+                this.$set(this, "comments", this.sortComment(newVal.map(x => ({ ...x, isActive: false }))));
+            },
+            immediate: true
+        }
     },
 }
 </script>
@@ -123,5 +135,12 @@ export default {
 
 .mb-100 {
     margin-bottom: 100px
+}
+.attach-text {
+    color: #1976d2;
+}
+.attach-text :hover{
+    color: #1976d2;
+    text-decoration: underline;
 }
 </style>

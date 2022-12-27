@@ -1,4 +1,5 @@
 <template>
+    
     <div class="table-responsive">
         <table id="transactionsTable" class="table table-hover" data-pagination="true">
             <thead>
@@ -24,7 +25,13 @@
                     <td>-</td>
                     <td></td>
                 </tr>
-                <tr v-if="(files.length>0)" v-for="(file, index) in files" :key="file._id">
+                <router-link
+                    tag="tr"
+                    class="item" 
+                    v-for="(file, index) in files"
+                    :key="file._id"
+                    :to="`/file/${file._id}`"
+                >
                     <th scope="row">
                         <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
                     </th>
@@ -39,7 +46,10 @@
                         <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
                         <span class="material-icons text-success">edit_calendar</span> -->
                     </td>
-                </tr>
+                </router-link>
+                <div v-if="showModal">
+                    <router-view></router-view>
+                </div>
                 <tr v-if="(files.length + folders.length == 0)">
                     <td class="text-center" colspan="6" scope="row"><h5>Empty</h5></td>
                 </tr>
@@ -58,11 +68,18 @@ import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 
 export default {
     props: {
-        folders: Array,
-        files: Array
+        folders: {
+            type: Array,
+            default() {return []}
+        },
+        files: {
+            type: Array,
+            default() {return []}
+        }
     },
     data() {
         return {
+            showModal: false
         }
     },
     mounted() {
@@ -134,6 +151,14 @@ export default {
             })
         },
     },
+    watch: {
+		'$route': {
+			immediate: true,
+			handler: function(newVal, oldVal) {
+				this.showModal = newVal.meta && newVal.meta.showModal;
+			}
+		}
+	},
 }
 </script>
 <style scoped>

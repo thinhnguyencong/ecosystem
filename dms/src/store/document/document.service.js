@@ -83,6 +83,13 @@ function getTreeFolder() {
         method: "GET",
     })
 }
+function getFileById(data) {
+    return sendRequest({
+        url: url+"get-file-by-id",
+        method: "GET",
+        params: data
+    })
+}
 
 export const documentService = {
     getRootFolders,
@@ -95,5 +102,6 @@ export const documentService = {
     addComment,
     signDoc,
     rejectDoc,
-    getTreeFolder
+    getTreeFolder,
+    getFileById
 };

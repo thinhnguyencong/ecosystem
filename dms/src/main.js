@@ -24,6 +24,19 @@ dayjs.extend(window.dayjs_plugin_relativeTime);
 Vue.use(VueSweetalert2);
 Vue.use(Vuetify)
 Vue.use(VueQuillEditor)
+Vue.mixin({
+  beforeCreate() {
+    if (this.$options.watch) {
+      Object.entries(this.$options.watch).forEach(([watcherKey, func]) => {
+        this.$options.watch[watcherKey] = new Proxy(func, {
+          apply(target, thisArg) {
+            console.log(`Called watcher ${target.name} on component ${thisArg.$options.name}`);
+          },
+        });
+      });
+    }
+  },
+});
 // Vue.use(Toast, options);
 new Vue({
     router,

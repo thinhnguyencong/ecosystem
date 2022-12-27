@@ -48,11 +48,6 @@ export const getFolderById = async (req, res, next) => {
 		})
 	}
 	let files = await getFile(userId, folder.files)
-	let newFiles = files.length ? await getFileStatus(files, user.publicAddress, dmsContract) : []
-	
-	let attachmentIds = await getAttachFiles(files)
-	let attachments =  await getFile(userId, attachmentIds)
-	let attachFiles = attachments.length ? await getFileStatus(attachments, user.publicAddress, dmsContract) : []
 	// check if folder is public folder
 	if(folder.type == "public" || folder.shared.includes(userId) || folder.owner == userId) {
 		if(folder.type == "public") {
@@ -68,12 +63,11 @@ export const getFolderById = async (req, res, next) => {
 						status,
 						owner: folder.owner,
 						type: folder.type,
-						files: newFiles,
+						files: files,
 						shared: folder.shared,
 						createdAt: folder.createdAt,
 						updatedAt: folder.updatedAt,
 					},
-					attachFiles: attachFiles
 				},
 				
 			})
@@ -103,12 +97,11 @@ export const getFolderById = async (req, res, next) => {
 						status,
 						owner: folder.owner,
 						type: folder.type,
-						files: newFiles,
+						files: files,
 						shared: folder.shared,
 						createdAt: folder.createdAt,
 						updatedAt: folder.updatedAt,
 					},
-					attachFiles: attachFiles
 				},
 				
 			})
@@ -139,12 +132,11 @@ export const getFolderById = async (req, res, next) => {
 						status,
 						owner: folder.owner,
 						type: folder.type,
-						files: newFiles,
+						files: files,
 						shared: folder.shared,
 						createdAt: folder.createdAt,
 						updatedAt: folder.updatedAt,
 					},
-					attachFiles: attachFiles
 				},
 				
 			})
@@ -156,12 +148,6 @@ export const getFolderById = async (req, res, next) => {
 	}
 }
 export const getFoldersInMyFolder = async (req, res, next) => {
-	const web3Connection = await getWeb3()
-	if(!web3Connection.status) {
-		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	}
-	const web3 = web3Connection.web3
-	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	const userEmail = req.jwtDecoded.email
 	let user = await User.findOne({email: userEmail}) 
 	let userId = user._id.valueOf()
@@ -181,12 +167,6 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 		let result = myFolderItems.filter(item => !item.ancestors.some(a=> myFolderIds.includes(a)))
 		const startTime = Date.now();
 		let files = await getFile(userId, myFolder.files)
-		
-		let newFiles = files.length ? await getFileStatus(files, user.publicAddress, dmsContract) : []
-
-		let attachmentIds = await getAttachFiles(files)
-		let attachments =  await getFile(userId, attachmentIds)
-		let attachFiles = attachments.length ? await getFileStatus(attachments, user.publicAddress, dmsContract) : []
 
 		const endTime = Date.now();
 		const timeTaken = endTime - startTime;
@@ -195,8 +175,7 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 			msg: "Success",
 			data: {
 				myFolders: result,
-				folder: {...myFolder, files: newFiles},
-				attachFiles: attachFiles
+				folder: {...myFolder, files: files},
 			},
 		})
 	}else {
@@ -437,33 +416,16 @@ const getFile = async (userId, allFiles) => {
 	return permissionedFiles
 }
 export const getAllFiles = async (req, res, next) => {
-	const web3Connection = await getWeb3()
-	if(!web3Connection.status) {
-		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	}
-	const web3 = web3Connection.web3
 	try {
-		const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail}) 
-		const {publicAddress} = user
 		let userId = user._id.valueOf()
 		if(isValidObjectId(userId)) {
 			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
-			const startTime = Date.now();
-			let newFiles = await getFileStatus(files, publicAddress, dmsContract)
-			let attachmentIds = await getAttachFiles(newFiles)
-			let attachments =  await getFile(userId, attachmentIds)
-			let attachFiles = attachments.length ? await getFileStatus(attachments, user.publicAddress, dmsContract) : []
-			const endTime = Date.now();
-			const timeTaken = endTime - startTime;
-  			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
-			//console.log("newFiles", newFiles);
 			return res.status(200).send({
 				msg: "Success",
 				data: {
-					files: newFiles,
-					attachFiles: attachFiles
+					files: files,
 				},
 				
 			})
@@ -479,9 +441,6 @@ export const getAllFiles = async (req, res, next) => {
 		})
 	}
 	
-}
-function getKeyByValue(object, value) {
-	return Object.keys(object).find(key => object[key] === value);
 }
 
 export const addComment = async (req, res, next) => {
@@ -822,122 +781,136 @@ export const getTreeFolder = async (req, res, next) => {
 	})
 }
 
-const getFileStatus = async (files, publicAddress, dmsContract) => {
-	return await Promise.all(files.map(async (file, index)=> {
-		let statusDetail = {
-			reviewerList: [],
-			signerList: []
+export const getFileById = async (req, res, next) => {
+	const web3Connection = await getWeb3()
+	if(!web3Connection.status) {
+		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+	}
+	const web3 = web3Connection.web3
+	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
+	let id = req.query.id
+	const userEmail = req.jwtDecoded.email
+	let user = await User.findOne({email: userEmail}) 
+	let userId = user._id.valueOf() 
+	if(!isValidObjectId(id)){
+		return res.status(404).send({
+			msg: "File not exist"
+		})
+	}
+	let fileById = await File.findById(id).lean()
+	if(fileById.shared.includes(userId)|| fileById.owner == userId) {
+		const startTime = Date.now();
+		let file = await getFileStatus(fileById, user.publicAddress, dmsContract)
+		const endTime = Date.now();
+		const timeTaken = endTime - startTime;
+		console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
+		
+		return res.status(200).send({
+			data: {
+				file: file,
+			},
+			msg: "Add comment successfully!"
+		})
+	}
+	return res.status(401).send({
+		msg: "Unauthorized"
+	})
+	
+}
+const getFileStatus = async (file, publicAddress, dmsContract) => {
+	let statusDetail = {
+		reviewerList: [],
+		signerList: []
+	}
+	let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: publicAddress });
+	let reviewerList = info[1].map(x=> x.toLowerCase())
+	let signerList = info[2].map(x=> x.toLowerCase())
+	let reviewArr = []
+	let signArr = []
+	for(let reviewer of reviewerList) {
+		let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, reviewer).call({ from: publicAddress });
+		let reviewTime = await dmsContract.methods.checkUserSignedTime(file.tokenId, reviewer).call({ from: publicAddress })
+		let user = await User.findOne({'publicAddress': reviewer.toLowerCase()})
+		if(user) {
+			reviewArr.push(reviewerStatus)
+			statusDetail.reviewerList.push({
+				name: user.name,
+				address: reviewer, 
+				status: reviewerStatus=='0' ? 'not-yet-reviewed' : reviewerStatus=='1' ? 'reviewed' : reviewerStatus=='3' ? 'rejected' : 'error',
+				time: reviewTime
+			})
 		}
-		let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: publicAddress });
-		let reviewerList = info[1].map(x=> x.toLowerCase())
-		let signerList = info[2].map(x=> x.toLowerCase())
-		let reviewArr = []
-		let signArr = []
-		for(let reviewer of reviewerList) {
-			let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, reviewer).call({ from: publicAddress });
-			let reviewTime = await dmsContract.methods.checkUserSignedTime(file.tokenId, reviewer).call({ from: publicAddress })
-			let user = await User.findOne({'publicAddress': reviewer.toLowerCase()})
-			if(user) {
-				reviewArr.push(reviewerStatus)
-				statusDetail.reviewerList.push({
-					name: user.name,
-					address: reviewer, 
-					status: reviewerStatus=='0' ? 'not-yet-reviewed' : reviewerStatus=='1' ? 'reviewed' : reviewerStatus=='3' ? 'rejected' : 'error',
-					time: reviewTime
-				})
-			}
+	}
+	for(let signer of signerList) {
+		let signerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, signer).call({ from: publicAddress });
+		let signTime = await dmsContract.methods.checkUserSignedTime(file.tokenId, signer).call({ from: publicAddress })
+		let user = await User.findOne({'publicAddress': signer.toLowerCase()})
+		if(user) {
+			signArr.push(signerStatus)
+			statusDetail.signerList.push({
+				name: user.name,
+				address: signer, 
+				status: signerStatus=='0' ? 'not-yet-signed' : signerStatus=='2' ? 'signed' : signerStatus=='3' ? 'rejected' : 'error',
+				time: signTime
+			})
 		}
-		for(let signer of signerList) {
-			let signerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, signer).call({ from: publicAddress });
-			let signTime = await dmsContract.methods.checkUserSignedTime(file.tokenId, signer).call({ from: publicAddress })
-			let user = await User.findOne({'publicAddress': signer.toLowerCase()})
-			if(user) {
-				signArr.push(signerStatus)
-				statusDetail.signerList.push({
-					name: user.name,
-					address: signer, 
-					status: signerStatus=='0' ? 'not-yet-signed' : signerStatus=='2' ? 'signed' : signerStatus=='3' ? 'rejected' : 'error',
-					time: signTime
-				})
-			}
+	}
+	file.statusDetail = statusDetail
+	//check if document has been rejected review
+	if(reviewArr.includes("3")) {
+		return {
+			...file,
+			status: "rejected",
+			canComment: true,
+			canReview: false,
+			canSign: false
 		}
-		file.statusDetail = statusDetail
-		// console.log("file.tokenId", file.tokenId, publicAddress);
-		// console.log("reviewerList", reviewerList);
-		// console.log("signerList", signerList);
-		// console.log("reviewArr", reviewArr);
-		// console.log("signArr", signArr);
-		//check if document has been rejected review
-		if(reviewArr.includes("3")) {
-			return {
-				...file,
-				status: "rejected",
-				canComment: true,
-				canReview: false,
-				canSign: false
-			}
-		}else {
-			// case check if anyone has ever review this file (all zeros means file has not been reviewed)
-			if(reviewArr.every(item => item === "0")){
-				// if user in reviewerList
-				if(reviewerList.includes(publicAddress.toLowerCase())){
-					return {
-						...file,
-						status: "waiting-to-review",
-						canComment: true,
-						canReview: true,
-						canSign: false
-					}
-				}
+	}else {
+		// case check if anyone has ever review this file (all zeros means file has not been reviewed)
+		if(reviewArr.every(item => item === "0")){
+			// if user in reviewerList
+			if(reviewerList.includes(publicAddress.toLowerCase())){
 				return {
 					...file,
 					status: "waiting-to-review",
 					canComment: true,
+					canReview: true,
+					canSign: false
+				}
+			}
+			return {
+				...file,
+				status: "waiting-to-review",
+				canComment: true,
+				canReview: false,
+				canSign: false
+			}
+		// case check if all user has reviewed this file (all 1s means file has been reviewed by all reviewers)
+		}else if (reviewArr.every(item => item === "1")){
+			// check if document has been rejected sign
+			if(signArr.includes("3")) {
+				return {
+					...file,
+					status: "rejected",
+					canComment: true,
 					canReview: false,
 					canSign: false
 				}
-			// case check if all user has reviewed this file (all 1s means file has been reviewed by all reviewers)
-			}else if (reviewArr.every(item => item === "1")){
-				// check if document has been rejected sign
-				if(signArr.includes("3")) {
+			}else {
+				// case check if one or more user has signed this file (all 2s means file has been signed by all signers)
+				if(signArr.every(item => item === "2")){
 					return {
 						...file,
-						status: "rejected",
-						canComment: true,
+						status: "signed",
+						canComment: false,
 						canReview: false,
 						canSign: false
 					}
 				}else {
-					// case check if one or more user has signed this file (all 2s means file has been signed by all signers)
-					if(signArr.every(item => item === "2")){
-						return {
-							...file,
-							status: "signed",
-							canComment: false,
-							canReview: false,
-							canSign: false
-						}
-					}else {
-						// if user in signerList
-						if(signerList.includes(publicAddress.toLowerCase())){
-							let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, publicAddress).call({ from: publicAddress });
-							if(reviewerStatus == "2") {
-								return {
-									...file,
-									status: "waiting-to-sign",
-									canComment: true,
-									canReview: false,
-									canSign: false
-								}
-							}
-							return {
-								...file,
-								status: "waiting-to-sign",
-								canComment: true,
-								canReview: false,
-								canSign: true
-							}
-						}else {
+					// if user in signerList
+					if(signerList.includes(publicAddress.toLowerCase())){
+						let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, publicAddress).call({ from: publicAddress });
+						if(reviewerStatus == "2") {
 							return {
 								...file,
 								status: "waiting-to-sign",
@@ -946,27 +919,35 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 								canSign: false
 							}
 						}
-					}
-				}
-			}
-			// 1 0 lẫn lộn ở trong reviewArr
-			else {
-				if(reviewerList.includes(publicAddress.toLowerCase())){
-					let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, publicAddress).call({ from: publicAddress });
-					if(reviewerStatus == "1") {
 						return {
 							...file,
-							status: "waiting-to-review",
+							status: "waiting-to-sign",
+							canComment: true,
+							canReview: false,
+							canSign: true
+						}
+					}else {
+						return {
+							...file,
+							status: "waiting-to-sign",
 							canComment: true,
 							canReview: false,
 							canSign: false
 						}
 					}
+				}
+			}
+		}
+		// 1 0 lẫn lộn ở trong reviewArr
+		else {
+			if(reviewerList.includes(publicAddress.toLowerCase())){
+				let reviewerStatus = await dmsContract.methods.checkUserSignedStatus(file.tokenId, publicAddress).call({ from: publicAddress });
+				if(reviewerStatus == "1") {
 					return {
 						...file,
 						status: "waiting-to-review",
 						canComment: true,
-						canReview: true,
+						canReview: false,
 						canSign: false
 					}
 				}
@@ -974,12 +955,19 @@ const getFileStatus = async (files, publicAddress, dmsContract) => {
 					...file,
 					status: "waiting-to-review",
 					canComment: true,
-					canReview: false,
+					canReview: true,
 					canSign: false
 				}
 			}
+			return {
+				...file,
+				status: "waiting-to-review",
+				canComment: true,
+				canReview: false,
+				canSign: false
+			}
 		}
-	}))
+	}
 }
 
 // get attach files from comment in file

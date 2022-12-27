@@ -14,10 +14,12 @@
 				<br />
 			</router-link>
 		</div>
+		<Transition name="modal">
+			<div v-if="showModal">
+				<router-view></router-view>
+			</div>
+		</Transition>
 		
-		<div v-if="showModal">
-			<router-view></router-view>
-		</div>
 	<!-- <modal-file/> -->
 	</div>
 </template>
@@ -58,3 +60,27 @@ export default {
 }
 
 </script>
+<style scoped>
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+ .modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+</style>

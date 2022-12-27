@@ -6,6 +6,7 @@ import MyFolder from '../views/MyFolder.vue'
 import ShareWithMe from '../views/SharedWithMe.vue'
 import Directory from '../views/Directory.vue'
 import AdminPage from '../views/AdminPage.vue'
+import ModalFileDetails from '../views/ModalFileDetails.vue'
 import ModalFile from '../views/ModalFile.vue'
 import NotFound from '../components/NotFound.vue'
 import store from '../store'
@@ -39,8 +40,6 @@ const routes = [
 	meta: { requiresAuth: false, requiresAdmin: false },
 	children: [
 		{
-		  // UserProfile will be rendered inside User's <router-view>
-		  // when /user/:id/profile is matched
 		  path: 'file/:id',
 		  name: 'ModalFile',
 		  component: ModalFile,
@@ -53,24 +52,20 @@ const routes = [
     path: '/',
     name: 'Home',
 	component: Home,
-	meta: { requiresAuth: true, requiresAdmin: false }
+	meta: { requiresAuth: true, requiresAdmin: false },
+  },
+  {
+	path: '/file/:fileId',
+	name: 'ModalFileDetails',
+	component: ModalFileDetails,
+	props: true,
+	meta: { requiresAuth: true, requiresAdmin: false, showModal: true }
   },
   {
     path: '/my-folder',
     name: 'My Folder',
     component: MyFolder,
 	meta: { requiresAuth: true, requiresAdmin: false },
-	children: [
-		{
-		  // UserProfile will be rendered inside User's <router-view>
-		  // when /user/:id/profile is matched
-		  path: 'file/:id',
-		  name: 'ModalFile',
-		  component: ModalFile,
-		  props: true,
-		  meta: { requiresAuth: true, requiresAdmin: false, showModal: true }
-		},
-	],
   },
   {
     path: '/shared-with-me',
@@ -147,38 +142,48 @@ const handleRequestKey = async () => {
 
 }
 router.beforeEach(async (to, from, next) => {
+	console.log("to", to);
 	if (to.matched.some(record => record.meta.requiresAuth)){
 		const HREF = window.location.href.trim();
 		const urlParams = new UrlParams(HREF);
 		console.log("urlParams", HREF.split('?')[0]);
 		if (!window.sessionStorage.getItem("authToken")) {
+			console.log("1");
 			await oAuth2Flow(urlParams, HREF.split('?')[0]);
 		} else {
+			console.log("2");
 			await store.dispatch("auth/reAuth")
 		}
 		if(store.state.auth.isAuthenticated) {
+			
 			let access_token = jwt_decode(window.sessionStorage.getItem("authToken"))
 			if(!access_token?.resource_access?.dms?.roles) {
+				console.log("3");
 				alert('Your account need to be verified by admin')
 				return next(false)
 			}else {
 				if(access_token.resource_access.dms.roles.includes('admin')) {
+					console.log("4");
 					await store.dispatch("auth/setRole", "admin") 
 				}else {
+					console.log("5");
 					await store.dispatch("auth/setRole", "user")
 				}
 				// check if route require admin role
 				if(to.matched.some(record => record.meta.requiresAdmin)) {
 					if(store.state.auth.role === "admin") {
+						console.log("6");
 						// if(!localStorage.getItem('dms-storage')) {
 						// 	await handleRequestKey()
 						// }
 						return next()
 					}else {
+						console.log("7");
 						return next({name: 'NotFound'})
 					}
 				}
 				else {
+					console.log("8");
 					// if(!localStorage.getItem('dms-storage')) {
 					// 	await handleRequestKey()
 					// }
@@ -187,11 +192,13 @@ router.beforeEach(async (to, from, next) => {
 			}
 			
 		}else {
+			console.log("9");
 			return next(false)
 		}
 		
 	} 
   	else {
+		console.log("10");
 		return next()
 	}
 })

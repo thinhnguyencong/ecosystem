@@ -40,6 +40,7 @@ export const sendRequest = async ({url, method, params, data}) => {
     axiosApiInstance.interceptors.response.use((response) => {
         return response
     }, async function (error) {
+        console.log("error", error);
         // if request sent with expired access token, call refresh token function
         // reference: https://thedutchlab.com/blog/using-axios-interceptors-for-refreshing-your-api-token
         const originalRequest = error.config;

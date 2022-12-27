@@ -56,8 +56,8 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        <ModalFileDetails v-for="(file, index) in documentState.folder.files" :fileProps="file" :key="file._id" modal_id='main'/>
-        <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/>
+        <!-- <ModalFileDetails v-for="(file, index) in documentState.folder.files" :fileProps="file" :key="file._id" modal_id='main'/>
+        <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/> -->
 	</div>
 </template>
 <script setup>
@@ -110,7 +110,6 @@ export default {
         async callAPI() {
             await this.$store.dispatch("auth/sidebarActive", "my-folder")
             await this.$store.dispatch("document/getMyFolders") 
-            await this.$store.dispatch("document/getTreeFolder") 
         },
         switchLayout() {
             if(this.layout === "list"){

@@ -1,7 +1,7 @@
 <template>
     <div>
         <br>
-        <div v-if="folders.length > 0">
+        <div v-if="folders.length">
             <h4 class="font-weight-bold">Folders</h4>
             <hr>
             
@@ -17,23 +17,32 @@
             <br>
             <br>
         </div>
-        <div v-if="files.length > 0">
+        <div v-if="files.length">
             
             <h4 class="font-weight-bold">Files</h4>
             <hr>
             
             <div class="item-grid-card">
-                <FileVue
+                <router-link
+                    tag="tr"
+                    class="item" 
                     v-for="(file, index) in files"
-                    :key="index"
-                    :name="JSON.parse(file.tokenURI).name"
-                    :fileType="JSON.parse(file.tokenURI).fileType"
-                    :id="file._id"
-                    :file="file"
-                />
+                    :key="file._id"
+                    :to="`/file/${file._id}`"
+                >
+                    <FileVue
+                        :name="JSON.parse(file.tokenURI).name"
+                        :fileType="JSON.parse(file.tokenURI).fileType"
+                        :id="file._id"
+                        :file="file"
+                    />
+                </router-link>
+                <div v-if="showModal">
+                    <router-view></router-view>
+                </div>
             </div>
         </div>
-        <div v-if="files.length == 0 && folders.length == 0">
+        <div v-if="files?.length == 0 && folders?.length == 0">
             <h5>This folder is empty</h5>
         </div>
         
@@ -50,22 +59,38 @@ import $ from 'jquery'
 
 export default {
     props: {
-        folders: Array,
-        files: Array
+        folders: {
+            type: Array,
+            default() {return []}
+        },
+        files: {
+            type: Array,
+            default() {return []}
+        }
     },
     data() {
         return {
+            showModal: false
         }
     },
     mounted() {
-        console.log("folders", this.folders);
-        console.log("files", this.files);
+        // console.log("folders", this.folders);
+        // console.log("files", this.files);
     },
     methods: {
         // openModal(id) {
         //     $("#"+id).modal('toggle');
         // },
     },
+    watch: {
+		'$route': {
+			immediate: true,
+			handler: function(newVal, oldVal) {
+                console.log('$route', newVal, oldVal);
+				this.showModal = newVal.meta && newVal.meta.showModal;
+			}
+		}
+	},
 }
 </script>
 <style scoped>
