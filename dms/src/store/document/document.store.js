@@ -12,7 +12,9 @@ const initialState = {
   //   keyAttributes: [],
   // },
   files: [],
-  file: {},
+  file: {
+    isLoading: false
+  },
   treeFolder: []
 };
 
@@ -286,17 +288,17 @@ export const document = {
 
     // ------------------addComment-----------------------------
     addComment(state){
-      // state.isLoading = true
+      state.file.isLoading = true
     },
     addCommentSuccess(state, result){
-        state.isLoading = false;
+        state.file.isLoading = false
         state.file.comments = result.data.data.comments
         // if(state.files?.length) state.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
         // if(state.folder?.files?.length) state.folder.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
         toast.success(result.data.msg)
     },
     addCommentFailure(state, error){
-        state.isLoading = false
+        state.file.isLoading = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
@@ -352,14 +354,17 @@ export const document = {
     // ------------------getFileById-----------------------------
     getFileById(state){
       state.isLoading = true
+      state.file.isLoading = true
       state.file = {}
     },
     getFileByIdSuccess(state, result){
         state.isLoading = false;
+        state.file.isLoading = false
         state.file = result.data.data.file
     },
     getFileByIdFailure(state, error){
         state.isLoading = false
+        state.file.isLoading = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);
         // if (error.response.status === 404) {

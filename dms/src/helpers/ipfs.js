@@ -1,4 +1,3 @@
-import { create } from 'ipfs-http-client'
 
 export const IpfsClient = () => {
     try {

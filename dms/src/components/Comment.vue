@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="comment-widgets">
         <div v-for="(comment, index) in comments" :key="index" class="d-flex flex-row comment-row">
             <div class="p-2"><span class="round"><img src="https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png" alt="user" width="40"></span></div>
             <div class="p-2 comment-text w-100">
@@ -7,11 +7,9 @@
                 <p class="m-b-5 m-t-10">{{comment.content}}</p>
                 <a class="attach-text" v-if="comment.attachments.length" role="button" @click="handleShow(comment)">{{ comment.attachments.length }} Attachment(s)</a>
                 <div v-show="comment.isActive">
-                    
-                    <div class="">
+                    <div class="list-group">
                         <router-link
                             tag="div"
-                            class="list-group" 
                             v-for="(attachment, index) in comment.attachments"
                             :key="index"
                             :to="`/file/${attachment.id}`"

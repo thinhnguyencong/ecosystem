@@ -27,7 +27,7 @@
                 </tr>
                 <router-link
                     tag="tr"
-                    class="item" 
+                    class="item cursor-pointer" 
                     v-for="(file, index) in files"
                     :key="file._id"
                     :to="`/file/${file._id}`"
@@ -41,8 +41,8 @@
                     <td>{{file.owner}}</td>
                     <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                     <td>
-                        <span class="material-icons" @click="openModal(file._id)">visibility</span>&nbsp;&nbsp;
-                        <span class="material-icons" @click="download(file)">download</span>&nbsp;&nbsp;
+                        <span class="material-icons">visibility</span>&nbsp;&nbsp;
+                        <span class="material-icons" @click.stop="" @click="download(file)">download</span>&nbsp;&nbsp;
                         <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
                         <span class="material-icons text-success">edit_calendar</span> -->
                     </td>
@@ -65,7 +65,7 @@
 import $ from 'jquery' 
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
-
+import {getClassFileType}  from "../helpers/index"
 export default {
     props: {
         folders: {
@@ -90,9 +90,7 @@ export default {
         handleAccessFolder(id) {
             this.$router.push("/folder/" + id);
         },
-        openModal(id) {
-            $("#main-"+id).modal('toggle');
-        },
+        getClassFileType: getClassFileType,
         niceBytes(bytes) {
             const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
             let l = 0, n = parseInt(bytes, 10) || 0;
@@ -103,22 +101,7 @@ export default {
             
             return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
         },
-        getClassFileType(type) {
-            switch(type) {
-                case 'application/pdf': return "mdi mdi-file-pdf-box text-danger"
-                case 'application/vnd.ms-powerpoint': return "mdi mdi-microsoft-powerpoint text-danger"
-                case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': return "mdi mdi-microsoft-powerpoint text-danger"
-                case 'application/msword': return "mdi mdi-microsoft-word text-primary"
-                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return "mdi mdi-microsoft-word text-primary"
-                case 'application/vnd.ms-excel': return "mdi mdi-microsoft-excel text-success"
-                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': return "mdi mdi-microsoft-excel text-success"
-                case 'text/javascript': return "mdi mdi-language-javascript text-warning"
-                case 'text/x-java-source': return "mdi mdi-language-java text-danger"
-                case 'text/html': return "mdi mdi-language-html5 text-warning"
-                case 'text/css': return "mdi mdi-language-css3 text-primary"
-                default: return "mdi mdi-file text-secondary"
-            }
-        },
+        
         getClassStatus(type) {
             switch(type) {
                 case 'rejected': return "text-danger"
@@ -167,6 +150,9 @@ export default {
 }
 .text-custom-color-blue {
     color: #00A8FF
+}
+.cursor-pointer {
+    cursor: pointer;
 }
 .material-icons{
     cursor: pointer;

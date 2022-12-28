@@ -13,10 +13,31 @@
     src="https://code.jquery.com/jquery-3.3.1.js"
     integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
     crossorigin="anonymous"></script>
-    <script src="/ipfs-http-client.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.3/plugin/relativeTime.min.js"></script>
+
+    <!--IPFS-->
+    <script src="/js/ipfs-http-client.js"></script>
+
+    <!--Dayjs-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.3/plugin/relativeTime.min.js"></script>
+
+    <!--AES-->
     <script type="text/javascript" src="https://cdn.rawgit.com/ricmoo/aes-js/e27b99df/index.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/promise-polyfill/dist/polyfill.min.js"></script>
+
+    <!--jszip for pptx preview-->
+    <script type="text/javascript" src="/js/jszip.min.js"></script>
+
+    <!--pptx preview-->
+    <script type="text/javascript" src="/js/filereader.js"></script>
+    <script type="text/javascript" src="/js/d3.min.js"></script>
+    <script type="text/javascript" src="/js/nv.d3.min.js"></script>
+    <script type="text/javascript" src="/js/pptxjs.js"></script><!--this file has been modified from the original https://pptx.js.org/pages/docs.html-->
+    
+    <link rel="stylesheet" href="/css/pptxjs.css">
+    <link rel="stylesheet" href="/css/nv.d3.min.css">
+
+    <!--Buffer-->
     <script type="module">
       import { Buffer } from "buffer";
       window.Buffer = Buffer;

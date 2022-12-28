@@ -22,17 +22,28 @@
                                 </button>
                             </router-link>
                         </div>
-                        <div v-if="!documentState.isLoading" class="modal-body">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-7" style="min-height: 70vh;">
-                                        <div class="wrap w-100 h-100">
-                                            <!-- <embed :src="'https://drive.google.com/viewer?url='+ link + '.pdf&embedded=true'" class="w-100 vh-190" height="600px" frameborder="0"/> -->
-                                            <!-- <VueDocPreview :url="link" type="office" /> -->
-                                            <iframe width="100%" height="100%" class="frame" :src="link" frameborder="0"></iframe>
+                        <div v-if="!documentState.isLoading" class="modal-body" style="height: 80vh;">
+                            <div class="container h-100">
+                                <div class="row h-100">
+                                    <div class="col-7 h-100">
+                                        <div id="wrap" :class="file.tokenURI !== undefined && 
+                                        JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                                        ? 'wrap w-100 h-100 overflow-auto': 'wrap w-100 h-100'">
+                                            <div v-if="!isLoadingFile"></div>
+                                            <div v-else>
+                                                <div class="spinner-border text-dark" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                                <span class="h5">Decrypting file...</span>
+                                            </div>  
+                                            <iframe style="overflow: hidden;" width="100%" height="100%" class="frame" :src="link" frameborder="0"></iframe>
                                         </div>
+                                        <!-- <div v-if="!isLoadingFile" class="wrap w-100 h-100">
+                                            
+                                        </div> -->
+                                        
                                     </div>
-                                    <div class="col-5">
+                                    <div class="col-5" style="min-height: 80%;">
                                             <v-tabs fixed-tabs grow v-model="active" color="#eee" slider-color="cyan" :ref="'tabs-'+file._id">
                                                 <v-tab :key="0" >
                                                     Document Details
@@ -82,59 +93,59 @@
                                                 </v-tab-item>
                                                 <v-tab-item :key="1">
                                                     <br>
-                                                    
-                                                    <div class="card border border-muted">
-                                                        <div v-if="file.canComment==true" class="input-group">
+                                                    <div v-if="file.canComment" class="card border border-muted">
+                                                        <div class="input-group">
                                                             <input v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Write your comment..." class="form-control shadow-none" autofocus="true">
                                                         </div>
                                                         <hr class="divider" />
-                                                        
-                                                            <div class="row">
-                                                                <div class="col-1">
-                                                                    <div class="align-self-center ">
-                                                                        <v-badge
-                                                                            left
-                                                                            overlap
-                                                                            color="orange"
+                                                        <div class="row">
+                                                            <div class="col-1">
+                                                                <div class="align-self-center ">
+                                                                    <v-badge
+                                                                        left
+                                                                        overlap
+                                                                        color="orange"
+                                                                        >
+                                                                        <template v-slot:badge v-if="attachments.length">
+                                                                            <span>{{ attachments.length }}</span>
+                                                                        </template>
+                                                                        <v-btn flat icon color="indigo">
+                                                                            <v-icon
+                                                                                data-toggle="tooltip" 
+                                                                                title="Add attachment"
+                                                                                @click="showAttach = !showAttach"
+                                                                                color="black"
                                                                             >
-                                                                            <template v-slot:badge v-if="attachments.length">
-                                                                                <span>{{ attachments.length }}</span>
-                                                                            </template>
-                                                                            <v-btn flat icon color="indigo">
-                                                                                <v-icon
-                                                                                    data-toggle="tooltip" 
-                                                                                    title="Add attachment"
-                                                                                    @click="showAttach = !showAttach"
-                                                                                    color="black"
-                                                                                >
-                                                                                attach_file
-                                                                                </v-icon>
-                                                                            </v-btn>
-                                                                        </v-badge>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-7">
-                                                                    <div class="w-100 pt-2" v-if="showAttach">
-                                                                        <Transition name="bounce">
-                                                                            <treeselect 
-                                                                                v-model="attachments" 
-                                                                                :multiple="true" 
-                                                                                :options="documentState.treeFolder" 
-                                                                                :value-consists-of="valueConsistsOf"
-                                                                                placeholder="Add attachments.." 
-                                                                                :normalizer="normalizer"
-                                                                                />
-                                                                        </Transition>   
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-4">
-                                                                    <div class="pt-2 align-self-center ml-auto ">
-                                                                        <button style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment">Add Comment</button>
-                                                                    </div>
+                                                                            attach_file
+                                                                            </v-icon>
+                                                                        </v-btn>
+                                                                    </v-badge>
                                                                 </div>
                                                             </div>
-                                                        
-                                                        
+                                                            <div class="col-7">
+                                                                <div class="w-100 pt-2" v-if="showAttach">
+                                                                    <Transition name="bounce">
+                                                                        <treeselect 
+                                                                            v-model="attachments" 
+                                                                            :multiple="true" 
+                                                                            :options="documentState.treeFolder" 
+                                                                            :value-consists-of="valueConsistsOf"
+                                                                            placeholder="Add attachments.." 
+                                                                            :normalizer="normalizer"
+                                                                            />
+                                                                    </Transition>   
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="pt-2 align-self-center ml-auto ">
+                                                                    <button v-if="!documentState.file.isLoading" style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment">Add Comment</button>
+                                                                    <button v-else class="btn btn-primary" type="button" disabled style="float: right;">
+                                                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                                        Adding...
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <br>
                                                     <h5 class="font-weight-bold">All comments</h5>
@@ -207,11 +218,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="spinner-border text-dark" role="status">
-                            <div style="width:100%;height:700px;">
+                        <div v-else class="modal-body" style="height: 80vh;">
+                            <div class="spinner-border text-dark" role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -226,6 +238,7 @@
 // });
 </script>
 <script>
+import xlsxPreview from 'xlsx-preview';
 import Comment from "../components/Comment.vue"
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
@@ -233,7 +246,7 @@ import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
+import {renderAsync} from "docx-preview/dist/docx-preview"
 export default {
     props: ["fileId"],
     components: { Treeselect, Comment },
@@ -255,6 +268,7 @@ export default {
             },
             attachments: [],
             valueConsistsOf: 'LEAF_PRIORITY',
+            isLoadingFile: false
         }
     },
     created() {
@@ -277,16 +291,48 @@ export default {
             }
             if(this.file) {
                 this.error=null
+                this.isLoadingFile = true
                 IpfsClient().get(this.file.hash).then(async (res) =>{
                     if(res) {
                         let resultDecrypt = decrypt(res[0].content, this.file.key)
                         let tokenUri = JSON.parse(this.file.tokenURI)
-                        let b64 = this.b64EncodeUnicode(resultDecrypt)
-                        let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                        this.link = abc
+                        if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                            renderAsync(resultDecrypt, document.getElementById("wrap"))
+        			        .then(x => {
+                                this.isLoadingFile = false
+                                console.log("docx: finished")
+                            });
+                        }
+                        else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                            const buffer = resultDecrypt.buffer
+                            const result = await xlsxPreview.xlsx2Html(buffer, {
+                                output: 'arrayBuffer',
+                                minimumRows: 50,
+                                minimumCols: 30,
+                            });
+                            console.log(result);
+                            const url = URL.createObjectURL(new Blob([result], {
+                                type: 'text/html'
+                            }));
+                            document.querySelector('#wrap').innerHTML =
+                                `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
+                            this.isLoadingFile = false
+                        }
+                        else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+                            let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
+                            $("#wrap").pptxToHtml({
+                                fileData: fileData,
+                            });
+                        }else {
+                            let b64 = this.b64EncodeUnicode(resultDecrypt)
+                            let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
+                            this.link = abc
+                            this.isLoadingFile = false
+                        }
                     }
                     else {
                         this.error="No file to preview"
+                        this.isLoadingFile = false
                     }
                     // this.saveByteArray("Sample Report", res[0].content.buffer); // download button
                 })
@@ -301,11 +347,12 @@ export default {
         
         async bufferArrayToBlob(base64, type ) {
             const typeNew = 'data:' + type + ';base64'
+            console.log(base64);
             const base64Response = await fetch(`${typeNew},${base64}`)
             const blob1 = await base64Response.blob()
             const blob = new Blob([blob1], { type: type })
             const link = window.URL.createObjectURL(blob)
-            // console.log(link);
+            console.log(link);
             return link
         },
         b64EncodeUnicode(bytes) {
@@ -496,12 +543,7 @@ hr.divider {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
-.wrap {
-    /* width: 400px;
-    height: 600px;
-    padding: 0;
-    overflow: hidden; */
-}
+
 .frame {
     resize: both; 
 }

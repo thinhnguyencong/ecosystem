@@ -157,7 +157,7 @@ export default {
         onPickFile () {
             this.$refs.fileInput.click()
         },
-        handleUploadFile(event) {
+        async handleUploadFile(event) {
             const files = event.target.files
             if (files[0]) {
                 this.file = files[0]

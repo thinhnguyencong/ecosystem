@@ -9,7 +9,6 @@ import * as bootstrap from 'bootstrap'
 import '@mdi/font/css/materialdesignicons.css';
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
-import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import VueQuillEditor from 'vue-quill-editor'
 // require styles
@@ -37,7 +36,6 @@ Vue.mixin({
     }
   },
 });
-// Vue.use(Toast, options);
 new Vue({
     router,
     store,

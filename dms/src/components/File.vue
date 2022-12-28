@@ -2,24 +2,14 @@
     <div>
         <div class="tile file">
             <span class="file-icon">
-                <i v-if="fileType=='application/pdf'" class="mdi mdi-file-pdf-box text-danger"></i>
-                <i v-else-if="fileType=='application/vnd.ms-powerpoint'" class="mdi mdi-microsoft-powerpoint text-danger"></i>
-                <i v-else-if="fileType=='application/vnd.openxmlformats-officedocument.presentationml.presentation'" class="mdi mdi-microsoft-powerpoint text-danger"></i>
-                <i v-else-if="fileType=='application/msword'" class="mdi mdi-microsoft-word text-primary"></i>
-                <i v-else-if="fileType=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'" class="mdi mdi-microsoft-word text-primary"></i>
-                <i v-else-if="fileType=='application/vnd.ms-excel'" class="mdi mdi-microsoft-excel text-success"></i>
-                <i v-else-if="fileType=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" class="mdi mdi-microsoft-excel text-success"></i>
-                <i v-else-if="fileType=='text/javascript'" class="mdi mdi-language-javascript text-warning"></i>
-                <i v-else-if="fileType=='text/x-java-source'" class="mdi mdi-language-java text-danger"></i>
-                <i v-else-if="fileType=='text/html'" class="mdi mdi-language-html5 text-warning"></i>
-                <i v-else-if="fileType=='text/css'" class="mdi mdi-language-css3 text-primary"></i>
-                <i v-else class="mdi mdi-file text-secondary"></i>
+                <i :class="getClassFileType(fileType)"></i>
             </span>
         <h5 class="truncate">{{name}}</h5>
         </div>
     </div>
 </template>
 <script>
+import {getClassFileType} from "../helpers/index"
 import $ from 'jquery' 
 export default {
     props: {
@@ -29,9 +19,7 @@ export default {
         file: Object
     },
    methods: {
-    // openModal() {
-    //     $("#main-"+this.id).modal('toggle');
-    // }
+        getClassFileType: getClassFileType,
    },
     mounted() {
         
