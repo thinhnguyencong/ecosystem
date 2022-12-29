@@ -13,7 +13,10 @@ const initialState = {
   // },
   files: [],
   file: {
-    isLoading: false
+    isLoading: false,
+    isLoadingComment: false,
+    isLoadingSign: false,
+    isLoadingReject: false
   },
   treeFolder: []
 };
@@ -288,53 +291,57 @@ export const document = {
 
     // ------------------addComment-----------------------------
     addComment(state){
-      state.file.isLoading = true
+      state.file.isLoadingComment = true
     },
     addCommentSuccess(state, result){
-        state.file.isLoading = false
+        state.file.isLoadingComment = false
         state.file.comments = result.data.data.comments
-        // if(state.files?.length) state.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
-        // if(state.folder?.files?.length) state.folder.files.find(file=> file._id == result.data.data.fileId).comments = result.data.data.comments
         toast.success(result.data.msg)
     },
     addCommentFailure(state, error){
-        state.file.isLoading = false
+        state.file.isLoadingComment = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
 
     // ------------------signDoc-----------------------------
     signDoc(state){
-      state.isLoading = true
+      state.file.isLoadingSign = true
     },
     signDocSuccess(state, result){
-        state.isLoading = false;
+        state.file = {
+          ...state.file,
+          canReject: false,
+          canReview: false,
+          canSign: false,
+          isLoadingSign: false
+        }
         toast.success(result.data.msg)
-        setTimeout(() => {
-          window.location.reload()
-        }, 3000);
     },
     signDocFailure(state, error){
-        state.isLoading = false
+        state.isLoadingSign = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
 
     // ------------------rejectDoc-----------------------------
     rejectDoc(state){
-      state.isLoading = true
+      state.file.isLoadingReject = true
     },
     rejectDocSuccess(state, result){
-        state.isLoading = false;
-        toast.success(result.data.msg)
-        setTimeout(() => {
-          window.location.reload()
-        }, 3000);
+      state.file = {
+        ...state.file,
+        canReject: false,
+        canReview: false,
+        canSign: false,
+        isLoadingReject: false
+      }
+      toast.success(result.data.msg)
     },
     rejectDocFailure(state, error){
-        state.isLoading = false
-        console.log(error);
-        toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+      state.file.isLoadingReject = false
+      console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
 
     // ------------------getTreeFolder-----------------------------
@@ -353,17 +360,21 @@ export const document = {
 
     // ------------------getFileById-----------------------------
     getFileById(state){
-      state.isLoading = true
-      state.file.isLoading = true
-      state.file = {}
+      state.file = {
+        isLoading: true,
+        isLoadingComment: false,
+        isLoadingSign: false,
+        isLoadingReject: false
+      }
     },
     getFileByIdSuccess(state, result){
-        state.isLoading = false;
-        state.file.isLoading = false
-        state.file = result.data.data.file
+        state.file = {
+          ...state.file,
+          ...result.data.data.file,
+          isLoading: false,
+        }
     },
     getFileByIdFailure(state, error){
-        state.isLoading = false
         state.file.isLoading = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);

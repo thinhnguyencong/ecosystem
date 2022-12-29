@@ -54,7 +54,7 @@ export const sendRequest = async ({url, method, params, data}) => {
     });
 
     if(method === "GET"){
-        const response = await axiosApiInstance.get(url, {params: params})
+        const response = await axiosApiInstance.get(url, {params: params}, {timeout: 2})
 		return response;
     } else if(method === "POST"){
         const response = await axiosApiInstance.post(url, {data: data})

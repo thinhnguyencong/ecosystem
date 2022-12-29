@@ -18,7 +18,6 @@ export const auth = {
       return authService.doAuthRedirect(data)
       .then(
         res => {
-          console.log("res", res);
           commit('doAuthRedirectSuccess', res);
         },
         error => {
@@ -31,7 +30,6 @@ export const auth = {
       return authService.reAuth()
       .then(
         res => {
-          console.log("res", res);
           commit('reAuthSuccess', res);
         },
         error => {
@@ -44,7 +42,6 @@ export const auth = {
       return authService.getAuthToken(data)
       .then(
         res => {
-          console.log("res", res);
           commit('getAuthTokenSuccess', res);
         },
         error => {
@@ -57,7 +54,6 @@ export const auth = {
       return authService.logout(data)
       .then(
         res => {
-          console.log("res", res);
           commit('logoutSuccess', res);
         },
         error => {
@@ -70,7 +66,6 @@ export const auth = {
       return authService.findUser()
       .then(
         res => {
-          console.log("res", res);
           commit('findUserSuccess', res);
         },
         error => {
@@ -83,7 +78,6 @@ export const auth = {
       return authService.getAllUsers()
       .then(
         res => {
-          console.log("res", res);
           commit('getAllUsersSuccess', res);
         },
         error => {
@@ -181,13 +175,11 @@ export const auth = {
 
     // ------------------sidebarActive-----------------------------
     sidebarActive(state, data) {
-      console.log(data);
       state.active = data
     },
 
     // ------------------setRole-----------------------------
     setRole(state, data) {
-      console.log(data);
       state.role = data
     },
 

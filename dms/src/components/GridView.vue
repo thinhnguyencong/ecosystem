@@ -28,7 +28,7 @@
                     class="item" 
                     v-for="(file, index) in files"
                     :key="file._id"
-                    :to="`/file/${file._id}`"
+                    :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
                 >
                     <FileVue
                         :name="JSON.parse(file.tokenURI).name"
@@ -37,9 +37,6 @@
                         :file="file"
                     />
                 </router-link>
-                <div v-if="showModal">
-                    <router-view></router-view>
-                </div>
             </div>
         </div>
         <div v-if="files?.length == 0 && folders?.length == 0">
@@ -54,8 +51,7 @@ import FileVue from '../components/File.vue'
 import FolderVue from '../components/Folder.vue';
 </script>
 
-<script>
-import $ from 'jquery' 
+<script> 
 
 export default {
     props: {
@@ -70,27 +66,14 @@ export default {
     },
     data() {
         return {
-            showModal: false
+
         }
     },
     mounted() {
-        // console.log("folders", this.folders);
-        // console.log("files", this.files);
+
     },
     methods: {
-        // openModal(id) {
-        //     $("#"+id).modal('toggle');
-        // },
     },
-    watch: {
-		'$route': {
-			immediate: true,
-			handler: function(newVal, oldVal) {
-                console.log('$route', newVal, oldVal);
-				this.showModal = newVal.meta && newVal.meta.showModal;
-			}
-		}
-	},
 }
 </script>
 <style scoped>

@@ -6,9 +6,11 @@
           <div class="col">
             <div class="card border border-primary">
               <div v-if="!userState.isLoading" class="card-body">
-                <p class="card-title">{{userState.publicAddress}} <span class="material-icons fs-1r">
-                content_copy
-                </span></p>
+                <p class="card-title">{{userState.publicAddress}} 
+                  <span @click="copyURL(userState.publicAddress)" class="material-icons fs-1r" role="button">
+                    content_copy
+                  </span>
+                </p>
                 
                 <h5 class="card-text font-weight-bold">Balance: {{formatAmount(userState.balance)}} TBNB</h5>
                 <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalSendToken">Send <i class="mdi mdi-send text-light"></i></a>
@@ -244,6 +246,14 @@ export default {
     },
     formatAmount(amount) {
       return Math.round(amount*10000)/10000
+    },
+    async copyURL(mytext) {
+      try {
+        await navigator.clipboard.writeText(mytext);
+        alert('Copied');
+      } catch($e) {
+        alert('Cannot copy');
+      }
     }
   },
   mounted() {

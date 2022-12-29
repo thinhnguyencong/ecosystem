@@ -2,7 +2,7 @@
     <Transition name="modal">
         <div :id="id" class="modal-mask">
             <div class="modal-wrapper" @click="$router.go(-1)">
-                    <div class="modal-container" role="document">
+                    <div class="modal-container" role="document" @click.stop="">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <!-- <a href="#" @click="$router.go(-1)">back</a> -->

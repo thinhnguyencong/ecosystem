@@ -30,7 +30,7 @@
                     class="item cursor-pointer" 
                     v-for="(file, index) in files"
                     :key="file._id"
-                    :to="`/file/${file._id}`"
+                    :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
                 >
                     <th scope="row">
                         <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
@@ -47,9 +47,6 @@
                         <span class="material-icons text-success">edit_calendar</span> -->
                     </td>
                 </router-link>
-                <div v-if="showModal">
-                    <router-view></router-view>
-                </div>
                 <tr v-if="(files.length + folders.length == 0)">
                     <td class="text-center" colspan="6" scope="row"><h5>Empty</h5></td>
                 </tr>
@@ -62,7 +59,6 @@
     </div>
 </template>
 <script>
-import $ from 'jquery' 
 import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 import {getClassFileType}  from "../helpers/index"
@@ -79,12 +75,9 @@ export default {
     },
     data() {
         return {
-            showModal: false
         }
     },
     mounted() {
-        console.log("folders", this.folders);
-        console.log("files", this.files);
     },
     methods: {
         handleAccessFolder(id) {
@@ -134,14 +127,6 @@ export default {
             })
         },
     },
-    watch: {
-		'$route': {
-			immediate: true,
-			handler: function(newVal, oldVal) {
-				this.showModal = newVal.meta && newVal.meta.showModal;
-			}
-		}
-	},
 }
 </script>
 <style scoped>

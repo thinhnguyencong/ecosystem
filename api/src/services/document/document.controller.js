@@ -22,12 +22,6 @@ export const getRootFolders = async (req, res, next) => {
 }
 
 export const getFolderById = async (req, res, next) => {
-	const web3Connection = await getWeb3()
-	if(!web3Connection.status) {
-		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	}
-	const web3 = web3Connection.web3
-	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	let id = req.query.id
 	let ancestors= [];
 	let status;
@@ -789,32 +783,40 @@ export const getFileById = async (req, res, next) => {
 	const web3 = web3Connection.web3
 	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	let id = req.query.id
-	const userEmail = req.jwtDecoded.email
-	let user = await User.findOne({email: userEmail}) 
-	let userId = user._id.valueOf() 
-	if(!isValidObjectId(id)){
-		return res.status(404).send({
-			msg: "File not exist"
+	try {
+		const userEmail = req.jwtDecoded.email
+		let user = await User.findOne({email: userEmail}) 
+		let userId = user._id.valueOf() 
+		if(!isValidObjectId(id)){
+			return res.status(404).send({
+				msg: "File not exist"
+			})
+		}
+		let fileById = await File.findById(id).lean()
+		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
+			const startTime = Date.now();
+			let file = await getFileStatus(fileById, user.publicAddress, dmsContract)
+			const endTime = Date.now();
+			const timeTaken = endTime - startTime;
+			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
+			
+			return res.status(200).send({
+				data: {
+					file: file,
+				},
+				msg: "Add comment successfully!"
+			})
+		}
+		return res.status(401).send({
+			msg: "Unauthorized"
+		})
+	} catch (error) {
+		console.log(error);
+		return res.status(500).send({
+			msg: "Internal Server Error"
 		})
 	}
-	let fileById = await File.findById(id).lean()
-	if(fileById.shared.includes(userId)|| fileById.owner == userId) {
-		const startTime = Date.now();
-		let file = await getFileStatus(fileById, user.publicAddress, dmsContract)
-		const endTime = Date.now();
-		const timeTaken = endTime - startTime;
-		console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
-		
-		return res.status(200).send({
-			data: {
-				file: file,
-			},
-			msg: "Add comment successfully!"
-		})
-	}
-	return res.status(401).send({
-		msg: "Unauthorized"
-	})
+	
 	
 }
 const getFileStatus = async (file, publicAddress, dmsContract) => {
@@ -968,26 +970,4 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 			}
 		}
 	}
-}
-
-// get attach files from comment in file
-const getAttachFiles = async (files) => {
-	let attachments= []
-	for (let i = 0; i < files.length; i++) {
-		const comments = files[i].comments;
-		if(comments.length) {
-			for (let j = 0; j < comments.length; j++) {
-				const comment = comments[j];
-				attachments = [...new Set([...comment.attachments, ...attachments])]
-			}
-		}
-	}
-	let result = attachments.reduce((unique, o) => {
-		if(!unique.some(obj => obj.id === o.id)) {
-		  unique.push(o);
-		}
-		return unique;
-	},[]);
-
-	return result.map(x=> x.id)
 }

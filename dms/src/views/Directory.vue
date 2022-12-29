@@ -63,9 +63,9 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        <!-- <ModalFileDetails v-for="(file, index) in documentState.folder.files" :fileProps="file" :key="file._id" modal_id='main'/>
-        <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/> -->
-        
+        <div v-if="showModal">
+            <router-view></router-view>
+        </div>
 	</div>
 </template>
 <script setup>
@@ -91,7 +91,8 @@ export default {
     },
     data() {
         return {
-           layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
+            showModal: false,
+            layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
         }
     },
     computed: {
@@ -113,14 +114,22 @@ export default {
         }
     },
     watch: {
-    '$route.params.id': {
-      handler() {
-        console.log("abc");
-        this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
-      },
-      immediate: true
-    } 
-  }
+        '$route.params.id': {
+            handler() {
+                console.log("abc");
+                this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
+            },
+            immediate: true
+        },
+        '$route': {
+            immediate: true,
+            handler: function(newVal, oldVal) {
+                console.log('$route', newVal, oldVal);
+                this.showModal = newVal.meta && newVal.meta.showModal;
+            }
+        } 
+    },
+
 
 }
 </script>

@@ -142,7 +142,15 @@ export const transferToken = async (req, res, next) => {
 					Token.abi,
 					tokenContractAddress
 				);
-				let estimateGasUsed = await tokenContract.methods.transfer(addressTo, web3.utils.toWei(amount, "ether")).estimateGas({ from: publicAddress })
+				let estimateGasUsed
+				try {
+					estimateGasUsed = await tokenContract.methods.transfer(addressTo, web3.utils.toWei(amount, "ether")).estimateGas({ from: publicAddress })
+				} catch (error) {
+					console.log(error.message);
+					return res.status(500).send({
+						msg: error.message
+					})
+				}
 				let balance = await web3.eth.getBalance(publicAddress)
 				const gasPrice = await web3.eth.getGasPrice()
 				let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
@@ -151,15 +159,6 @@ export const transferToken = async (req, res, next) => {
 						msg: "Balance amount not enough!"
 					})
 				}
-				const tokenBalance = await tokenContract.methods.balanceOf(publicAddress).call();
-				console.log(typeof web3.utils.fromWei(tokenBalance.toString()),typeof amount);
-				if(parseFloat(web3.utils.fromWei(tokenBalance.toString())) < parseFloat(amount)){
-					return res.status(400).json({
-						msg: "Token amount not enough!"
-					})
-				}
-				// let latestBlock = await web3.eth.getBlock("latest");
-				// console.log("latestBlock",latestBlock)
 				const transaction = {
 					from: publicAddress,
 					to: tokenContractAddress, // faucet address to return eth

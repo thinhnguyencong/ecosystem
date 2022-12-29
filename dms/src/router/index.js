@@ -32,6 +32,13 @@ async function oAuth2Flow(urlParams, redirect_uri) {
 		await store.dispatch("auth/doAuthRedirect", {redirect_uri})
 	}
 }
+const fileRoute = {
+	path: 'file/:fileId',
+	name: 'ModalFileDetails',
+	component: ModalFileDetails,
+	props: true,
+	meta: { requiresAuth: true, requiresAdmin: false, showModal: true }
+}
 const routes = [
   {
     path: '/home',
@@ -53,19 +60,14 @@ const routes = [
     name: 'Home',
 	component: Home,
 	meta: { requiresAuth: true, requiresAdmin: false },
-  },
-  {
-	path: '/file/:fileId',
-	name: 'ModalFileDetails',
-	component: ModalFileDetails,
-	props: true,
-	meta: { requiresAuth: true, requiresAdmin: false, showModal: true }
+	children: [fileRoute]
   },
   {
     path: '/my-folder',
     name: 'My Folder',
     component: MyFolder,
 	meta: { requiresAuth: true, requiresAdmin: false },
+	children: [fileRoute]
   },
   {
     path: '/shared-with-me',
@@ -83,7 +85,8 @@ const routes = [
 	path: '/folder/:id', 
 	name: 'Directory',
   	component: Directory,
-	meta: { requiresAuth: true, requiresAdmin: false }
+	meta: { requiresAuth: true, requiresAdmin: false },
+	children: [fileRoute]
   },
   // will match everything and put it under `$route.params.pathMatch`
   { 
@@ -97,7 +100,7 @@ const routes = [
 ]
 const router = new VueRouter({
 	mode: 'history',
-  	routes
+  	routes,
 })
 const handleRequestKey = async () => {
 	try {
@@ -142,48 +145,46 @@ const handleRequestKey = async () => {
 
 }
 router.beforeEach(async (to, from, next) => {
-	console.log("to", to);
 	if (to.matched.some(record => record.meta.requiresAuth)){
 		const HREF = window.location.href.trim();
 		const urlParams = new UrlParams(HREF);
-		console.log("urlParams", HREF.split('?')[0]);
 		if (!window.sessionStorage.getItem("authToken")) {
-			console.log("1");
+			//console.log("1");
 			await oAuth2Flow(urlParams, HREF.split('?')[0]);
 		} else {
-			console.log("2");
+			//console.log("2");
 			await store.dispatch("auth/reAuth")
 		}
 		if(store.state.auth.isAuthenticated) {
 			
 			let access_token = jwt_decode(window.sessionStorage.getItem("authToken"))
 			if(!access_token?.resource_access?.dms?.roles) {
-				console.log("3");
+				//console.log("3");
 				alert('Your account need to be verified by admin')
 				return next(false)
 			}else {
 				if(access_token.resource_access.dms.roles.includes('admin')) {
-					console.log("4");
+					//console.log("4");
 					await store.dispatch("auth/setRole", "admin") 
 				}else {
-					console.log("5");
+					//console.log("5");
 					await store.dispatch("auth/setRole", "user")
 				}
 				// check if route require admin role
 				if(to.matched.some(record => record.meta.requiresAdmin)) {
 					if(store.state.auth.role === "admin") {
-						console.log("6");
+						//console.log("6");
 						// if(!localStorage.getItem('dms-storage')) {
 						// 	await handleRequestKey()
 						// }
 						return next()
 					}else {
-						console.log("7");
+						//console.log("7");
 						return next({name: 'NotFound'})
 					}
 				}
 				else {
-					console.log("8");
+					//console.log("8");
 					// if(!localStorage.getItem('dms-storage')) {
 					// 	await handleRequestKey()
 					// }
@@ -192,13 +193,16 @@ router.beforeEach(async (to, from, next) => {
 			}
 			
 		}else {
-			console.log("9");
+			//console.log("9");
 			return next(false)
 		}
 		
 	} 
   	else {
-		console.log("10");
+		if(to.path == "/") {
+			return next({name: 'Home'})
+		}
+		//console.log("10");
 		return next()
 	}
 })

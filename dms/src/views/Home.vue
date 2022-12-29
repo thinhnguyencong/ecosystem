@@ -37,8 +37,13 @@
     <div v-else class="spinner-border text-dark" role="status">
         <span class="sr-only">Loading...</span>
     </div>
-    <!-- <ModalFileDetails v-for="(file, index) in documentState.files" :fileProps="file" :key="'main'+file._id" modal_id='main'/>
-    <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/> -->
+    <div v-if="showModal">
+        <router-view v-slot="{ Component }">
+          <transition name="modal">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+    </div>
   </div>
 
 </template>
@@ -56,12 +61,12 @@ import { CID } from 'ipfs-http-client'
     components: {ModalFileDetails},
     data() {
       return {
+        showModal: false,
         layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
       }
     },
     mounted() {
       this.$router.push(this.$route.path)
-      console.log("acbccbcbhewiueyhrwiufhn");
     },
     created() {
         this.$store.dispatch("auth/sidebarActive", "home")
@@ -85,6 +90,14 @@ import { CID } from 'ipfs-http-client'
     computed: {
         documentState() {return this.$store.state.document },
     },
+    watch: {
+      '$route': {
+        immediate: true,
+        handler: function(newVal, oldVal) {
+          this.showModal = newVal.meta && newVal.meta.showModal;
+        }
+      }
+    },
   }
 </script>
 <style scoped>
@@ -99,5 +112,22 @@ import { CID } from 'ipfs-http-client'
 .material-icons:hover {
     background: transparent;
 	color: #0f85f4;
+}
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+ .modal-enter, .modal-leave {
+    opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }
 </style>

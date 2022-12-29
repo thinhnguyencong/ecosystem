@@ -41,6 +41,9 @@
         </div>
         <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
         <ModalUploadFile/>
+        <div v-if="showModal">
+            <router-view></router-view>
+        </div>
         <div v-if="!documentState.isLoading">
             <!-- <div data-toggle="modal" data-target="#modalCreateFolder" class="tile folder">
                         <span class="material-icons">add</span>
@@ -56,8 +59,6 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        <!-- <ModalFileDetails v-for="(file, index) in documentState.folder.files" :fileProps="file" :key="file._id" modal_id='main'/>
-        <ModalFileDetails v-for="(file, index) in documentState.attachFiles" :fileProps="file" :key="'attach'+file._id" modal_id='attach'/> -->
 	</div>
 </template>
 <script setup>
@@ -81,26 +82,8 @@ export default {
     data() {
         return {
             name: "Untitled Folder",
-           layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
-           mockData: [
-             {
-                name: "Head First python.pdf",
-                fileType: "application/pdf"
-            },
-            {
-                name: "Weekly Report.pptx",
-                fileType: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-            },
-            {
-                name: "Document.doc",
-                fileType: "application/msword"
-            },
-            {
-                name: "testcase.xls",
-                fileType: "application/vnd.ms-excel"
-            },
-           ],
-           
+            layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
+            showModal: false,
         }
     },
     computed: {
@@ -120,6 +103,15 @@ export default {
                 localStorage.setItem("layout", "list")
             }
         }
+    },
+    watch: {
+      '$route': {
+        immediate: true,
+        handler: function(newVal, oldVal) {
+            console.log('$route', newVal, oldVal);
+            this.showModal = newVal.meta && newVal.meta.showModal;
+        }
+      }
     },
   }
 </script>
