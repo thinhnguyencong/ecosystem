@@ -1,6 +1,7 @@
 import {documentService} from './document.service';
 import router from '../../router';
 import { toast } from '../../plugins/toast';
+import { auth } from '../auth/auth.store';
 const initialState = {
   children: [],
   ancestors: [],
@@ -316,6 +317,21 @@ export const document = {
           canSign: false,
           isLoadingSign: false
         }
+        if (result.data.type == "review") {
+            state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).status = "reviewed"
+            state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000) 
+            if(state.file.statusDetail.reviewerList.map(reviewer => reviewer.status).every(status => status === "reviewed")) {
+              state.file.status = "waiting-to-sign"
+            }
+        }
+        if (result.data.type == "sign") {
+          state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).status = "signed"
+          state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000)
+          console.log("state.file.statusDetail.signerList", state.file.statusDetail.signerList, state.file.statusDetail.signerList.map(signer => signer.status).every(status => status === "signed"));
+          if(state.file.statusDetail.signerList.map(signer => signer.status).every(status => status === "signed")) {
+            state.file.status = "signed"
+          }
+        }
         toast.success(result.data.msg)
     },
     signDocFailure(state, error){
@@ -335,6 +351,16 @@ export const document = {
         canReview: false,
         canSign: false,
         isLoadingReject: false
+      }
+      if (result.data.type == "review") {
+        state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).status = "rejected"
+        state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000) 
+        state.file.status = "rejected"
+      }
+      if (result.data.type == "sign") {
+        state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).status = "rejected"
+        state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000)
+        state.file.status = "rejected"
       }
       toast.success(result.data.msg)
     },
@@ -377,11 +403,12 @@ export const document = {
     getFileByIdFailure(state, error){
         state.file.isLoading = false
         console.log(error);
-        toast.error(error.response.data.msg ? error.response.data.msg : error.message);
-        // if (error.response.status === 404) {
-        //   toast.error(error.response.data.msg ? error.response.data.msg : error.message);
-        //   router.push('/404')
-        // }
+        if (error.response.status === 404) {
+          toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+          router.push('/404')
+        } else {
+          toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+        }
     },
   },
 };

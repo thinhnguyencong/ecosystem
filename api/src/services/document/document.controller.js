@@ -544,7 +544,8 @@ export const signDoc = async (req, res, next) => {
 					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
 						return res.status(200).send({
-							msg: "Review document successfully!"
+							msg: "Review document successfully!",
+							type: type
 						})
 					} else {
 						console.log("Error when send transaction to the network", error);
@@ -568,7 +569,7 @@ export const signDoc = async (req, res, next) => {
 				let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
 				if(web3.utils.fromWei(balance.toString()) < transactionFee) {
 					return res.status(400).json({
-						msg: "Balance amount not enough!"
+						msg: "Balance amount not enough!",
 					})
 				}
 				const transaction = {
@@ -586,7 +587,8 @@ export const signDoc = async (req, res, next) => {
 					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
 						return res.status(200).send({
-							msg: "Sign document successfully!"
+							msg: "Sign document successfully!",
+							type: type
 						})
 					} else {
 						console.log("Error when send transaction to the network", error);
@@ -640,7 +642,7 @@ export const rejectDoc = async (req, res, next) => {
 				} catch (error) {
 					console.log(error.message);
 					return res.status(500).send({
-						msg: error.message
+						msg: error.message,
 					})
 				}
 				let balance = await web3.eth.getBalance(publicAddress)
@@ -666,7 +668,8 @@ export const rejectDoc = async (req, res, next) => {
 					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
 						return res.status(200).send({
-							msg: "Reject document successfully!"
+							msg: "Reject document successfully!",
+							type: type
 						})
 					} else {
 						console.log("Error when send transaction to the network", error);
@@ -708,7 +711,8 @@ export const rejectDoc = async (req, res, next) => {
 					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
 						return res.status(200).send({
-							msg: "Reject document successfully!"
+							msg: "Reject document successfully!",
+							type: type
 						})
 					} else {
 						console.log("Error when send transaction to the network", error);
@@ -793,9 +797,19 @@ export const getFileById = async (req, res, next) => {
 			})
 		}
 		let fileById = await File.findById(id).lean()
+		if(!fileById){
+			return res.status(404).send({
+				msg: "File not exist"
+			})
+		}
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
 			const startTime = Date.now();
-			let file = await getFileStatus(fileById, user.publicAddress, dmsContract)
+			let file = fileById;
+			try {
+				file = await getFileStatus(fileById, user.publicAddress, dmsContract)
+			} catch (error) {
+				throw({message: "Time out when connect to Web3 Provider"})
+			}
 			const endTime = Date.now();
 			const timeTaken = endTime - startTime;
 			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
@@ -811,9 +825,8 @@ export const getFileById = async (req, res, next) => {
 			msg: "Unauthorized"
 		})
 	} catch (error) {
-		console.log(error);
 		return res.status(500).send({
-			msg: "Internal Server Error"
+			msg: error.message ? "Internal Server Error: "+ error.message : "Internal Server Error"
 		})
 	}
 	

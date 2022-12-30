@@ -54,8 +54,10 @@
                 <td class="text-center" colspan="6" scope="row"><a href="">See more ...</a></td>
             </tr> -->
             </tbody>
-            
         </table>
+        <Transition name="modal">
+            <router-view v-if="showModal"></router-view>
+        </Transition>
     </div>
 </template>
 <script>
@@ -75,6 +77,7 @@ export default {
     },
     data() {
         return {
+            showModal: false,
         }
     },
     mounted() {
@@ -127,6 +130,13 @@ export default {
             })
         },
     },
+    '$route': {
+        immediate: true,
+        handler: function(newVal, oldVal) {
+            console.log(newVal, oldVal);
+            this.showModal = newVal.meta && newVal.meta.showModal;
+        }
+      },
 }
 </script>
 <style scoped>
@@ -145,5 +155,14 @@ export default {
 .material-icons:hover {
     background: transparent;
 	color: #0f85f4;
+}
+.modal-enter, .modal-leave-active {
+    opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
 }
 </style>

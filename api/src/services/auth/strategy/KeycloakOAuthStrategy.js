@@ -70,7 +70,7 @@ export class KeycloakOAuthStrategy extends OAuthStrategy {
   getUser(jwtAccessToken) {
     const user = {
       username: jwtAccessToken.preferred_username,
-      name: jwtAccessToken.name
+      name: jwtAccessToken.family_name + " " + jwtAccessToken.given_name
       // roles: jwtAccessToken.resource_access.react.roles
     };
     return user;

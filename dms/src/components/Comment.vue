@@ -12,7 +12,7 @@
                             tag="div"
                             v-for="(attachment, index) in comment.attachments"
                             :key="index"
-                            :to="`/file/${attachment.id}`"
+                            :to="$route.matched[0].name == 'Directory' ? `/folder/${$route.params.id}/file/${attachment.id}` : `${$route.matched[0].path}/file/${attachment.id}`"
                         >
                             <a class="list-group-item list-group-item-action">
                                 {{ (index+1)+". " }}{{attachment.name}}
@@ -24,6 +24,9 @@
                 </div>
             </div>
         </div>
+        <Transition name="modal">
+            <router-view v-if="showModal"></router-view>
+        </Transition>
     </div>
    
     
@@ -38,6 +41,7 @@ export default {
     data() {
         return {
             comments: [],
+            showModal: false
         }
     },
     methods: {
@@ -48,6 +52,7 @@ export default {
             return dayjs(time).fromNow();
         },
         handleShow(comment) {
+            console.log("$route", this.$route);
             comment.isActive = !comment.isActive;
         },
         sortComment(comments) {
@@ -71,7 +76,14 @@ export default {
                 this.$set(this, "comments", this.sortComment(newVal.map(x => ({ ...x, isActive: false }))));
             },
             immediate: true
-        }
+        },
+        '$route': {
+        immediate: true,
+            handler: function(newVal, oldVal) {
+                console.log(newVal, oldVal);
+                this.showModal = newVal.meta && newVal.meta.showModal;
+            }
+        } 
     },
 }
 </script>
@@ -140,5 +152,20 @@ export default {
 .attach-text :hover{
     color: #1976d2;
     text-decoration: underline;
+}
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+  transition: opacity 0.5s ease;
 }
 </style>

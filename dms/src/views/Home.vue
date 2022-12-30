@@ -28,22 +28,18 @@
     </nav>
     <div v-if="!documentState.isLoading">
       <div v-if="layout == 'grid'">
-          <GridView :folders="[]" :files="documentState.files"/>
+          <GridView :folders="[]" :files="files"/>
       </div>
       <div v-if="layout == 'list'">
-          <ListView :folders="[]" :files="documentState.files"/>
+          <ListView :folders="[]" :files="files"/>
       </div>
     </div>
     <div v-else class="spinner-border text-dark" role="status">
         <span class="sr-only">Loading...</span>
     </div>
-    <div v-if="showModal">
-        <router-view v-slot="{ Component }">
-          <transition name="modal">
-            <component :is="Component" />
-          </transition>
-        </router-view>
-    </div>
+    <!-- <div v-if="showModal">
+        <router-view></router-view>
+    </div> -->
   </div>
 
 </template>
@@ -61,6 +57,8 @@ import { CID } from 'ipfs-http-client'
     components: {ModalFileDetails},
     data() {
       return {
+        files: [],
+        folders: [],
         showModal: false,
         layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
       }
@@ -84,19 +82,17 @@ import { CID } from 'ipfs-http-client'
         }
       },
       async callAPI() { 
-        await this.$store.dispatch("document/getAllFiles") 
+        await this.$store.dispatch("document/getAllFiles")
+        await this.$store.dispatch("document/getTreeFolder")
+        console.log("this.documentState", this.documentState);
+        this.files = this.documentState.files
+        this.folders = this.documentState.folders
       }
     },
     computed: {
         documentState() {return this.$store.state.document },
     },
     watch: {
-      '$route': {
-        immediate: true,
-        handler: function(newVal, oldVal) {
-          this.showModal = newVal.meta && newVal.meta.showModal;
-        }
-      }
     },
   }
 </script>
@@ -113,21 +109,5 @@ import { CID } from 'ipfs-http-client'
     background: transparent;
 	color: #0f85f4;
 }
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
- .modal-enter, .modal-leave {
-    opacity: 0;
-}
 
-.modal-enter .modal-container,
-.modal-leave .modal-container {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
-}
 </style>

@@ -1,6 +1,7 @@
 import { OAuthStrategies } from "./strategy/OAuthStrategies.js";
 import requestPromise from "request-promise";
 import jwt from "jsonwebtoken";
+import User from "../../models/user.model.js";
 
 export const authUrl = async (req, res, next) => {
 	console.log("api call");
@@ -19,10 +20,10 @@ export const authToken = async (req, res, next) => {
 	const oAuthStrategies = new OAuthStrategies(clientId, redirect_uri);
 	const authStrategy = oAuthStrategies.getStrategy();
 	requestPromise(authStrategy.getAuthTokenOptions(code))
-	.then(tokenRes => {
+	.then(async tokenRes => {
 		const jwtAccessToken = jwt.decode(JSON.parse(tokenRes).access_token);
 		const user = authStrategy.getUser(jwtAccessToken);
-
+		const publicAddress = await User.findOne({username: user.username}, "publicAddress").exec()
 		console.log(`User ${user.username} successfully logged in.`);
 		res.cookie("refresh_token", JSON.parse(tokenRes).refresh_token, {
 			httpOnly: true,
@@ -32,7 +33,10 @@ export const authToken = async (req, res, next) => {
 
 		res.status(200).send({
 			authToken: JSON.parse(tokenRes).access_token,
-			user: user,
+			user: {
+				...user,
+				publicAddress: publicAddress.publicAddress
+			},
 		});
 	})
 	.catch(error => {
@@ -48,19 +52,20 @@ export const reAuth = async (req, res, next) => {
 	const authStrategy = oAuthStrategies.getStrategy();
 	let token = req.headers.authorization.split(" ")[1]
 	requestPromise(authStrategy.getTokenUrlOptions(token))
-	.then(response => {
+	.then(async response => {
 		// if the request status isn't "OK", the token is invalid
 		if (JSON.parse(response).active !== true) {
 			res.status(401).json({
 				error: `Unauthorized`,
 			});
 		}else {
+			const user = authStrategy.getUser(JSON.parse(response));
+			const publicAddress = await User.findOne({username: user.username}, "publicAddress").exec()
 			res.status(200).send({
-				//authToken: token,
 				user: {
-					username: JSON.parse(response).preferred_username,
-					name: JSON.parse(response).family_name + " " + JSON.parse(response).given_name
-				},
+					...user,
+					publicAddress: publicAddress.publicAddress
+				}
 			});
 		}
 		

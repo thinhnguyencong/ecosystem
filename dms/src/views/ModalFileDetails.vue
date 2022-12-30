@@ -223,13 +223,7 @@
         </div>
     </div>
 </template>
-<script setup>
-// $(document).on('show.bs.modal', '.modal', function() {
-//   const zIndex = 1040 + 10 * $('.modal:visible').length;
-//   $(this).css('z-index', zIndex);
-//   setTimeout(() => $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'));
-// });
-</script>
+
 <script>
 import xlsxPreview from 'xlsx-preview';
 import Comment from "../components/Comment.vue"
@@ -240,6 +234,7 @@ import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {renderAsync} from "docx-preview/dist/docx-preview"
+console.log("ABCCCCCC");
 export default {
     props: ["fileId"],
     components: { Treeselect, Comment },
@@ -264,9 +259,7 @@ export default {
             isLoadingFile: false
         }
     },
-    created() {
-        
-    },
+
     mounted() {
         this.initData(this.fileId)
     },
@@ -275,11 +268,11 @@ export default {
             console.log(this.$router);
             console.log(this.$route);
         },
-        async initData() {
-            if(this.fileId) {
+        async initData(fileId) {
+            this.$set(this, 'isLoadingFile', true);
+            if(fileId) {
                 try {
-                    await this.$store.dispatch("document/getFileById", {id: this.fileId})
-                    await this.$store.dispatch("document/getTreeFolder")
+                    await this.$store.dispatch("document/getFileById", {id: fileId})
                     this.file = this.documentState.file
                 } catch (error) {
                     console.log(error);
@@ -287,9 +280,8 @@ export default {
                     this.error="No file to preview"
                 }
             }
-            if(this.file) {
+            if(this.file.hash) {
                 this.error=null
-                this.$set(this, 'isLoadingFile', true);
                 IpfsClient().get(this.file.hash).then(async (res) =>{
                     if(res) {
                         let resultDecrypt = decrypt(res[0].content, this.file.key)
@@ -421,19 +413,20 @@ export default {
                     this.link = ""
                     this.file = {}
                     this.$set(this, 'isLoadingFile', true);
-                    this.initData()
+                    console.log("2");
+                    this.initData(newVal)
                 }
             },
         },
-        documentState:{
-            handler(newVal, oldVal) {
-                if(newVal) {
-                    this.file = newVal.file
-                }
-            },
-            deep: true
-        }
-        
+        // documentState:{
+        //     handler(newVal, oldVal) {
+        //         console.log("newVal", newVal, oldVal);
+        //         if(newVal) {
+        //             this.file = newVal.file
+        //         }
+        //     },
+        //     deep: true
+        // },
     }
 }
 </script>

@@ -41,9 +41,6 @@
         </div>
         <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
         <ModalUploadFile/>
-        <div v-if="showModal">
-            <router-view></router-view>
-        </div>
         <div v-if="!documentState.isLoading">
             <!-- <div data-toggle="modal" data-target="#modalCreateFolder" class="tile folder">
                         <span class="material-icons">add</span>
@@ -104,15 +101,6 @@ export default {
             }
         }
     },
-    watch: {
-      '$route': {
-        immediate: true,
-        handler: function(newVal, oldVal) {
-            console.log('$route', newVal, oldVal);
-            this.showModal = newVal.meta && newVal.meta.showModal;
-        }
-      }
-    },
   }
 </script>
 
@@ -127,34 +115,4 @@ export default {
     background: transparent;
 	color: #0f85f4;
 }
-/* .text-custom-color-blue {
-    color: #00A8FF
-} */
-/* .tile {
-    border-radius: 3px;
-    width: 200px;
-    height: 100%;
-    margin-bottom: 23px;
-    text-align: center;
-    border: 1px solid #eeeeee;
-    transition: 0.2s all cubic-bezier(0.4, 0.0, 0.2, 1);
-    position: relative;
-    padding: 35px 16px 25px;
-    margin-right: 17px;
-    cursor: pointer;
-}
-.tile:hover{
-  box-shadow: 0px 7px 5px -6px rgba(0, 0, 0, 0.12);
-  background-color: #eeeeee;
-  border: 1px solid #dddddd;
-}
-.tile .material-icons{
-    color: #00A8FF;
-    height: 55px;
-    margin-bottom: 20px;
-    font-size: 55px;
-    display: block;
-    line-height: 54px;
-    cursor: pointer;
-} */
 </style>

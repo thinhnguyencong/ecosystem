@@ -63,9 +63,6 @@
         <div v-else class="spinner-border text-dark" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        <div v-if="showModal">
-            <router-view></router-view>
-        </div>
 	</div>
 </template>
 <script setup>
@@ -91,7 +88,6 @@ export default {
     },
     data() {
         return {
-            showModal: false,
             layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
         }
     },
@@ -115,19 +111,13 @@ export default {
     },
     watch: {
         '$route.params.id': {
-            handler() {
-                console.log("abc");
-                this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
+            handler(newVal, oldVal) {
+                if(newVal !== oldVal) {
+                    this.$store.dispatch("document/getFolderById", {id: newVal})
+                }
             },
             immediate: true
         },
-        '$route': {
-            immediate: true,
-            handler: function(newVal, oldVal) {
-                console.log('$route', newVal, oldVal);
-                this.showModal = newVal.meta && newVal.meta.showModal;
-            }
-        } 
     },
 
 
