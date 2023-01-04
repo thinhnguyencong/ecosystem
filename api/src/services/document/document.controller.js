@@ -805,11 +805,11 @@ export const getFileById = async (req, res, next) => {
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
 			const startTime = Date.now();
 			let file = fileById;
-			try {
-				file = await getFileStatus(fileById, user.publicAddress, dmsContract)
-			} catch (error) {
-				throw({message: "Time out when connect to Web3 Provider"})
-			}
+			// try {
+			// 	file = await getFileStatus(fileById, user.publicAddress, dmsContract)
+			// } catch (error) {
+			// 	throw({message: "Time out when connect to Web3 Provider"})
+			// }
 			const endTime = Date.now();
 			const timeTaken = endTime - startTime;
 			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
@@ -876,7 +876,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 		return {
 			...file,
 			status: "rejected",
-			canComment: true,
 			canReview: false,
 			canSign: false
 		}
@@ -888,7 +887,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 				return {
 					...file,
 					status: "waiting-to-review",
-					canComment: true,
 					canReview: true,
 					canSign: false
 				}
@@ -896,7 +894,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 			return {
 				...file,
 				status: "waiting-to-review",
-				canComment: true,
 				canReview: false,
 				canSign: false
 			}
@@ -907,7 +904,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 				return {
 					...file,
 					status: "rejected",
-					canComment: true,
 					canReview: false,
 					canSign: false
 				}
@@ -917,7 +913,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 					return {
 						...file,
 						status: "signed",
-						canComment: false,
 						canReview: false,
 						canSign: false
 					}
@@ -929,7 +924,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 							return {
 								...file,
 								status: "waiting-to-sign",
-								canComment: true,
 								canReview: false,
 								canSign: false
 							}
@@ -937,7 +931,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 						return {
 							...file,
 							status: "waiting-to-sign",
-							canComment: true,
 							canReview: false,
 							canSign: true
 						}
@@ -945,7 +938,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 						return {
 							...file,
 							status: "waiting-to-sign",
-							canComment: true,
 							canReview: false,
 							canSign: false
 						}
@@ -961,7 +953,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 					return {
 						...file,
 						status: "waiting-to-review",
-						canComment: true,
 						canReview: false,
 						canSign: false
 					}
@@ -969,7 +960,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 				return {
 					...file,
 					status: "waiting-to-review",
-					canComment: true,
 					canReview: true,
 					canSign: false
 				}
@@ -977,7 +967,6 @@ const getFileStatus = async (file, publicAddress, dmsContract) => {
 			return {
 				...file,
 				status: "waiting-to-review",
-				canComment: true,
 				canReview: false,
 				canSign: false
 			}

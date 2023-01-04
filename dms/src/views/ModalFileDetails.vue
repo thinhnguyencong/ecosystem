@@ -32,182 +32,164 @@
                                         <iframe v-if="link.length" style="overflow: hidden;" width="100%" height="100%" class="frame" :src="link" frameborder="0"></iframe>
                                         <div id="wrap" class="w-100 h-100"></div>  
                                     </div>
+                                    <div v-if="error">{{ error }}</div>
                                 </div>
-                                <div class="col-5" style="min-height: 80%;">
-                                        <v-tabs fixed-tabs grow v-model="active" color="#eee" slider-color="cyan" :ref="'tabs-'+file._id">
-                                            <v-tab :key="0" >
-                                                Document Details
-                                            </v-tab>
-                                            <v-tab :key="1">
-                                                Comments
-                                            </v-tab>
-                                            <v-tab :key="2">
-                                                Status
-                                            </v-tab>
-                                            <v-tab-item :key="0">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <br>
-                                                        <h5 class="font-weight-bold">Description</h5>
-                                                        <div class="card border border-muted">
-                                                            <div class="card-body description scrollbar">
-                                                                <div v-html="file.description"></div>
-                                                            </div>
+                                <div class="col-5 h-100">
+                                    <v-tabs fixed-tabs grow v-model="active" color="#eee" slider-color="cyan">
+                                        <v-tab :key="0" >
+                                            Document Details
+                                        </v-tab>
+                                        <v-tab :key="1">
+                                            Comments
+                                        </v-tab>
+                                        <v-tab :key="2">
+                                            Status
+                                        </v-tab>
+                                        <v-tab-item :key="0">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <br>
+                                                    <h5 class="font-weight-bold">Description</h5>
+                                                    <div class="card border border-muted">
+                                                        <div class="card-body description scrollbar">
+                                                            <div v-html="file.description"></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <br>
-                                                <div class="row">
-                                                    <!-- <div class="col">
-                                                        <div class="font-weight-bold">Reviewer List</div>
-                                                        <ul class="list-group list-group-flush list">
-                                                            <li class="list-group-item">Dapibus ac facilisis in</li>
-                                                            <li class="list-group-item">Morbi leo risus</li>
-                                                            <li class="list-group-item">Porta ac consectetur ac</li>
-                                                            <li class="list-group-item">Vestibulum at eros</li>
-                                                        </ul>
+                                            </div>
+                                            <br>
+                                            <div class="row">
+                                                <!-- <div class="col">
+                                                    <div class="font-weight-bold">Reviewer List</div>
+                                                    <ul class="list-group list-group-flush list">
+                                                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                                                        <li class="list-group-item">Morbi leo risus</li>
+                                                        <li class="list-group-item">Porta ac consectetur ac</li>
+                                                        <li class="list-group-item">Vestibulum at eros</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="font-weight-bold">Signer List</div>
+                                                    <ul class="list-group list-group-flush  list">
+                                                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                                                        <li class="list-group-item">Morbi leo risus</li>
+                                                        <li class="list-group-item">Porta ac consectetur ac</li>
+                                                        <li class="list-group-item">Vestibulum at eros</li>
+                                                    </ul>
+                                                </div> -->
+                                                
+                                            </div>
+                                            
+                                            
+                                        </v-tab-item>
+                                        <v-tab-item :key="1">
+                                            <br>
+                                            <div class="card border border-muted h-100">
+                                                <div class="input-group">
+                                                    <input v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Write your comment..." class="form-control shadow-none" autofocus="true">
+                                                </div>
+                                                <!-- <hr class="divider" /> -->
+                                                <div class="d-flex">
+                                                    <div class="mr-auto p-2">
+                                                        <div class="align-self-center">
+                                                            <div id="dropdownAttachment" class="icon-badge-container" @click="showAttach=!showAttach">
+                                                                <span class="material-icons icon-badge-icon">attach_file</span>
+                                                                <div v-if="attachments.length" class="icon-badge">{{ attachments.length }}</div>
+                                                            </div>
+                                                            <div v-if="showAttach" class="attachment">
+                                                                <treeselect
+                                                                    v-model="attachments" 
+                                                                    :multiple="true" 
+                                                                    :options="documentState.treeFolder" 
+                                                                    :value-consists-of="valueConsistsOf"
+                                                                    placeholder="Add attachments.." 
+                                                                    :normalizer="normalizer"
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col">
-                                                        <div class="font-weight-bold">Signer List</div>
-                                                        <ul class="list-group list-group-flush  list">
-                                                            <li class="list-group-item">Dapibus ac facilisis in</li>
-                                                            <li class="list-group-item">Morbi leo risus</li>
-                                                            <li class="list-group-item">Porta ac consectetur ac</li>
-                                                            <li class="list-group-item">Vestibulum at eros</li>
-                                                        </ul>
-                                                    </div> -->
+                                                    <div class="p-2">
+                                                        <div class="pt-2 align-self-center ml-auto ">
+                                                            <button v-if="!documentState.file.isLoadingComment" style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment"><span class="material-icons">send</span></button>
+                                                            <button v-else class="btn btn-primary" type="button" disabled style="float: right;">
+                                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                                Adding...
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <h5 class="font-weight-bold">All comments</h5>
+                                            <div class="card border border-muted">
+                                                <div class="card-body" :id="'comments-'+file._id">
+                                                    <div v-if="file?.comments?.length>0" class="comments scrollbar"> 
+                                                        <Comment :commentsProp="file.comments"/>
+                                                    </div>
+                                                    <div v-else> 
+                                                        No comment yet
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </v-tab-item>
+                                        <v-tab-item :key="2">
+                                            <br>
+                                            <h5 class="font-weight-bold">Document Information</h5>
+                                            <div class="card border border-muted">
+                                                <div class="card-body">
+                                                    <span>Status: &nbsp;</span>
+                                                    <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
+                                                    <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
+                                                    <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
+                                                    <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
+                                                    <p></p>
+                                                    <p class="font-weight-bold">Review History: </p>
+                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList">{{reviewer.name}}: &nbsp; 
+                                                        <span v-if="reviewer.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
+                                                        <span v-if="reviewer.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer.time)}}</span>
+                                                        <span v-if="reviewer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer.time)}}</span>
+                                                    </p>
+                                                    <p class="font-weight-bold">Sign History: </p>
+                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList">{{signer.name}}: &nbsp; 
+                                                        <span v-if="signer.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
+                                                        <span v-if="signer.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer.time)}}</span>
+                                                        <span v-if="signer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer.time)}}</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-md-4 text-center">
                                                     
                                                 </div>
-                                                
-                                                
-                                            </v-tab-item>
-                                            <v-tab-item :key="1">
-                                                <br>
-                                                <div v-if="file.canComment" class="card border border-muted">
-                                                    <div class="input-group">
-                                                        <input v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Write your comment..." class="form-control shadow-none" autofocus="true">
-                                                    </div>
-                                                    <hr class="divider" />
-                                                    <div class="row">
-                                                        <div class="col-1">
-                                                            <div class="align-self-center ">
-                                                                <v-badge
-                                                                    left
-                                                                    overlap
-                                                                    color="orange"
-                                                                    >
-                                                                    <template v-slot:badge v-if="attachments.length">
-                                                                        <span>{{ attachments.length }}</span>
-                                                                    </template>
-                                                                    <v-btn flat icon color="indigo">
-                                                                        <v-icon
-                                                                            data-toggle="tooltip" 
-                                                                            title="Add attachment"
-                                                                            @click="showAttach = !showAttach"
-                                                                            color="black"
-                                                                        >
-                                                                        attach_file
-                                                                        </v-icon>
-                                                                    </v-btn>
-                                                                </v-badge>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-7">
-                                                            <div class="w-100 pt-2" v-if="showAttach">
-                                                                <Transition name="bounce">
-                                                                    <treeselect 
-                                                                        v-model="attachments" 
-                                                                        :multiple="true" 
-                                                                        :options="documentState.treeFolder" 
-                                                                        :value-consists-of="valueConsistsOf"
-                                                                        placeholder="Add attachments.." 
-                                                                        :normalizer="normalizer"
-                                                                        />
-                                                                </Transition>   
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <div class="pt-2 align-self-center ml-auto ">
-                                                                <button v-if="!documentState.file.isLoadingComment" style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment">Add Comment</button>
-                                                                <button v-else class="btn btn-primary" type="button" disabled style="float: right;">
-                                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                    Adding...
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <h5 class="font-weight-bold">All comments</h5>
-                                                <div class="card border border-muted">
-                                                    <div class="card-body" :id="'comments-'+file._id">
-                                                        <div v-if="file?.comments?.length>0" class="comments scrollbar"> 
-                                                            <Comment :commentsProp="file.comments"/>
-                                                        </div>
-                                                        <div v-else> 
-                                                            No comment yet
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                            </v-tab-item>
-                                            <v-tab-item :key="2">
-                                                <br>
-                                                <h5 class="font-weight-bold">Document Information</h5>
-                                                <div class="card border border-muted">
-                                                    <div class="card-body">
-                                                        <span>Status: &nbsp;</span>
-                                                        <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
-                                                        <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
-                                                        <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
-                                                        <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
-                                                        <p></p>
-                                                        <p class="font-weight-bold">Review History: </p>
-                                                        <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList">{{reviewer.name}}: &nbsp; 
-                                                            <span v-if="reviewer.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
-                                                            <span v-if="reviewer.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer.time)}}</span>
-                                                            <span v-if="reviewer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer.time)}}</span>
-                                                        </p>
-                                                        <p class="font-weight-bold">Sign History: </p>
-                                                        <p v-for="(signer, index) in file?.statusDetail?.signerList">{{signer.name}}: &nbsp; 
-                                                            <span v-if="signer.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
-                                                            <span v-if="signer.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer.time)}}</span>
-                                                            <span v-if="signer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer.time)}}</span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col-md-4 text-center">
-                                                        
-                                                    </div>
-                                                    <div class="col-md-8 text-center">
-                                                        <span class="float-md-right">
-                                                            <button v-if="documentState.file.isLoadingReject" class="btn btn-danger btn-lg" type="button" disabled>
-                                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                Rejecting...
-                                                            </button>
-                                                            <span v-else>
-                                                                <button v-if="file.canSign" class="btn btn-danger btn-lg" aria-disabled="false" @click="handleReject('sign')">Reject</button>
-                                                                <button v-else-if="file.canReview" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('review')">Reject</button>
-                                                            </span>
-                                                            <button v-if="documentState.file.isLoadingSign && file.canReview" class="btn btn-warning btn-lg" type="button" disabled>
-                                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                Reviewing...
-                                                            </button>
-                                                            <button v-else-if="documentState.file.isLoadingSign && file.canSign" class="btn btn-success btn-lg" type="button" disabled>
-                                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                Signing...
-                                                            </button>
-                                                            <span v-else>
-                                                                <button v-if="file.canReview" class="btn btn-warning btn-lg" role="button" aria-disabled="false" @click="handleSign('review')">Review</button>
-                                                                <button v-if="file.canSign" class="btn btn-success btn-lg" role="button" aria-disabled="false" @click="handleSign('sign')">Sign</button>
-                                                            </span>
+                                                <div class="col-md-8 text-center">
+                                                    <span class="float-md-right">
+                                                        <button v-if="documentState.file.isLoadingReject" class="btn btn-danger btn-lg" type="button" disabled>
+                                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                            Rejecting...
+                                                        </button>
+                                                        <span v-else>
+                                                            <button v-if="file.canSign" class="btn btn-danger btn-lg" aria-disabled="false" @click="handleReject('sign')">Reject</button>
+                                                            <button v-else-if="file.canReview" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('review')">Reject</button>
                                                         </span>
-                                                    </div>
+                                                        <button v-if="documentState.file.isLoadingSign && file.canReview" class="btn btn-warning btn-lg" type="button" disabled>
+                                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                            Reviewing...
+                                                        </button>
+                                                        <button v-else-if="documentState.file.isLoadingSign && file.canSign" class="btn btn-success btn-lg" type="button" disabled>
+                                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                            Signing...
+                                                        </button>
+                                                        <span v-else>
+                                                            <button v-if="file.canReview" class="btn btn-warning btn-lg" role="button" aria-disabled="false" @click="handleSign('review')">Review</button>
+                                                            <button v-if="file.canSign" class="btn btn-success btn-lg" role="button" aria-disabled="false" @click="handleSign('sign')">Sign</button>
+                                                        </span>
+                                                    </span>
                                                 </div>
-                                            </v-tab-item>
-                                        </v-tabs>
+                                            </div>
+                                        </v-tab-item>
+                                    </v-tabs>
                                 </div>
                             </div>
                         </div>
@@ -231,8 +213,6 @@ import { IpfsClient } from "../helpers/ipfs";
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
-// import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {renderAsync} from "docx-preview/dist/docx-preview"
 console.log("ABCCCCCC");
 export default {
@@ -283,52 +263,51 @@ export default {
             if(this.file.hash) {
                 this.error=null
                 IpfsClient().get(this.file.hash).then(async (res) =>{
-                    if(res) {
-                        let resultDecrypt = decrypt(res[0].content, this.file.key)
-                        let tokenUri = JSON.parse(this.file.tokenURI)
-                        if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                            renderAsync(resultDecrypt, document.getElementById("wrap"))
-        			        .then(x => {
-                                console.log(this.isLoadingFile);
-                                this.$set(this, 'isLoadingFile', false);
-                                console.log("docx: finished")
-                            });
-                        }
-                        else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                            const buffer = resultDecrypt.buffer
-                            const result = await xlsxPreview.xlsx2Html(buffer, {
-                                output: 'arrayBuffer',
-                                minimumRows: 50,
-                                minimumCols: 30,
-                            });
-                            const url = URL.createObjectURL(new Blob([result], {
-                                type: 'text/html'
-                            }));
-                            document.querySelector('#wrap').innerHTML =
-                                `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
-                                console.log(this.isLoadingFile);
+                    console.log("res", res);
+                    let resultDecrypt = decrypt(res[0].content, this.file.key)
+                    let tokenUri = JSON.parse(this.file.tokenURI)
+                    if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                        renderAsync(resultDecrypt, document.getElementById("wrap"))
+                        .then(x => {
+                            console.log(this.isLoadingFile);
                             this.$set(this, 'isLoadingFile', false);
-                        }
-                        else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-                            let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
-                            $("#wrap").pptxToHtml({
-                                fileData: fileData,
-                            });
-                            this.$set(this, 'isLoadingFile', false);
-                        }else {
-                            let b64 = this.b64EncodeUnicode(resultDecrypt)
-                            let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                            this.link = abc
-                            this.$set(this, 'isLoadingFile', false);
-                        }
+                            console.log("docx: finished")
+                        });
                     }
-                    else {
-                        this.error="No file to preview"
+                    else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                        const buffer = resultDecrypt.buffer
+                        const result = await xlsxPreview.xlsx2Html(buffer, {
+                            output: 'arrayBuffer',
+                            minimumRows: 50,
+                            minimumCols: 30,
+                        });
+                        const url = URL.createObjectURL(new Blob([result], {
+                            type: 'text/html'
+                        }));
+                        document.querySelector('#wrap').innerHTML =
+                            `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
+                            console.log(this.isLoadingFile);
                         this.$set(this, 'isLoadingFile', false);
                     }
-                    // this.saveByteArray("Sample Report", res[0].content.buffer); // download button
+                    else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+                        let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
+                        $("#wrap").pptxToHtml({
+                            fileData: fileData,
+                        });
+                        this.$set(this, 'isLoadingFile', false);
+                    }else {
+                        let b64 = this.b64EncodeUnicode(resultDecrypt)
+                        let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
+                        this.link = abc
+                        this.$set(this, 'isLoadingFile', false);
+                    }
                 })
-            }else {
+                .catch(error =>  {
+                    this.$set(this, 'isLoadingFile', false);
+                    this.error="No file to preview"
+                })
+            } else {
+                this.$set(this, 'isLoadingFile', false);
                 this.error="No file to preview"
             }
         },
@@ -438,9 +417,6 @@ export default {
 .description {
     height: 350px; 
 }
-.comments {
-    height: 300px; 
-}
 .list {
     height: 110px;
     overflow-y: scroll; /* Add the ability to scroll */
@@ -459,27 +435,6 @@ export default {
   scrollbar-width: none;  /* Firefox */
 }
 
-#attachment-btn:hover {
-    background: rgb(244, 242, 238);
-}
-
-.bounce-enter-active {
-  animation: bounce-in 0.5s;
-}
-.bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
-}
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.25);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 hr.divider { 
   margin: 0em;
   border-width: 2px;
@@ -518,6 +473,40 @@ hr.divider {
 
 .frame {
     resize: both; 
+}
+
+.slide-enter, .slide-leave-to{
+  transform: scaleY(0);
+}
+.icon-badge-container {
+    position:relative;
+}
+
+.icon-badge-icon {
+    font-size: 30px;
+    position: relative;
+    border-radius: 50%;
+    padding: 5px;
+}
+.icon-badge-icon:hover {
+    background: transparent;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
+}
+.icon-badge {
+    background-color: red;
+    font-size: 12px;
+    color: white;
+    text-align: center;
+    width:17px;
+    height:17px;
+    border-radius: 50%;
+    position: absolute; /* changed */
+    top: -5px; /* changed */
+    left: 19px; /* changed */
+}
+.attachment {
+    z-index: 9999;
 }
 /*  */
 </style>

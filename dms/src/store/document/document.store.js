@@ -178,7 +178,9 @@ export const document = {
   mutations: {
     // ------------------getRootFolders-----------------------------
     getRootFolders(state){
-        state.isLoading = true
+        if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getRootFoldersSuccess(state, result){
         state.isLoading = false;
@@ -193,7 +195,9 @@ export const document = {
 
     // ------------------getFolderById-----------------------------
     getFolderById(state){
-        state.isLoading = true
+        if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getFolderByIdSuccess(state, result){
         state.isLoading = false;
@@ -212,7 +216,9 @@ export const document = {
 
     // ------------------getMyFolders-----------------------------
     getMyFolders(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getMyFoldersSuccess(state, result){
         state.isLoading = false;
@@ -227,7 +233,9 @@ export const document = {
 
     // ------------------getSharedWithMeFolders-----------------------------
     getSharedWithMeFolders(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getSharedWithMeFoldersSuccess(state, result){
         state.isLoading = false;
@@ -241,12 +249,15 @@ export const document = {
 
     // ------------------createFolder-----------------------------
     createFolder(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     createFolderSuccess(state, result){
         state.isLoading = false;
         console.log(result);
         state.children.unshift(result.data.data)
+        toast.success(result.data.msg)
     },
     createFolderFailure(state, error){
         state.isLoading = false
@@ -263,7 +274,9 @@ export const document = {
 
     // ------------------uploadFile-----------------------------
     uploadFile(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     uploadFileSuccess(state, result){
         state.isLoading = false;
@@ -278,7 +291,9 @@ export const document = {
 
     // ------------------getAllFiles-----------------------------
     getAllFiles(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getAllFilesSuccess(state, result){
         state.isLoading = false;
@@ -372,7 +387,9 @@ export const document = {
 
     // ------------------getTreeFolder-----------------------------
     getTreeFolder(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getTreeFolderSuccess(state, result){
         state.isLoading = false;

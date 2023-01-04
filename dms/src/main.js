@@ -10,15 +10,17 @@ import '@mdi/font/css/materialdesignicons.css';
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import "vue-toastification/dist/index.css";
+// quill
 import VueQuillEditor from 'vue-quill-editor'
-// require styles
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+// sweetalert
 import VueSweetalert2 from 'vue-sweetalert2';
-
-// If you don't need the styles, do not connect
 import 'sweetalert2/dist/sweetalert2.min.css';
+// tree select
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 dayjs.extend(window.dayjs_plugin_relativeTime);
 Vue.use(VueSweetalert2);
 Vue.use(Vuetify)

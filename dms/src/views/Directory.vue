@@ -37,8 +37,8 @@
         <div class="d-flex justify-content-between">
             <div class="p-2">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="mdi mdi-plus text-light"></i> New  
+                    <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="mdi mdi-plus text-light"></i> New &nbsp;  
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
@@ -74,6 +74,14 @@
     import ListTableVue from '../components/ListView.vue';
     import GridViewVue from '../components/GridView.vue';
     import ModalFileDetails from './ModalFileDetails.vue';
+    import $ from "jquery"
+
+    $(document).ready(function() {
+        $('#modalCreateFolder').on('shown.bs.modal', function() {
+            $('#newFolderName').trigger('focus');
+            $('#newFolderName').select()
+        });
+    });
 </script>
 <script>
 export default {
@@ -97,6 +105,7 @@ export default {
     },
     methods: {
         async callAPI() {
+            await this.$store.dispatch("document/getTreeFolder")
             await this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
         },
         switchLayout() {

@@ -9,10 +9,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form v-on:submit.prevent="">
                         <div class="form-group">
                             <label for="name">Folder Name</label>
-                            <input required v-on:keyup.enter="handleCreateFolder" v-model="name" type="text" class="form-control" id="newFolderName" placeholder="Folder name" autofocus>
+                            <input v-on:keyup.enter="handleCreateFolder" v-model="name" type="text" class="form-control" id="newFolderName" placeholder="Folder name" autofocus>
                         </div>
                     </form>
                 </div>
@@ -24,8 +24,9 @@
         </div>
     </div>
 </template>
-<script>
 
+<script>
+import $ from "jquery"
 export default {
     props: {
         parentId: String,
@@ -45,13 +46,18 @@ export default {
           documentState() {return this.$store.state.document },
       },
       methods: {
-            handleCreateFolder() {
-                let data = {
-                    parentId: this.parentId,
-                    name: this.name
-                }
-                this.$store.dispatch("document/createFolder", data)
+        handleCreateFolder() {
+            if(!this.name) {
+                alert("Please provide a folder name")
+                return;
             }
+            let data = {
+                parentId: this.parentId,
+                name: this.name
+            }
+            this.$store.dispatch("document/createFolder", data)
+            $('#modalCreateFolder').modal('hide')
+        }
       },
     }
   </script>

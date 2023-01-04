@@ -6,23 +6,28 @@ import dotenvExpand from "dotenv-expand"
 import cors from "cors";
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose';
+import { Server } from 'socket.io';
+import { createServer } from "http";
 import services from './services/index.js';
 import connectDB from './config/dbConnection.js';
+
 
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
 connectDB()
 const PORT = process.env.PORT || 5555;
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(origin=>origin.trim());
 
 const corsOptions ={
-  // origin: (origin, callback) => {
-  //   allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'))
-  // },
-  origin: true,
+  origin: (origin, callback) => {
+    allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'))
+  },
+  // origin: true,
   credentials:true,            //access-control-allow-credentials:true
   optionSuccessStatus:200,
 }
@@ -66,7 +71,13 @@ app.get("/health", (req, res) => {
 
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');
-  app.listen(PORT, () =>
+  io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+  });
+  httpServer.listen(PORT, () =>
       console.log(`Express app listening on localhost:${PORT}`)
   );
 });

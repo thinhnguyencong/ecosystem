@@ -42,7 +42,10 @@
                     <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                     <td>
                         <span class="material-icons">visibility</span>&nbsp;&nbsp;
-                        <span class="material-icons" @click.stop="" @click="download(file)">download</span>&nbsp;&nbsp;
+                        <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class=" spinner-border text-dark" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </span>
+                        <span v-else class="material-icons" @click.stop="" @click="download(file)">download</span>&nbsp;&nbsp;
                         <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
                         <span class="material-icons text-success">edit_calendar</span> -->
                     </td>
@@ -78,9 +81,14 @@ export default {
     data() {
         return {
             showModal: false,
+            isLoadingDownload: {
+                id: null,
+                value: false
+            }
         }
     },
     mounted() {
+        
     },
     methods: {
         handleAccessFolder(id) {
@@ -109,6 +117,8 @@ export default {
             }
         },
         download(file) {
+            this.isLoadingDownload.value = true
+            this.isLoadingDownload.id = file._id
             IpfsClient().get(file.hash).then(async (res) =>{
                 if(res) {
                     console.log(res[0].content)
@@ -123,20 +133,24 @@ export default {
                     link.download = fileName;
                     console.log("link", link);
                     link.click();
+                    this.isLoadingDownload.value = false
                 }
-                else {
-                    alert("No file to download")
-                }
+            }).catch(error=> {
+                this.isLoadingDownload.value = false
+                console.log(error);
+                alert("No file to download")
             })
         },
     },
-    '$route': {
+    watch: {
+      '$route': {
         immediate: true,
         handler: function(newVal, oldVal) {
             console.log(newVal, oldVal);
             this.showModal = newVal.meta && newVal.meta.showModal;
         }
       },
+    }
 }
 </script>
 <style scoped>

@@ -48,9 +48,7 @@ import ModalFileDetails from './ModalFileDetails.vue';
 import GridView from '../components/GridView.vue';
 import ListView from '../components/ListView.vue';
 import logoURL from '../assets/img-doc.png'
-import FolderVue from '../components/Folder.vue';
-import { IpfsClient } from '../helpers/ipfs';
-import { CID } from 'ipfs-http-client'
+import socketIOClient from "socket.io-client";
 </script>
 <script>
   export default {
@@ -64,6 +62,9 @@ import { CID } from 'ipfs-http-client'
       }
     },
     mounted() {
+      console.log("import.meta.VITE_SERVER_URL", import.meta.env.VITE_SERVER_URL);
+      let x = socketIOClient(import.meta.env.VITE_SERVER_URL)
+      console.log("x", x);
       this.$router.push(this.$route.path)
     },
     created() {

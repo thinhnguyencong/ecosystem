@@ -16,9 +16,9 @@ FROM quay.io/keycloak/keycloak:19.0.3
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 # change these values to point to a running postgres instance
-ENV KC_HOSTNAME=127.0.0.1
+ENV KC_HOSTNAME=login-dms.grooo.com.vn
 ENV KC_DB_USERNAME=postgres
 ENV KC_DB_PASSWORD=postgres
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD [ "start-dev", "--optimized" ]
+CMD [ "start", "--optimized" ]
