@@ -17,6 +17,7 @@ export const authUrl = async (req, res, next) => {
 
 export const authToken = async (req, res, next) => {
 	const {code, clientId, redirect_uri} = req.body.data;
+	console.log(" req.body.data", req.body.data);
 	const oAuthStrategies = new OAuthStrategies(clientId, redirect_uri);
 	const authStrategy = oAuthStrategies.getStrategy();
 	requestPromise(authStrategy.getAuthTokenOptions(code))

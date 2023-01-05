@@ -11,9 +11,9 @@ import { createServer } from "http";
 import services from './services/index.js';
 import connectDB from './config/dbConnection.js';
 
-
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //config for HTTPS connection
 
 const app = express();
 const httpServer = createServer(app);

@@ -155,12 +155,18 @@ export default {
     }
   },
   watch: { 
-    headersProps: function(newVal, oldVal) { // watch it
-      this.headers = newVal
+    headersProps: {
+      handler(newVal, oldVal) { // watch it
+        this.headers = newVal
+      },
+      immediate: true
     },
-    itemsProps: function(newVal, oldVal) { // watch it
-      this.items = this.modifyItems(newVal, this.headers)
-    },
+    itemsProps: {
+      handler(newVal, oldVal) { // watch it
+        this.items = this.modifyItems(newVal, this.headers)
+      },
+      immediate: true
+    }
   }
 }
 </script>
