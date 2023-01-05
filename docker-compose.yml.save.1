@@ -4,20 +4,18 @@ services:
   keycloak:
     build: ./keycloak
     ports:
-     # - "8443:8443"
+      - "8443:8443"
       - "8080:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      PROXY_ADDRESS_FORWARDING: "true"
-      REDIRECT_SOCKET: "proxy-https"
-      KEYCLOAK_FRONTEND_URL: https://login-dms.grooo.com.vn
     command:
       - start-dev
+      - --hostname=10.10.1.16
       - --import-realm
       - --features=preview
     volumes:
-      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
+#      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
   # wallet-server:
   #   build: ./api
   #   ports:
