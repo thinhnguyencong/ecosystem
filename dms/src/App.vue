@@ -82,4 +82,13 @@ button {
 .ql-align-left {
 	text-align: left;
 }
+.v-window {
+    height: 90% !important;
+}
+.v-window__container {
+	height: 100% !important;
+}
+.v-window-item {
+	height: 100% !important;
+}
 </style>

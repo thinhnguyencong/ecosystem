@@ -35,62 +35,43 @@
                                     <div v-if="error">{{ error }}</div>
                                 </div>
                                 <div class="col-5 h-100">
-                                    <v-tabs fixed-tabs grow v-model="active" color="#eee" slider-color="cyan">
-                                        <v-tab :key="0" >
+                                    <v-tabs icons-and-text class="h-100" fixed-tabs grow v-model="active" color="#f7f7f7">
+                                        <v-tabs-slider color="blue"></v-tabs-slider>
+                                        <v-tab active-class="tab-active text-dark" :key="0" >
                                             Document Details
                                         </v-tab>
-                                        <v-tab :key="1">
+                                        <v-tab active-class="tab-active text-dark" :key="1">
                                             Comments
                                         </v-tab>
-                                        <v-tab :key="2">
+                                        <v-tab active-class="tab-active text-dark" :key="2">
                                             Status
                                         </v-tab>
                                         <v-tab-item :key="0">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <br>
-                                                    <h5 class="font-weight-bold">Description</h5>
-                                                    <div class="card border border-muted">
-                                                        <div class="card-body description scrollbar">
-                                                            <div v-html="file.description"></div>
-                                                        </div>
+                                            <div class="doc-info">
+                                                Owner
+                                                <p>hhhh</p>
+                                                <p>hhhh</p>
+                                                <p>hhhh</p>
+                                            </div>
+                                            <div class="description">
+                                                <h5 class="font-weight-bold">Description</h5>
+                                                <div class="border border-muted description-box scrollbar">
+                                                    <div class="card-body">
+                                                        <div v-html="file.description"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <br>
-                                            <div class="row">
-                                                <!-- <div class="col">
-                                                    <div class="font-weight-bold">Reviewer List</div>
-                                                    <ul class="list-group list-group-flush list">
-                                                        <li class="list-group-item">Dapibus ac facilisis in</li>
-                                                        <li class="list-group-item">Morbi leo risus</li>
-                                                        <li class="list-group-item">Porta ac consectetur ac</li>
-                                                        <li class="list-group-item">Vestibulum at eros</li>
-                                                    </ul>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="font-weight-bold">Signer List</div>
-                                                    <ul class="list-group list-group-flush  list">
-                                                        <li class="list-group-item">Dapibus ac facilisis in</li>
-                                                        <li class="list-group-item">Morbi leo risus</li>
-                                                        <li class="list-group-item">Porta ac consectetur ac</li>
-                                                        <li class="list-group-item">Vestibulum at eros</li>
-                                                    </ul>
-                                                </div> -->
                                                 
-                                            </div>
-                                            
-                                            
                                         </v-tab-item>
                                         <v-tab-item :key="1">
                                             <br>
-                                            <div class="card border border-muted h-100">
+                                            <div class="border border-muted comment-box">
                                                 <div class="input-group">
-                                                    <input v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Write your comment..." class="form-control shadow-none" autofocus="true">
+                                                    <textarea v-on:keyup.enter="handleAddComment" v-model="content" placeholder="Write your comment..." class="form-control shadow-none" autofocus="true"></textarea>
                                                 </div>
                                                 <!-- <hr class="divider" /> -->
-                                                <div class="d-flex">
-                                                    <div class="mr-auto p-2">
+                                                <div class="d-flex action">
+                                                    <div class="p-2 mr-auto">
                                                         <div class="align-self-center">
                                                             <div id="dropdownAttachment" class="icon-badge-container" @click="showAttach=!showAttach">
                                                                 <span class="material-icons icon-badge-icon">attach_file</span>
@@ -109,29 +90,30 @@
                                                         </div>
                                                     </div>
                                                     <div class="p-2">
-                                                        <div class="pt-2 align-self-center ml-auto ">
+                                                        <div class="align-self-center ml-auto ">
                                                             <button v-if="!documentState.file.isLoadingComment" style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment"><span class="material-icons">send</span></button>
                                                             <button v-else class="btn btn-primary" type="button" disabled style="float: right;">
-                                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                Adding...
+                                                                <span class="spinner-border spinner-border" role="status" aria-hidden="true"></span>
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <br>
-                                            <h5 class="font-weight-bold">All comments</h5>
-                                            <div class="card border border-muted">
-                                                <div class="card-body" :id="'comments-'+file._id">
-                                                    <div v-if="file?.comments?.length>0" class="comments scrollbar"> 
-                                                        <Comment :commentsProp="file.comments"/>
-                                                    </div>
-                                                    <div v-else> 
-                                                        No comment yet
+                                            <div class="comment-div scrollbar">
+                                                <h5 class="font-weight-bold">All comments</h5>
+                                                <div class="border border-muted comment-list">
+                                                    <div class="p-3" :id="'comments-'+file._id">
+                                                        <div v-if="file?.comments?.length>0"> 
+                                                            <Comment :commentsProp="file.comments"/>
+                                                        </div>
+                                                        <div v-else> 
+                                                            No comment yet
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <br>
+                                           
                                         </v-tab-item>
                                         <v-tab-item :key="2">
                                             <br>
@@ -414,9 +396,6 @@ export default {
     max-width: 80%;
     max-height: 80vh;
 }
-.description {
-    height: 350px; 
-}
 .list {
     height: 110px;
     overflow-y: scroll; /* Add the ability to scroll */
@@ -425,9 +404,9 @@ export default {
     overflow-y: scroll; /* Add the ability to scroll */
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
-/* .scrollbar::-webkit-scrollbar {
+.scrollbar::-webkit-scrollbar {
     display: none;
-} */
+}
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar {
@@ -491,7 +470,7 @@ hr.divider {
 .icon-badge-icon:hover {
     background: transparent;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
+    box-shadow: 0 5px 15px rgba(184, 165, 197, 0.4);
 }
 .icon-badge {
     background-color: red;
@@ -508,5 +487,26 @@ hr.divider {
 .attachment {
     z-index: 9999;
 }
-/*  */
+
+.action {
+    background-color: rgb(254, 254, 255);
+}
+.comment-box {
+    min-height: 20%;
+}
+.comment-div {
+    height: 80%;
+}
+.comment-list {
+    height: 90%
+}
+.description {
+    height: 80%;
+}
+.description-box {
+    height: calc(100% - 20px);
+}
+.doc-info {
+    min-height: 20%;
+}
 </style>
