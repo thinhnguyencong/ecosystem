@@ -1,46 +1,53 @@
 <template>
     <div>
-        <br>
-        <div v-if="folderList.length">
-            <h4 class="font-weight-bold">Folders</h4>
-            <hr>
-            
-            <div class="item-grid-card">
+        <div v-if="!documentState.isLoading">
+            <br>
+            <div v-if="folderList.length">
+                <h4 class="font-weight-bold">Folders</h4>
+                <hr>
                 
-                <FolderVue
-                    v-for="(folder, index) in folderList"
-                    :key="index"
-                    :name="folder.name"
-                    :id="folder._id"
-                />
-            </div>
-            <br>
-            <br>
-        </div>
-        <div v-if="fileList.length">
-            
-            <h4 class="font-weight-bold">Files</h4>
-            <hr>
-            
-            <div class="item-grid-card">
-                <router-link
-                    tag="tr"
-                    class="item" 
-                    v-for="(file, index) in fileList"
-                    :key="file._id"
-                    :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
-                >
-                    <FileVue
-                        :name="JSON.parse(file.tokenURI).name"
-                        :fileType="JSON.parse(file.tokenURI).fileType"
-                        :id="file._id"
-                        :file="file"
+                <div class="item-grid-card">
+                    
+                    <FolderVue
+                        v-for="(folder, index) in folderList"
+                        :key="index"
+                        :name="folder.name"
+                        :id="folder._id"
                     />
-                </router-link>
+                </div>
+                <br>
+                <br>
+            </div>
+            <div v-if="fileList.length">
+                
+                <h4 class="font-weight-bold">Files</h4>
+                <hr>
+                
+                <div class="item-grid-card">
+                    <router-link
+                        tag="tr"
+                        class="item" 
+                        v-for="(file, index) in fileList"
+                        :key="file._id"
+                        :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
+                    >
+                        <FileVue
+                            :name="JSON.parse(file.tokenURI).name"
+                            :fileType="JSON.parse(file.tokenURI).fileType"
+                            :id="file._id"
+                            :file="file"
+                        />
+                    </router-link>
+                </div>
+            </div>
+            <div v-if="fileList?.length == 0 && folderList?.length == 0">
+                <h5>This folder is empty</h5>
             </div>
         </div>
-        <div v-if="fileList?.length == 0 && folderList?.length == 0">
-            <h5>This folder is empty</h5>
+        <div v-else class="pl-4 pr-4">
+            <div class="spinner-border text-dark" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
         <Transition name="modal">
             <router-view v-if="showModal"></router-view>
@@ -77,6 +84,9 @@ export default {
         
     },
     methods: {
+    },
+    computed: {
+        documentState() {return this.$store.state.document },
     },
     watch: {
       '$route': {

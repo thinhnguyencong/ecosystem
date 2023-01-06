@@ -270,10 +270,10 @@ export const getSharedWithMeFolder = async (req, res, next) => {
 	let user = await User.findOne({email: userEmail}) 
 	let userId = user._id.valueOf()
 	if(isValidObjectId(userId)) {
-		let sharedWithMeFolders = await Folder.find({ shared: userId })
+		let sharedWithMeFolders = await Folder.find({ shared: userId }).lean()
 		//console.log("sharedWithMeFolders", sharedWithMeFolders);
 		let result1 = []
-		let a = sharedWithMeFolders.filter(f => f.parent == null).map(x=> ({_id: x._id.valueOf(), name: x.name}))
+		let a = sharedWithMeFolders.filter(f => f.parent == null).map(x=> ({...x, _id: x._id.valueOf(), name: x.name}))
 		console.log(a)
 		let result = result1.concat(a)
 		let b = sharedWithMeFolders.filter(f => f.parent !== null)
@@ -283,14 +283,11 @@ export const getSharedWithMeFolder = async (req, res, next) => {
 			// console.log(folder.name);
 			if(folder.ancestors.length) {
 				for (let i=0; i< folder.ancestors.length; i++ ){
-					let ancestorFolder = await Folder.findById(folder.ancestors[i])
+					let ancestorFolder = await Folder.findById(folder.ancestors[i]).lean()
 					// console.log("ancestorFolder", ancestorFolder);
 					// only get permissioned folder
 					if(ancestorFolder && ancestorFolder.shared.includes(userId) && ancestorFolder.parent !== null && ancestorFolder.owner !== userId) {
-						result.push({
-							_id: JSON.parse(JSON.stringify(ancestorFolder))._id,
-							name: JSON.parse(JSON.stringify(ancestorFolder)).name
-						})
+						result.push(JSON.parse(JSON.stringify(ancestorFolder)))
 					}
 				}
 			}
@@ -411,15 +408,30 @@ const getFile = async (userId, allFiles) => {
 }
 export const getAllFiles = async (req, res, next) => {
 	try {
+		const web3Connection = await getWeb3()
+		if(!web3Connection.status) {
+			return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+		}
+		const web3 = web3Connection.web3
+		const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail}) 
 		let userId = user._id.valueOf()
+		// những tài liệu mà user có public address chưa kí
+		let pendingDocs = await dmsContract.methods.getUserNotSignedList().call({ from: user.publicAddress });
+
+		// // những tài liệu đã kí của user.publicaddress
+		let signedDocs = await dmsContract.methods.getUserSignedList().call({ from: user.publicAddress });
+		console.log("X", pendingDocs);
+		console.log("z", signedDocs);
 		if(isValidObjectId(userId)) {
 			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
 			return res.status(200).send({
 				msg: "Success",
 				data: {
 					files: files,
+					pendingDocs: pendingDocs,
+					signedDocs: signedDocs
 				},
 				
 			})
@@ -805,11 +817,11 @@ export const getFileById = async (req, res, next) => {
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
 			const startTime = Date.now();
 			let file = fileById;
-			// try {
-			// 	file = await getFileStatus(fileById, user.publicAddress, dmsContract)
-			// } catch (error) {
-			// 	throw({message: "Time out when connect to Web3 Provider"})
-			// }
+			try {
+				file = await getFileStatus(fileById, user.publicAddress, dmsContract)
+			} catch (error) {
+				throw({message: "Time out when connect to Web3 Provider"})
+			}
 			const endTime = Date.now();
 			const timeTaken = endTime - startTime;
 			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);

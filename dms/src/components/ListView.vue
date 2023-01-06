@@ -1,67 +1,75 @@
 <template>
-    
-    <div class="table-responsive">
-        <table id="transactionsTable" class="table table-hover" data-pagination="true">
-            <thead>
-            <tr>
-                <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
-                <th scope="col">Token Id</th>
-                <th scope="col">Date Modified</th>
-                <th scope="col">Status</th>
-                <th scope="col">Owner</th>
-                <th scope="col">Size</th>
-                <th scope="col">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr role='button' v-if="(folders.length>0)" @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
-                    <th scope="row">
-                        <i class="mdi mdi-folder text-custom-color-blue"></i> {{folder.name}}
-                    </th>
-                    <td>-</td>
-                    <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
-                    <td>-</td>
-                    <td>{{folder.owner}}</td>
-                    <td>-</td>
-                    <td></td>
+    <div>
+        <div class="table-responsive" v-if="!documentState.isLoading">
+            <br>
+            <table id="transactionsTable" class="table table-hover" data-pagination="true">
+                <thead>
+                <tr>
+                    <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
+                    <th scope="col">Token Id</th>
+                    <th scope="col">Date Modified</th>
+                    <th v-if="status" scope="col">Status</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Action</th>
                 </tr>
-                <router-link
-                    tag="tr"
-                    class="item cursor-pointer" 
-                    v-for="(file, index) in files"
-                    :key="file._id"
-                    :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
-                >
-                    <th scope="row">
-                        <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
-                    </th>
-                    <td>{{file.tokenId}}</td>
-                    <td>{{(new Date(file.createdAt)).toDateString()}}</td>
-                    <td :class="getClassStatus(file.status)">{{file.status}}</td>
-                    <td>{{file.owner}}</td>
-                    <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
-                    <td>
-                        <span class="material-icons">visibility</span>&nbsp;&nbsp;
-                        <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class=" spinner-border text-dark" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </span>
-                        <span v-else class="material-icons" @click.stop="" @click="download(file)">download</span>&nbsp;&nbsp;
-                        <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
-                        <span class="material-icons text-success">edit_calendar</span> -->
-                    </td>
-                </router-link>
-                <tr v-if="(files.length + folders.length == 0)">
-                    <td class="text-center" colspan="6" scope="row"><h5>Empty</h5></td>
-                </tr>
-            <!-- <tr>
-                <td class="text-center" colspan="6" scope="row"><a href="">See more ...</a></td>
-            </tr> -->
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <tr role='button' v-if="(folders.length>0)" @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
+                        <th scope="row">
+                            <i class="mdi mdi-folder text-custom-color-blue"></i> {{folder.name}}
+                        </th>
+                        <td>-</td>
+                        <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
+                        <td v-if="status">-</td>
+                        <td>{{folder.owner}}</td>
+                        <td>-</td>
+                        <td></td>
+                    </tr>
+                    <router-link
+                        tag="tr"
+                        class="item cursor-pointer" 
+                        v-for="(file, index) in files"
+                        :key="file._id"
+                        :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
+                    >
+                        <th scope="row">
+                            <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
+                        </th>
+                        <td>{{file.tokenId}}</td>
+                        <td>{{(new Date(file.createdAt)).toDateString()}}</td>
+                        <td v-if="status" :class="getClassStatus(file.status)">{{file.status}}</td>
+                        <td>{{file.owner}}</td>
+                        <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
+                        <td>
+                            <span class="material-icons">visibility</span>&nbsp;&nbsp;
+                            <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class=" spinner-border text-dark" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </span>
+                            <span v-else class="material-icons" @click.stop="" @click="download(file)">download</span>&nbsp;&nbsp;
+                            <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
+                            <span class="material-icons text-success">edit_calendar</span> -->
+                        </td>
+                    </router-link>
+                    <tr v-if="(files.length + folders.length == 0)">
+                        <td class="text-center" colspan="6" scope="row"><h5>Empty</h5></td>
+                    </tr>
+                <!-- <tr>
+                    <td class="text-center" colspan="6" scope="row"><a href="">See more ...</a></td>
+                </tr> -->
+                </tbody>
+            </table>
+        </div>
+        <div v-else class="pl-4 pr-4">
+            <div class="spinner-border text-dark" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <Transition name="modal">
             <router-view v-if="showModal"></router-view>
         </Transition>
     </div>
+    
 </template>
 <script>
 import { IpfsClient } from "../helpers/ipfs";
@@ -76,6 +84,10 @@ export default {
         files: {
             type: Array,
             default() {return []}
+        },
+        hasStatus: {
+            type: Boolean,
+            default() {return true}
         }
     },
     data() {
@@ -84,11 +96,15 @@ export default {
             isLoadingDownload: {
                 id: null,
                 value: false
-            }
+            },
+            status: true
         }
     },
     mounted() {
-        
+        this.status = this.hasStatus
+    },
+    computed: {
+        documentState() {return this.$store.state.document },
     },
     methods: {
         handleAccessFolder(id) {
@@ -154,6 +170,9 @@ export default {
 }
 </script>
 <style scoped>
+td, th, tr {
+    font-size: 1.2rem;
+}
 .float-right {
     float: right;
 }

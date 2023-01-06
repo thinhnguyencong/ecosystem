@@ -18,11 +18,11 @@ import Sidebar from './components/layout/Sidebar.vue'
 import Header from './components/layout/Header.vue';
 import store from './store';
 
-$(document).on('show.bs.modal', '.modal', function() {
-  const zIndex = 1040 + 10 * $('.modal:visible').length;
-  $(this).css('z-index', zIndex);
-  setTimeout(() => $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'));
-});
+// $(document).on('show.bs.modal', '.modal', function() {
+//   const zIndex = 1040 + 10 * $('.modal:visible').length;
+//   $(this).css('z-index', zIndex);
+//   setTimeout(() => $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'));
+// });
 
 </script>
 
@@ -64,12 +64,12 @@ button {
 	}
 }
 #content {
-  margin: 2rem
+//   margin: 2rem
 }
 #layout {
 	width: 100%;
 	transition: margin-left .5s; /* If you want a transition effect */
-	padding: 20px;
+	// padding: 20px;
 }
 </style>  
 <style lang="scss">
@@ -90,5 +90,11 @@ button {
 }
 .v-window-item {
 	height: 100% !important;
+}
+.v-tabs__div a {
+  text-decoration: none !important;
+}
+.tab-active {
+	background-color: #eee !important;
 }
 </style>

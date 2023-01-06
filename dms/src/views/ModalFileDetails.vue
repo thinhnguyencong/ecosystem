@@ -37,21 +37,35 @@
                                 <div class="col-5 h-100">
                                     <v-tabs icons-and-text class="h-100" fixed-tabs grow v-model="active" color="#f7f7f7">
                                         <v-tabs-slider color="blue"></v-tabs-slider>
-                                        <v-tab active-class="tab-active text-dark" :key="0" >
+                                        <v-tab class="file-detail-tab" active-class="tab-active text-primary font-weight-bold" :key="0" >
                                             Document Details
                                         </v-tab>
-                                        <v-tab active-class="tab-active text-dark" :key="1">
+                                        <v-tab class="file-detail-tab" active-class="tab-active text-primary font-weight-bold" :key="1">
                                             Comments
                                         </v-tab>
-                                        <v-tab active-class="tab-active text-dark" :key="2">
+                                        <v-tab class="file-detail-tab" active-class="tab-active text-primary font-weight-bold" :key="2">
                                             Status
                                         </v-tab>
                                         <v-tab-item :key="0">
                                             <div class="doc-info">
-                                                Owner
-                                                <p>hhhh</p>
-                                                <p>hhhh</p>
-                                                <p>hhhh</p>
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-3">
+                                                            <p>Owner</p>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <p>{{ file.owner }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3">
+                                                            <p>Upload At</p>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <p>{{(new Date(file.createdAt)).toDateString()}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="description">
                                                 <h5 class="font-weight-bold">Description</h5>
@@ -73,20 +87,48 @@
                                                 <div class="d-flex action">
                                                     <div class="p-2 mr-auto">
                                                         <div class="align-self-center">
-                                                            <div id="dropdownAttachment" class="icon-badge-container" @click="showAttach=!showAttach">
-                                                                <span class="material-icons icon-badge-icon">attach_file</span>
-                                                                <div v-if="attachments.length" class="icon-badge">{{ attachments.length }}</div>
-                                                            </div>
-                                                            <div v-if="showAttach" class="attachment">
-                                                                <treeselect
-                                                                    v-model="attachments" 
-                                                                    :multiple="true" 
-                                                                    :options="documentState.treeFolder" 
-                                                                    :value-consists-of="valueConsistsOf"
-                                                                    placeholder="Add attachments.." 
-                                                                    :normalizer="normalizer"
-                                                                />
-                                                            </div>
+                                                            <v-menu
+                                                                transition="slide-y-transition"
+                                                                bottom
+                                                                content-class="my-menu"
+                                                            >
+                                                                <template v-slot:activator="{ on }">
+                                                                    <div class="align-self-center ">
+                                                                        <v-badge
+                                                                            left
+                                                                            overlap
+                                                                            color="orange"
+                                                                            >
+                                                                            <template v-slot:badge v-if="attachments.length">
+                                                                                <span>{{ attachments.length }}</span>
+                                                                            </template>
+                                                                            
+                                                                            <v-btn flat icon color="indigo" v-on="on">
+                                                                                <v-icon
+                                                                                    data-toggle="tooltip" 
+                                                                                    title="Add attachment"
+                                                                                    color="black"
+                                                                                >
+                                                                                attach_file
+                                                                                </v-icon>
+                                                                            </v-btn>
+                                                                                
+                                                                        </v-badge>
+                                                                    </div>
+                                                                </template>
+                                                                
+                                                                <div @click.stop="" class="attachment">
+                                                                    <treeselect
+                                                                        v-model="attachments"
+                                                                        :multiple="true" 
+                                                                        :options="documentState.treeFolder" 
+                                                                        :value-consists-of="valueConsistsOf"
+                                                                        placeholder="Add attachments.." 
+                                                                        :normalizer="normalizer"
+                                                                    />
+                                                                </div>
+                                                                
+                                                            </v-menu>
                                                         </div>
                                                     </div>
                                                     <div class="p-2">
@@ -100,16 +142,11 @@
                                                 </div>
                                             </div>
                                             <br>
-                                            <div class="comment-div scrollbar">
+                                            <div class="comment-div">
                                                 <h5 class="font-weight-bold">All comments</h5>
-                                                <div class="border border-muted comment-list">
+                                                <div class="border border-muted comment-list scrollbar">
                                                     <div class="p-3" :id="'comments-'+file._id">
-                                                        <div v-if="file?.comments?.length>0"> 
-                                                            <Comment :commentsProp="file.comments"/>
-                                                        </div>
-                                                        <div v-else> 
-                                                            No comment yet
-                                                        </div>
+                                                       <Comment />
                                                     </div>
                                                 </div>
                                             </div>
@@ -379,15 +416,6 @@ export default {
                 }
             },
         },
-        // documentState:{
-        //     handler(newVal, oldVal) {
-        //         console.log("newVal", newVal, oldVal);
-        //         if(newVal) {
-        //             this.file = newVal.file
-        //         }
-        //     },
-        //     deep: true
-        // },
     }
 }
 </script>
@@ -457,7 +485,7 @@ hr.divider {
 .slide-enter, .slide-leave-to{
   transform: scaleY(0);
 }
-.icon-badge-container {
+/* .icon-badge-container {
     position:relative;
 }
 
@@ -468,10 +496,10 @@ hr.divider {
     padding: 5px;
 }
 .icon-badge-icon:hover {
-    background: transparent;
+    background-color: rgb(246, 239, 239);
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(184, 165, 197, 0.4);
-}
+} */
 .icon-badge {
     background-color: red;
     font-size: 12px;
@@ -483,11 +511,12 @@ hr.divider {
     position: absolute; /* changed */
     top: -5px; /* changed */
     left: 19px; /* changed */
-}
+} 
 .attachment {
-    z-index: 9999;
+    position: absolute;
+    z-index: 1;
+    width: 400px;
 }
-
 .action {
     background-color: rgb(254, 254, 255);
 }
@@ -498,15 +527,42 @@ hr.divider {
     height: 80%;
 }
 .comment-list {
-    height: 90%
+    height: 85%;
 }
 .description {
     height: 80%;
 }
 .description-box {
-    height: calc(100% - 20px);
+    height: 90%;
 }
 .doc-info {
     min-height: 20%;
+}
+.file-detail-tab {
+    cursor: pointer;
+}
+.file-detail-tab:hover {
+    background-color: #eee;
+}
+.tab-active {
+    background-color: #eee;
+}
+.my-menu {
+  margin-top: 40px;
+  contain: initial;
+  overflow: visible;
+}
+.my-menu::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 10px;
+  transform: translateY(-100%);
+  width: 10px; 
+  height: 13px; 
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 13px solid rgb(199, 195, 195);
+  margin-top: 5px;
 }
 </style>

@@ -1,52 +1,33 @@
 <template>
 	<div >
-        <nav aria-label="breadcrumb">
+        <nav aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">
-                    My Folder
-                </li>
-                <li class="ml-auto">
+                <li class="breadcrumb-item active d-flex flex-row ml-4" aria-current="page"><span class="material-icons">folder</span><span class="align-self-center">&nbsp;My Folder</span></li>
+                <li class="ml-auto mr-5">
                     <button @click="switchLayout">
-                        <span v-if="layout == 'grid'" class="material-icons ml-auto pr-4">
+                        <span v-if="layout == 'grid'" class="material-icons action-icon ml-auto pr-4">
                             list
                         </span>
-                        <span v-if="layout == 'list'" class="material-icons ml-auto pr-4">
+                        <span v-if="layout == 'list'" class="material-icons action-icon ml-auto pr-4">
                             grid_view
                         </span>
                     </button>
-                    <span class="material-icons" @click="handleDrawer">
+                    <span class="material-icons action-icon" @click="handleDrawer">
                         info
                     </span>
                 </li>
-                
-                
             </ol>
-             
         </nav>
-        
-        <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
-        <ModalUploadFile/>
-        <div v-if="!documentState.isLoading">
-            <!-- <div data-toggle="modal" data-target="#modalCreateFolder" class="tile folder">
-                        <span class="material-icons">add</span>
-                        <h4>Add</h4>
-                    </div> -->
+        <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
             <div class="row">
                 <div class="col">
-                    <div class="d-flex justify-content-between">
-                        <div class="p-2">
-                            <div class="dropdown">
-                                <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-plus text-light"></i> New &nbsp;
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
-                                    <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-2">
-                            <!-- <ManageKey/> -->
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="mdi mdi-plus text-light"></i> New &nbsp;
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
+                            <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
                         </div>
                     </div>
                     <div v-if="layout == 'grid'">
@@ -64,12 +45,18 @@
                         <FolderDetail :drawerVisible="drawerVisible"/>
                     </div>
                 </transition>
-            </div>        
+            </div>
+            
+            
         </div>
-        <div v-else class="spinner-border text-dark" role="status">
-            <span class="sr-only">Loading...</span>
+        <div v-else class="pl-4 pr-4">
+            <div class="spinner-border text-dark" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
         
+        <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
+        <ModalUploadFile/>
 	</div>
 </template>
 <script setup>
@@ -143,10 +130,10 @@ export default {
 .float-right {
     float: right;
 }
-.material-icons{
+.action-icon {
     cursor: pointer;
 }
-.material-icons:hover {
+.action-icon:hover {
     background: transparent;
 	color: #0f85f4;
 }

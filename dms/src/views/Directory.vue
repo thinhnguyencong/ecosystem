@@ -1,58 +1,61 @@
 <template>
 	<div >
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li v-if="documentState.folder.status=='my-folder'" class="breadcrumb-item" aria-current="page">
-                    <router-link to="/my-folder">My Folder</router-link>
+        <nav aria-label="breadcrumb" class="mt-4">
+            <ol class="breadcrumb mt-2">
+                <li v-if="documentState.folder.status=='my-folder'" class="ml-4" aria-current="page">
+                    <router-link class="align-self-center d-flex flex-row" to="/my-folder"><span class="material-icons">folder</span><span class="align-self-center mt-1">&nbsp;My Folder</span></router-link>
                 </li>
-                <li v-else-if="documentState.folder.status=='shared-with-me'" class="breadcrumb-item" aria-current="page">
-                    <router-link to="/shared-with-me">Share with me</router-link>
+                <li v-else-if="documentState.folder.status=='shared-with-me'" class="ml-4" aria-current="page">
+                    <router-link class="align-self-center d-flex flex-row" to="/shared-with-me"><span class="material-icons">folder</span><span class="align-self-center mt-1">&nbsp;Shared with me</span></router-link>
                 </li>
-                <li v-else class="breadcrumb-item" aria-current="page">
-                    <router-link to="/">Home</router-link>
+                <li v-else class="ml-4" aria-current="page">
+                    <router-link class="align-self-center d-flex flex-row" to="/"><span class="material-icons">folder</span><span class="align-self-center mt-1">&nbsp;Home</span></router-link>
                 </li>
                 <li v-for="(folder, index) in documentState.ancestors" :key="index" 
-                    class="breadcrumb-item " aria-current="page">
-                    <router-link :to="'/folder/'+ folder._id">{{folder.name}}</router-link>
+                    aria-current="page">
+                    <router-link class="align-self-center d-flex flex-row" :to="'/folder/'+ folder._id">
+                        <span class="material-icons">
+                            &nbsp;/ folder
+                        </span>
+                        <span class="align-self-center mt-1">&nbsp;{{folder.name}}</span>
+                    </router-link>
                 </li>
-                <li v-if="documentState.folder" class="breadcrumb-item active" aria-current="page">{{documentState.folder.name}}</li>
-                <li class="ml-auto">
+                <li v-if="documentState.folder" class="d-flex flex-row mt-n-2" aria-current="page">
+                    <span class="material-icons">
+                        &nbsp;/ <i class="mdi mdi-folder-open text-secondary"></i>
+                    </span>
+                    <span class="align-self-center mt-1 text-secondary">
+                        &nbsp;{{documentState.folder.name}}
+                    </span>
+                </li>
+                <li class="ml-auto mr-5">
                     <button @click="switchLayout">
-                        <span v-if="layout == 'grid'" class="material-icons ml-auto pr-4">
+                        <span v-if="layout == 'grid'" class="material-icons action-icon ml-auto pr-4">
                             list
                         </span>
-                        <span v-if="layout == 'list'" class="material-icons ml-auto pr-4">
+                        <span v-if="layout == 'list'" class="material-icons action-icon ml-auto pr-4">
                             grid_view
                         </span>
                     </button>
-                    <span class="material-icons ">
+                    <span class="material-icons action-icon">
                         info
                     </span>
                 </li>
-                
-                
             </ol>
              
         </nav>
-        <div class="d-flex justify-content-between">
-            <div class="p-2">
-                <div class="dropdown">
-                    <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="mdi mdi-plus text-light"></i> New &nbsp;  
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
-                        <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
-                    </div>
-                </div>
-            </div>
-            <!-- <div class="p-2">
-                <ManageKey/>
-            </div> -->
-        </div>
         <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
         <ModalUploadFile/>
-        <div v-if="!documentState.isLoading">
+        <div class="pl-5 pr-5 pt-3" v-if="!documentState.isLoading">
+            <div class="dropdown">
+                <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="mdi mdi-plus text-light"></i> New &nbsp;  
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
+                    <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
+                </div>
+            </div>
             <div v-if="layout == 'grid'">
                 <GridViewVue :folders="documentState.children" :files="documentState.folder.files"/>
             </div>
@@ -60,8 +63,10 @@
                 <ListTableVue :folders="documentState.children" :files="documentState.folder.files"/>
             </div>
         </div>
-        <div v-else class="spinner-border text-dark" role="status">
-            <span class="sr-only">Loading...</span>
+        <div v-else class="pl-4 pr-4">
+            <div class="spinner-border text-dark" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
 	</div>
 </template>
@@ -145,11 +150,14 @@ export default {
 .text-custom-color-blue {
     color: #00A8FF
 }
-.material-icons{
+.action-icon {
     cursor: pointer;
 }
-.material-icons:hover {
+.action-icon:hover {
     background: transparent;
 	color: #0f85f4;
+}
+.mt-n-2 {
+    margin-top: -0.2rem;
 }
 </style>

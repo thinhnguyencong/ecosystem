@@ -1,20 +1,18 @@
 <template>
-	<div >
+	<div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">
-                    Shared with me
-                </li>
-                <li class="ml-auto">
+                <li class="breadcrumb-item active d-flex flex-row ml-4" aria-current="page"><span class="material-icons">folder_shared</span><span class="align-self-center">&nbsp;Share With Me</span></li>
+                <li class="ml-auto mr-5">
                     <button @click="switchLayout">
-                        <span v-if="layout == 'grid'" class="material-icons ml-auto pr-4">
+                        <span v-if="layout == 'grid'" class="material-icons action-icon ml-auto pr-4">
                             list
                         </span>
-                        <span v-if="layout == 'list'" class="material-icons ml-auto pr-4">
+                        <span v-if="layout == 'list'" class="material-icons action-icon ml-auto pr-4">
                             grid_view
                         </span>
                     </button>
-                    <span class="material-icons ">
+                    <span class="material-icons action-icon">
                         info
                     </span>
                 </li>
@@ -23,43 +21,30 @@
              
         </nav>
 
-        <div v-if="!documentState.isLoading">
+        <div class="pl-4 pr-4" v-if="!documentState.isLoading">
             <div v-if="layout == 'grid'">
                 <GridViewVue :folders="documentState.children" :files="[]"/>
             </div>
             <div v-if="layout == 'list'">
-                <div class="table-responsive">
-                    <table id="transactionsTable" class="table table-hover" data-pagination="true">
-                        <thead>
-                        <tr>
-                            <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
-                            <th scope="col">Token Id</th>
-                            <th scope="col">Date Modified</th>
-                            <th scope="col">Owner</th>
-                            <th scope="col">Size</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                        </thead>
-                        
-                    </table>
-                </div>
+                <ListView :folders="documentState.children" :files="[]"/>
             </div>
         </div>
-        <div v-else class="spinner-border text-dark" role="status">
-            <span class="sr-only">Loading...</span>
+        <div v-else class="pl-4 pr-4">
+            <div class="spinner-border text-dark" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
         
 	</div>
 </template>
 <script setup>
-import FileVue from '../components/File.vue'
-import FolderVue from '../components/Folder.vue';
 import GridViewVue from '../components/GridView.vue';
+import ListView from '../components/ListView.vue';
 </script>
 <script>
 
 export default {
-  components: { File },
+  components: { File, ListView },
     mounted() {
         // Call the API query method on page load
         this.$router.push(this.$route.path)
@@ -71,48 +56,6 @@ export default {
     data() {
         return {
            layout: "grid",
-           mockData: [
-             {
-                name: "Head First python.pdf",
-                type: "pdf"
-            },
-            {
-                name: "Weekly Report.pptx",
-                type: "pptx"
-            },
-            {
-                name: "Monthly Report.pdf",
-                type: "pdf"
-            },
-            {
-                name: "Testcase.xlsx",
-                type: "xlsx"
-            },
-            {
-                name: "Reading CAM 13.docx",
-                type: "docx"
-            },
-            {
-                name: "index.html",
-                type: "html"
-            },
-            {
-                name: "style.css",
-                type: "css"
-            },
-            {
-                name: "Timetable 20221.xlsx",
-                type: "xlsx"
-            },
-            {
-                name: "script.js",
-                type: "javascript"
-            },
-            {
-                name: "Testcase 2.xlsx",
-                type: "xlsx"
-            },
-           ]
         }
     },
     computed: {
@@ -141,5 +84,12 @@ export default {
 }
 .text-custom-color-blue {
     color: #00A8FF
+}
+.action-icon {
+    cursor: pointer;
+}
+.action-icon:hover {
+    background: transparent;
+	color: #0f85f4;
 }
 </style>

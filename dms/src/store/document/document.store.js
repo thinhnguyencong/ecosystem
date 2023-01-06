@@ -19,7 +19,9 @@ const initialState = {
     isLoadingSign: false,
     isLoadingReject: false
   },
-  treeFolder: []
+  treeFolder: [],
+  pendingDocs: [],
+  signedDocs: []
 };
 
 export const document = {
@@ -197,6 +199,9 @@ export const document = {
     getFolderById(state){
         if(!state.isLoading) {
           state.isLoading = true
+          state.children = []
+          state.ancestors = []
+          state.folder = {}
         }
     },
     getFolderByIdSuccess(state, result){
@@ -298,6 +303,8 @@ export const document = {
     getAllFilesSuccess(state, result){
         state.isLoading = false;
         state.files = result.data.data.files;
+        state.pendingDocs = result.data.data.pendingDocs
+        state.signedDocs = result.data.data.signedDocs
     },
     getAllFilesFailure(state, error){
         state.isLoading = false

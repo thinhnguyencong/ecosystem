@@ -1,43 +1,46 @@
 <template>
-    <div class="comment-widgets">
-        <div v-for="(comment, index) in comments" :key="index" class="d-flex flex-row comment-row">
-            <div class="p-2"><span class="round"><img src="https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png" alt="user" width="40"></span></div>
-            <div class="p-2 comment-text w-100">
-                <h5 class="d-inline">{{ comment.name }}</h5> &nbsp; &nbsp; &nbsp;<small class="date">{{customTime(comment.createdAt)}}</small>
-                <p class="m-b-5 m-t-10">{{comment.content}}</p>
-                <a class="attach-text" v-if="comment.attachments.length" role="button" @click="handleShow(comment)">{{ comment.attachments.length }} Attachment(s)</a>
-                <div v-show="comment.isActive">
-                    <div class="list-group">
-                        <router-link
-                            tag="div"
-                            v-for="(attachment, index) in comment.attachments"
-                            :key="index"
-                            :to="$route.matched[0].name == 'Directory' ? `/folder/${$route.params.id}/file/${attachment.id}` : `${$route.matched[0].path}/file/${attachment.id}`"
-                        >
-                            <a class="list-group-item list-group-item-action">
-                                {{ (index+1)+". " }}{{attachment.name}}
-                            </a>
-                        </router-link>
-                            
-                    </div>
+    <div>
+        <div v-if="documentState.file?.comments?.length>0"> 
+            <div class="comment-widgets">
+                <div v-for="(comment, index) in comments" :key="index" class="d-flex flex-row comment-row">
+                    <div class="p-2"><span class="round"><img src="https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png" alt="user" width="40"></span></div>
+                    <div class="p-2 comment-text w-100">
+                        <h5 class="d-inline">{{ comment.name }}</h5> &nbsp; &nbsp; &nbsp;<small class="date">{{customTime(comment.createdAt)}}</small>
+                        <p class="m-b-5 m-t-10">{{comment.content}}</p>
+                        <a class="attach-text" v-if="comment.attachments.length" role="button" @click="handleShow(comment)">{{ comment.attachments.length }} Attachment(s)</a>
+                        <div v-show="comment.isActive">
+                            <div class="list-group">
+                                <router-link
+                                    tag="div"
+                                    v-for="(attachment, index) in comment.attachments"
+                                    :key="index"
+                                    :to="$route.matched[0].name == 'Directory' ? `/folder/${$route.params.id}/file/${attachment.id}` : `${$route.matched[0].path}/file/${attachment.id}`"
+                                >
+                                    <a class="list-group-item list-group-item-action">
+                                        {{ (index+1)+". " }}{{attachment.name}}
+                                    </a>
+                                </router-link>
+                                    
+                            </div>
 
+                        </div>
+                    </div>
                 </div>
+                
             </div>
+        </div>
+        <div v-else> 
+            No comment yet
         </div>
         <Transition name="modal">
             <router-view v-if="showModal"></router-view>
         </Transition>
     </div>
-   
-    
 </template>
 <script>
 import $ from 'jquery' 
-
 export default {
-    props: {
-        commentsProp: Array,
-    },
+    props: {},
     data() {
         return {
             comments: [],
@@ -52,7 +55,6 @@ export default {
             return dayjs(time).fromNow();
         },
         handleShow(comment) {
-            console.log("$route", this.$route);
             comment.isActive = !comment.isActive;
         },
         sortComment(comments) {
@@ -63,27 +65,27 @@ export default {
         },
     },
     created() {
-        // this.$set(this, "file", )
     },
     mounted() {
-        console.log("MOUNTTTTTTTTTTTTTT");
-        
-        this.$set(this, "comments", this.sortComment(this.commentsProp.map(x => ({ ...x, isActive: false }))));
+    },
+    computed: {
+        documentState() {return this.$store.state.document },
     },
     watch: {
-        commentsProp: {
-            handler(newVal, oldVal) {
-                this.$set(this, "comments", this.sortComment(newVal.map(x => ({ ...x, isActive: false }))));
-            },
-            immediate: true
-        },
         '$route': {
-        immediate: true,
+            immediate: true,
             handler: function(newVal, oldVal) {
-                console.log(newVal, oldVal);
                 this.showModal = newVal.meta && newVal.meta.showModal;
             }
-        } 
+        } ,
+        '$store.state.document.file.comments':{
+            handler(newVal, oldVal) {
+                if(newVal && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                    this.$set(this, 'comments', this.sortComment(newVal.map(x => ({ ...x, isActive: false }))))
+                }
+            },
+            immediate: true,
+        },
     },
 }
 </script>

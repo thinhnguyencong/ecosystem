@@ -1,5 +1,5 @@
 <template>
-    <div class="topnav grid-container">
+    <div class="topnav grid-container m-4 p-2">
         <div class="grid-item-1">
           <button @click="openNav">
             <span class="material-icons menu-button">menu</span>
