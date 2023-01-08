@@ -38,28 +38,28 @@
         </v-tab>
         <v-tab-item :key="0">
           <br>
-          <div v-if="layout == 'grid'">
+          <div v-if="layout == 'grid' && active==0">
               <GridView :folders="[]" :files="files"/>
           </div>
-          <div v-if="layout == 'list'">
+          <div v-if="layout == 'list' && active==0">
               <ListView :folders="[]" :files="files"/>
           </div>
         </v-tab-item>
         <v-tab-item :key="1">
           <br>
-          <div v-if="layout == 'grid'">
+          <div v-if="layout == 'grid' && active==1">
               <GridView :folders="[]" :files="getPendingDocs()"/>
           </div>
-          <div v-if="layout == 'list'">
+          <div v-if="layout == 'list' && active==1">
               <ListView :folders="[]" :files="getPendingDocs()" :hasStatus="false"/>
           </div>
         </v-tab-item>
         <v-tab-item :key="2">
           <br>
-          <div v-if="layout == 'grid'">
+          <div v-if="layout == 'grid' && active==2">
               <GridView :folders="[]" :files="getSignedDocs()"/>
           </div>
-          <div v-if="layout == 'list'">
+          <div v-if="layout == 'list' && active==2">
               <ListView :folders="[]" :files="getSignedDocs()" :hasStatus="false"/>
           </div>
         </v-tab-item>
@@ -92,6 +92,7 @@ import socketIOClient from "socket.io-client";
       // let x = socketIOClient(import.meta.env.VITE_SERVER_URL)
       // console.log("x", x);
       this.$router.push(this.$route.path)
+      console.log("home");
     },
     created() {
         this.$store.dispatch("auth/sidebarActive", "home")
