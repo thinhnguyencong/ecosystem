@@ -47,28 +47,26 @@
                                             Status
                                         </v-tab>
                                         <v-tab-item :key="0">
-                                            <div class="doc-info">
-                                                <div class="container">
+                                            <div class="doc-info mt-4">
                                                     <div class="row">
-                                                        <div class="col-3">
-                                                            <p>Owner</p>
+                                                        <div class="col-4">
+                                                            <p class="font-weight-bold">Owner :</p>
                                                         </div>
-                                                        <div class="col-5">
+                                                        <div class="col-8">
                                                             <p>{{ file.owner }}</p>
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-3">
-                                                            <p>Upload At</p>
+                                                        <div class="col-4">
+                                                            <p class="font-weight-bold">Upload At :</p>
                                                         </div>
-                                                        <div class="col-5">
+                                                        <div class="col-8">
                                                             <p>{{(new Date(file.createdAt)).toDateString()}}</p>
                                                         </div>
                                                     </div>
-                                                </div>
                                             </div>
                                             <div class="description">
-                                                <h5 class="font-weight-bold">Description</h5>
+                                                <p class="font-weight-bold">Description :</p>
                                                 <div class="border border-muted description-box scrollbar">
                                                     <div class="card-body">
                                                         <div v-html="file.description"></div>
@@ -164,13 +162,13 @@
                                                     <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
                                                     <p></p>
                                                     <p class="font-weight-bold">Review History: </p>
-                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList">{{reviewer.name}}: &nbsp; 
+                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList" :key="index">{{reviewer.name}}: &nbsp; 
                                                         <span v-if="reviewer.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
                                                         <span v-if="reviewer.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer.time)}}</span>
                                                         <span v-if="reviewer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer.time)}}</span>
                                                     </p>
                                                     <p class="font-weight-bold">Sign History: </p>
-                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList">{{signer.name}}: &nbsp; 
+                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList" :key="index">{{signer.name}}: &nbsp; 
                                                         <span v-if="signer.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
                                                         <span v-if="signer.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer.time)}}</span>
                                                         <span v-if="signer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer.time)}}</span>
@@ -463,6 +461,7 @@ hr.divider {
     background-color: rgba(0, 0, 0, .5);
     display: table;
     transition: opacity .3s ease;
+    z-index: 1;
 }
 .modal-wrapper {
   display: table-cell;
@@ -520,11 +519,11 @@ hr.divider {
 .action {
     background-color: rgb(254, 254, 255);
 }
-.comment-box {
-    min-height: 20%;
+textarea {
+    min-height: 80%;
 }
 .comment-div {
-    height: 80%;
+    height: 75%;
 }
 .comment-list {
     height: 85%;
@@ -536,7 +535,7 @@ hr.divider {
     height: 90%;
 }
 .doc-info {
-    min-height: 20%;
+    min-height: 15%;
 }
 .file-detail-tab {
     cursor: pointer;
@@ -562,7 +561,8 @@ hr.divider {
   height: 13px; 
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 13px solid rgb(199, 195, 195);
+  border-bottom: 13px solid rgb(233, 230, 230);
   margin-top: 5px;
 }
+
 </style>

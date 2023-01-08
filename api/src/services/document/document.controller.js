@@ -33,8 +33,8 @@ export const getFolderById = async (req, res, next) => {
 			msg: "Folder not exist"
 		})
 	}
-	let folderById = await Folder.findById(id)
-	let children = await Folder.find({ parent: id })
+	let folderById = await Folder.findById(id).lean()
+	let children = await Folder.find({ parent: id }).lean()
 	let folder = JSON.parse(JSON.stringify(folderById))
 	if(!folder){
 		return res.status(404).send({
@@ -42,6 +42,11 @@ export const getFolderById = async (req, res, next) => {
 		})
 	}
 	let files = await getFile(userId, folder.files)
+	let ownerName=""
+	if(folder.owner){
+		ownerName = await getNameById(folder.owner)
+	}
+	children = await Promise.all(children.map(async c=> ({...c, owner: await getNameById(c.owner)})))
 	// check if folder is public folder
 	if(folder.type == "public" || folder.shared.includes(userId) || folder.owner == userId) {
 		if(folder.type == "public") {
@@ -55,7 +60,7 @@ export const getFolderById = async (req, res, next) => {
 						name: folder.name, 
 						parent: folder.parent,
 						status,
-						owner: folder.owner,
+						owner: ownerName,
 						type: folder.type,
 						files: files,
 						shared: folder.shared,
@@ -79,6 +84,7 @@ export const getFolderById = async (req, res, next) => {
 					}
 				}
 			}
+			
 			return res.send({
 				msg: "Success",
 				data: {
@@ -89,7 +95,7 @@ export const getFolderById = async (req, res, next) => {
 						name: folder.name, 
 						parent: folder.parent,
 						status,
-						owner: folder.owner,
+						owner: ownerName,
 						type: folder.type,
 						files: files,
 						shared: folder.shared,
@@ -124,7 +130,7 @@ export const getFolderById = async (req, res, next) => {
 						name: folder.name, 
 						parent: folder.parent,
 						status,
-						owner: folder.owner,
+						owner: ownerName,
 						type: folder.type,
 						files: files,
 						shared: folder.shared,
@@ -153,12 +159,13 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 				msg: "Folder not exist"
 			})
 		}
-		let myFolderItems = await Folder.find({ owner: userId, parent: { $ne: null } })
+		let myFolderItems = await Folder.find({ owner: userId, parent: { $ne: null } }).lean()
 
 		let myFolderIds = myFolderItems.map(x=> x._id.valueOf())
 		
 		// filter child folder
 		let result = myFolderItems.filter(item => !item.ancestors.some(a=> myFolderIds.includes(a)))
+		result = await Promise.all(result.map(async f=> ({...f, owner: await getNameById(f.owner)})))
 		const startTime = Date.now();
 		let files = await getFile(userId, myFolder.files)
 
@@ -169,7 +176,7 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 			msg: "Success",
 			data: {
 				myFolders: result,
-				folder: {...myFolder, files: files},
+				folder: {...myFolder, files: files, owner: await getNameById(userId)},
 			},
 		})
 	}else {
@@ -331,79 +338,85 @@ export const uploadFile = async (req, res, next) => {
 				msg: "Error when verify wallet account"
 			})
 		} 
-		let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
-		const nonce = await web3.eth.getTransactionCount(publicAddress)
-		let estimateGasUsed = await dmsContract.methods.mintNFT(publicAddress, tokenURI, reviewerList, signerList).estimateGas({ from: publicAddress })
-		let balance = await web3.eth.getBalance(publicAddress)
-		const gasPrice = await web3.eth.getGasPrice()
-		let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
-		if(web3.utils.fromWei(balance.toString()) < transactionFee) {
-			return res.status(400).json({
-				msg: "Balance amount not enough!"
+		try {
+			let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
+			const nonce = await web3.eth.getTransactionCount(publicAddress)
+			let estimateGasUsed = await dmsContract.methods.mintNFT(publicAddress, tokenURI, reviewerList, signerList).estimateGas({ from: publicAddress })
+			let balance = await web3.eth.getBalance(publicAddress)
+			const gasPrice = await web3.eth.getGasPrice()
+			let transactionFee = web3.utils.fromWei(gasPrice.toString()) * estimateGasUsed
+			if(web3.utils.fromWei(balance.toString()) < transactionFee) {
+				return res.status(400).json({
+					msg: "Balance amount not enough!"
+				})
+			}
+			const numberOfTokenId = await dmsContract.methods.getCurrentId().call({ from: publicAddress });
+			const transaction = {
+				from: publicAddress,
+				to: NFT_ADDRESS,
+				value: "0x0",
+				gas: estimateGasUsed,
+				nonce: nonce,
+				data: dmsContract.methods.mintNFT(publicAddress, tokenURI, reviewerList, signerList).encodeABI(),
+			};
+			const signedTx = await web3.eth.accounts.signTransaction(transaction, privateKey);
+			console.log("2");
+			web3.eth.sendSignedTransaction(signedTx.rawTransaction, async function(error, hash) {
+				console.log("The hash of your transaction is: ", hash);
+				await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
+				if(!error) {
+					let signerAndReviewerListByAddress = await User.find({'publicAddress': {$in: [...new Set([...signerList, ...reviewerList])]}})
+					let listIdShared = signerAndReviewerListByAddress.map(x=> x._id.valueOf())
+					let parentFolder = await Folder.findById(JSON.parse(tokenURI).folder)
+					let newSharedList = [...new Set([...listIdShared ,...parentFolder.shared, ...sharedList])]
+					let newFile = new File({
+						tokenId: parseInt(numberOfTokenId) + 1,
+						hash: JSON.parse(tokenURI).hash,
+						shared: newSharedList,
+						parentFolder: JSON.parse(tokenURI).folder,
+						key: key,
+						owner: user._id.valueOf(),
+						description: description,
+						tokenURI: tokenURI
+					})
+					File.create(newFile, async function (err, newFileCreated) {
+						if (err) {
+							console.log(err);
+							return res.status(500).send({
+								msg: "Error when connect to database"
+							})
+						}
+						const filter1 = { name: "My Folder", type: "normal", parent: null, owner: user._id.valueOf()};
+						let folderUpdated = await Folder.findByIdAndUpdate(JSON.parse(tokenURI).folder, {$push: {files: newFileCreated._id.valueOf() }})
+						// let myFolderUpdated = await Folder.findOneAndUpdate(filter1, {$push: {files: newFileCreated._id.valueOf() }})
+						let fileData= {
+							tokenURI: JSON.parse(tokenURI),
+							tokenId: newFileCreated.tokenId
+						}
+
+						return res.status(200).send({
+							data: JSON.parse(JSON.stringify(newFileCreated)),
+							msg: "Upload file successfully!"
+						})
+					})
+					
+				} else {
+					console.log("Error when send transaction to the network", error);
+				}
+			})
+		} catch (error) {
+			console.log(error)
+			return res.status(500).send({
+				msg: "Internal Server Error"
 			})
 		}
-		const numberOfTokenId = await dmsContract.methods.getCurrentId().call({ from: publicAddress });
-		const transaction = {
-			from: publicAddress,
-			to: NFT_ADDRESS,
-			value: "0x0",
-			gas: estimateGasUsed,
-			nonce: nonce,
-			data: dmsContract.methods.mintNFT(publicAddress, tokenURI, reviewerList, signerList).encodeABI(),
-		};
-		const signedTx = await web3.eth.accounts.signTransaction(transaction, privateKey);
-		console.log("2");
-		web3.eth.sendSignedTransaction(signedTx.rawTransaction, async function(error, hash) {
-			console.log("The hash of your transaction is: ", hash);
-			await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
-			if(!error) {
-				let signerAndReviewerListByAddress = await User.find({'publicAddress': {$in: [...new Set([...signerList, ...reviewerList])]}})
-				let listIdShared = signerAndReviewerListByAddress.map(x=> x._id.valueOf())
-				let parentFolder = await Folder.findById(JSON.parse(tokenURI).folder)
-				let newSharedList = [...new Set([...listIdShared ,...parentFolder.shared, ...sharedList])]
-				let newFile = new File({
-					tokenId: parseInt(numberOfTokenId) + 1,
-					hash: JSON.parse(tokenURI).hash,
-					shared: newSharedList,
-					parentFolder: JSON.parse(tokenURI).folder,
-					key: key,
-					owner: user._id.valueOf(),
-					description: description,
-					tokenURI: tokenURI
-				})
-				File.create(newFile, async function (err, newFileCreated) {
-					if (err) {
-						console.log(err);
-						return res.status(500).send({
-							msg: "Error when connect to database"
-						})
-					}
-					const filter1 = { name: "My Folder", type: "normal", parent: null, owner: user._id.valueOf()};
-					let folderUpdated = await Folder.findByIdAndUpdate(JSON.parse(tokenURI).folder, {$push: {files: newFileCreated._id.valueOf() }})
-					// let myFolderUpdated = await Folder.findOneAndUpdate(filter1, {$push: {files: newFileCreated._id.valueOf() }})
-					let fileData= {
-						tokenURI: JSON.parse(tokenURI),
-						tokenId: newFileCreated.tokenId
-					}
-
-					return res.status(200).send({
-						data: JSON.parse(JSON.stringify(newFileCreated)),
-						msg: "Upload file successfully!"
-					})
-				})
-				
-			} else {
-				console.log("Error when send transaction to the network", error);
-				throw new Error(error)
-			}
-		})
 	})
 }
 
 const getFile = async (userId, allFiles) => {
 	const files = await File.find({'_id': {$in: allFiles}}).lean()
 	// console.log('files', files);
-	let permissionedFiles = files.filter(file => file.shared.includes(userId)|| file.owner == userId)
+	let permissionedFiles = await Promise.all(files.filter(file => file.shared.includes(userId)|| file.owner == userId).map(async c=> ({...c, owner: await getNameById(c.owner)})))
 	return permissionedFiles
 }
 export const getAllFiles = async (req, res, next) => {
@@ -426,6 +439,7 @@ export const getAllFiles = async (req, res, next) => {
 		console.log("z", signedDocs);
 		if(isValidObjectId(userId)) {
 			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
+			files = await Promise.all(files.map(async f=> ({...f, owner: await getNameById(f.owner)})))
 			return res.status(200).send({
 				msg: "Success",
 				data: {
@@ -815,6 +829,7 @@ export const getFileById = async (req, res, next) => {
 			})
 		}
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
+			fileById.owner = await getNameById(fileById.owner)
 			const startTime = Date.now();
 			let file = fileById;
 			try {
@@ -843,6 +858,10 @@ export const getFileById = async (req, res, next) => {
 	}
 	
 	
+}
+const getNameById = async (id) => {
+	let user = await User.findById(id)
+	return user.name
 }
 const getFileStatus = async (file, publicAddress, dmsContract) => {
 	let statusDetail = {

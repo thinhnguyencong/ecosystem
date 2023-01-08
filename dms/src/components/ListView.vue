@@ -15,8 +15,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr role='button' v-if="(folders.length>0)" @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
-                        <th scope="row">
+                    <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
+                        <th class="truncate" scope="row">
                             <i class="mdi mdi-folder text-custom-color-blue"></i> {{folder.name}}
                         </th>
                         <td>-</td>
@@ -30,10 +30,10 @@
                         tag="tr"
                         class="item cursor-pointer" 
                         v-for="(file, index) in files"
-                        :key="file._id"
+                        :key="index"
                         :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
                     >
-                        <th scope="row">
+                        <th class="truncate" scope="row">
                             <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
                         </th>
                         <td>{{file.tokenId}}</td>
@@ -197,5 +197,12 @@ td, th, tr {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.truncate {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
