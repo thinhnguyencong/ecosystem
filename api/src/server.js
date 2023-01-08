@@ -24,10 +24,10 @@ const PORT = process.env.PORT || 5555;
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(origin=>origin.trim());
 
 const corsOptions ={
-  origin: (origin, callback) => {
-    allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'))
-  },
-  // origin: true,
+  // origin: (origin, callback) => {
+  //   allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'))
+  // },
+  origin: true,
   credentials:true,            //access-control-allow-credentials:true
   optionSuccessStatus:200,
 }
