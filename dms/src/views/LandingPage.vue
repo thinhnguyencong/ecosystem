@@ -1,173 +1,405 @@
 <template>
 	<div >
-	  Landing Page
-    <!-- <button @click="handleLogin">Login</button> -->
-		<div class="post-items">
-			<router-link
-				tag="div"
-				class="item"
-				v-for="(post, index) in listPost"
-				:to="`/home/file/${post.id}`"
-				:key="post.id"
-			>
-				<strong><a href="#">{{ index+1+ ". " }}{{post.title}}</a></strong>
-				<br />
-			</router-link>
+		<header class="bg-image">
+		<div class="container">
+			<h1>Document Management System</h1>
+			<h2>Blockchain-based  |  Modern   |  Responsive</h2>
+			<a href="/" class="btn btn-transparent btn-lg">Login</a>
 		</div>
-		<Transition name="modal">
-			<div v-if="showModal">
-				<router-view></router-view>
-			</div>
-		</Transition>
-		
-	<!-- <modal-file/> -->
-	<div id="container"></div>
-	<!-- <iframe width="100%" height="100%" class="frame" :src="link" frameborder="0"></iframe> -->
+		</header>
+
+
+
+		<footer>
+		<div class="container">
+			<ul>
+			<li><a href="#">Weblinks</a></li>
+			<li><a href="#">Contact</a></li>
+			<li><a href="#">Mainpage</a></li>
+			</ul>
+			<p>&copy; 2016 CGP Designs. All rights reserved.</p>
+		</div>
+		</footer>
 	</div>
 </template>
 
 <script>
-import ModalFile from './ModalFile.vue'
-import { IpfsClient } from "../helpers/ipfs";
-const file = {
-  _id: "63a5255de6f94591502e9bf3",
-  tokenId: "41",
-  hash: "QmSTZMFidr1yLhhC673JVnKc25KMVcE7QZFzKpm1LoHghH",
-  tokenURI: "{\"hash\":\"QmSTZMFidr1yLhhC673JVnKc25KMVcE7QZFzKpm1LoHghH\",\"time\":1671767386948,\"name\":\"test-case.docx\",\"size\":38149260,\"fileType\":\"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"lastModified\":1667869056511,\"signers\":[\"0x09876c96f80247184921f24547c861c99083f602\"],\"reviewers\":[\"0xfe47e32e697532bba14ee50458055d1b80de4657\",\"0xff8ce8c35a2222c573352d182c50505010973244\"],\"folder\":\"63a40c31fb5a9ad179504748\"}",
-  owner: "63a40c31fb5a9ad179504746",
-  description: "<h2>I am Example</h2>",
-  parentFolder: "63a40c31fb5a9ad179504748",
-  shared: [
-    "63a3f9f3f7e37b57eefce1cc",
-    "63a3f9f3f7e37b57eefce1ce",
-    "63a3f9f3f7e37b57eefce1d2"
-  ],
-  key: "53486161677165647233453142533567",
-  isSharedPublic: false,
-  comments: [],
-  createdAt: "2022-12-23T03:49:49.356Z",
-  updatedAt: "2022-12-23T03:50:49.229Z",
-  __v: 0,
-  statusDetail: {
-    reviewerList: [
-      {
-        name: "Nguyen Minh Hien",
-        address: "0xfe47e32e697532bba14ee50458055d1b80de4657",
-        status: "not-yet-reviewed",
-        time: "0"
-      },
-      {
-        name: "Pham Van Dam",
-        address: "0xff8ce8c35a2222c573352d182c50505010973244",
-        status: "not-yet-reviewed",
-        time: "0"
-      }
-    ],
-    signerList: [
-      {
-        name: "Kim Si Chun",
-        address: "0x09876c96f80247184921f24547c861c99083f602",
-        status: "not-yet-signed",
-        time: "0"
-      }
-    ]
-  },
-  status: "waiting-to-review",
-  canComment: true,
-  canReview: false,
-  canSign: false
-}
-import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 export default {
-  components: { ModalFile },
-	data() {
-		return {
-			listPost: [],
-			showModal: false,
-			link: ""
-		}
-	},
-	watch: {
-		'$route': {
-			immediate: true,
-			handler: function(newVal, oldVal) {
-				this.showModal = newVal.meta && newVal.meta.showModal;
-			}
-		}
-	},
-	created() {
-		fetch('https://jsonplaceholder.typicode.com/posts')
-		.then(response => response.json())
-		.then(json => {
-			this.listPost=json.map(x=> ({id: x.id, title: x.title})).slice(0, 10)
-			console.log("this.listPost", this.listPost)
-		})
-		this.initData()
-	},
-	methods: {
-		handleLogin() {
-			// window.location.assign(`${import.meta.env.VITE_CLIENT_URL}`)
-		},
-		async initData() {
-			IpfsClient().get(file.hash).then(async (res) =>{
-				if(res) {
-					let resultDecrypt = decrypt(res[0].content, file.key)
-					let tokenUri = JSON.parse(file.tokenURI)
-					console.log("resultDecrypt", resultDecrypt);
-					let x = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
-					console.log(x);
-					window.docx.renderAsync(resultDecrypt, document.getElementById("container"))
-        			.then(x => console.log("docx: finished"));
-					// let b64 = this.b64EncodeUnicode(resultDecrypt)
-					// let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-					// this.link = abc
-				}
-				else {
-					this.error="No file to preview"
-				}
-				// this.saveByteArray("Sample Report", res[0].content.buffer); // download button
-			})
-        },
-		async bufferArrayToBlob(base64, type ) {
-            const typeNew = 'data:' + type + ';base64'
-            console.log(base64);
-            const base64Response = await fetch(`${typeNew},${base64}`)
-            const blob1 = await base64Response.blob()
-            const blob = new Blob([blob1], { type: type })
-            const link = window.URL.createObjectURL(blob)
-            console.log(link);
-            return link
-        },
-        b64EncodeUnicode(bytes) {
-            // let bytes = new Uint8Array( data );
-            let len = bytes.byteLength;
-            let binary = ''
-            for (var i = 0; i < len; i++) {
-                binary += String.fromCharCode( bytes[ i ] );
-            }
-            return btoa(  binary);
-        },
-	},
-	
 }
 
 </script>
-<style scoped>
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
+<style lang="scss" scoped>
+	$color-red: #cc615f;
+	$color-grey: #1c262b;
+	$color-grey--light: #29363e;
 
- .modal-enter {
-  opacity: 0;
-}
+	$color-orange: #e6ac5e;
+	$color-blue: #007ece;
+	$color-green: #8fca53;
+	$color-purple: #68647c;
+	$color-gold: #efb05a;
 
-.modal-enter .modal-container{
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
-}
+
+	$color-primary: $color-grey;
+
+	$bp-s: 43.75em; //700px;
+	$bp-xs: 34.375em; //550px;
+
+	@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css');
+
+	@import url(//fonts.googleapis.com/css?family=Open+Sans:400,700,800,300);
+
+
+	*{
+	box-sizing: border-box;
+	}
+	html{
+	width: 100%;
+	height:100%;
+	margin: 0;
+	padding: 0;
+	}
+	body{
+	width: 100%;
+	height:100%;
+	font-family: 'Open Sans','Helvetica Neue',Helvetica, sans-serif;
+	font-size: 100%;
+	line-height: 1.45;
+	color: #141414;
+	}
+
+	a{
+	text-decoration: none;
+
+	&:hover{
+		text-decoration: none;
+	}
+	}
+
+	img{
+	max-width: 100%;
+	}
+
+	.btn{
+	display: inline-block;
+	margin: 1rem 0;
+	color: white;
+	font-weight: 500;
+	font-size: 1.3rem;
+	background: $color-primary;
+	letter-spacing: .02em;
+	border: none;
+	border-radius: 5px;
+	padding: .8rem 1rem .9rem;
+	text-shadow: 0 1px rgba(black,.3);
+	box-shadow: 0 0 2px rgba(black,.2);
+
+	@media (max-width: $bp-s){
+		padding: .5rem .7rem .6rem;
+		font-size: 1rem;
+	}
+
+	&:hover{
+		background: lighten($color-primary,5%);
+		color: #fff;
+	}
+	&:focus,
+	&:active,
+	&:focus:active{
+		background: darken($color-primary,5%);
+		border-color: darken($color-primary,5%);
+		box-shadow: 0 2px 5px 0 rgba(black,.5) inset;
+	}
+	}
+
+	.container{
+	margin: 0 auto;
+	width: 90%;
+	max-width: 900px;
+	min-height: 60vh;
+	}
+
+
+	header{
+	color: white;
+	background: $color-primary;
+	padding: 10rem 0;
+	text-align: center;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+
+	@media (max-width: $bp-s){
+		padding: 2rem 0;
+	}
+
+	h1{
+		font-size: 3rem;
+		margin: 0 0 1rem;
+
+		@media (max-width: $bp-s){
+		font-size: 2rem;
+		}
+	}
+	h2{
+		font-weight: 300;
+		font-size: 1.5rem;
+		margin: 0 0 1rem;
+
+		@media (max-width: $bp-s){
+		font-size: 1.5rem;
+		}
+	}
+	}
+
+	section{
+	background: #fff;
+	color: $color-grey;
+	padding: 3.5rem 0;
+
+	@media (max-width: $bp-s){
+		padding: 2rem 0;
+	}
+	
+	&.section--primary{
+		background: $color-primary;
+		color: #fff;
+	}
+	&.section--primary--alt{
+		background: desaturate(lighten($color-primary,15%),10%);
+		color: #fff;
+	}
+	&.section--primary--light{
+		background: rgba($color-primary,.1);//desaturate(lighten(mix($color-primary,white),10%),10%);
+	}
+
+	&.section--grey{
+		background: $color-grey;
+		color: #fff;
+	}
+	&.section--grey--light{
+		background: $color-grey--light;
+		color: #fff;
+	}
+
+	h3{
+		text-align: center;
+		font-size: 2rem;
+		font-weight: 300;
+		margin: 0 0 1rem;
+
+		@media (max-width: $bp-s){
+		font-size: 1.5rem;
+		}
+	}
+	
+	li{
+		font-size: 1.2rem;
+		font-weight: 300;
+	}
+	p{
+		font-size: 1.2rem;
+		font-weight: 300;
+	}
+	}
+	.col{
+	margin: 0 1.5%;
+	display: inline-block;
+	vertical-align: top;
+	}
+	.col-7{
+	@extend .col;
+	width: 64%;
+	
+	@media (max-width: $bp-s){
+		width: 100%;
+		margin: 0;
+	}
+	}
+	.col-3{
+	@extend .col;
+	width: 29%;
+
+	@media (max-width: $bp-s){
+		width: 100%;
+		margin: 0;
+	}
+	}
+	.col-5{
+	@extend .col;
+	width: 30%;
+
+	@media (max-width: $bp-xs){
+		width: 60%;
+		margin: 0;
+	}
+	}
+
+	.details{
+	text-align: left;
+	
+	h3{
+		font-size: 2rem;
+		text-align: left;
+	}
+	}
+	.details-img--ball{
+	@media (max-width: $bp-s){
+		height: 200px;
+		width: auto;
+		margin: 0 auto;
+	}
+	}
+	.features{
+	text-align: center;
+	padding: 1rem;
+
+	&:hover{
+		background: rgba(white,.1);
+	}
+	
+	@media (max-width: $bp-s){
+		width: 100%;
+		margin: 0;
+		text-align: left;
+		border-bottom: 1px solid rgba(white,.2);
+
+		&:last-child{
+		border: none;
+		}
+	}
+	
+	i{
+		font-size: 4rem;
+		margin: 0 0 2rem 0;
+
+		@media (max-width: $bp-s){
+		font-size: 1.5rem;
+		width: 2rem;
+		text-align: center;
+		margin: 0 0 1rem 0;
+		float: left;
+		}
+	}
+
+	p{
+		margin: 0 0 1rem 0;
+		font-size: 1rem;
+
+		@media (max-width: $bp-s){
+		margin-left: 3rem;
+		}
+	}
+	}
+
+	blockquote{
+	position: relative;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	
+	&:before{
+		display: inline-block;
+		color: $color-primary;
+		font-size: 2rem;
+		content: '\201C';
+	}
+	
+	p{
+		margin: 0;
+		display: inline;
+		font-size: 1.5rem;
+		
+		@media (max-width: $bp-s){
+		font-size: 1.2rem;
+		}
+	}
+	
+	cite{
+		font-size: 1rem;
+		display: block;
+		margin: .5rem 0 0 1.2rem;
+		text-style: italic;
+		
+		@media (max-width: $bp-s){
+		font-size: .8rem;
+		}
+		
+		&:before{
+		content: '–';
+		}
+	}
+	}
+
+	footer{
+	background: #2d2b2a;
+	color: #fff;
+	padding: 2rem 0;
+	text-align: center;
+	font-size: .8rem;
+	color: rgba(white,.4);
+
+	ul{
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li{
+		display: inline-block;
+
+		a{
+			display: block;
+			padding: .4rem .7rem;
+			font-size: .9rem;
+			text-decoration: none;
+			color: rgba(white,.7);
+
+			&:hover{
+			color: white;
+			}
+		}
+		}
+	}
+	}
+
+	.text--center{
+	text-align: center;
+	}
+	.text--left{
+	text-align: left;
+	}
+	.bg-image{
+	background: $color-primary;
+	text-align: center;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+	//text-shadow: 2px 0 5px black;
+
+	&:before{
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		background: #333 url('https://i.pcmag.com/imagery/roundups/010TkjGMK7tOLg240YrbYmW-1..v1569492689.jpg') no-repeat top center;
+		background-size: cover;
+		background-attachment: fixed;
+		filter: blur(5px);
+		opacity: .8;
+		transform: scale(1.1);
+	}
+	
+	&.bg-image-2:before{
+		opacity: .6;
+		background-image:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/366117/8_copy_copy.jpg'); 
+		background-position: center center;
+	}
+	}
+
 </style>

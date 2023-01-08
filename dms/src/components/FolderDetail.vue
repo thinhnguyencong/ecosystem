@@ -7,12 +7,42 @@
             paddingLeft: open ? '10px' : '0',
         }"
         >
-        <h1>Menu</h1>
-        <h4>Home</h4>
-        <h4>About</h4>
-        <h4>Stories</h4>
-        <h4>Testimonials</h4>
-        <h4>Contact</h4>
+        <div class="d-flex justify-content-center">
+            <div></div>
+            <h2 class="align-center">Folder Details</h2>
+            <div></div>
+        </div>
+        
+        <br>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <p class="h5 font-weight-bold">Folder Name</p>
+                </div>
+                <div class="col-8">
+                    <p class="h5">{{ documentState.folder.name }}</p>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-4">
+                    <p class="h5 font-weight-bold">Owner</p>
+                </div>
+                <div class="col-8">
+                    <p class="h5">{{ documentState.folder.owner }}</p>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-4">
+                    <p class="h5 font-weight-bold">Created At</p>
+                </div>
+                <div class="col-8">
+                    <p class="h5">{{ new Date(documentState.folder.createdAt).toDateString() }}</p>
+                </div>
+            </div>
+        </div>
+        
         </div>
     </div>
     
@@ -24,6 +54,9 @@ export default {
         return {
             open: false,
         };
+    },
+    computed: {
+        documentState() {return this.$store.state.document },
     },
     watch: {
         drawerVisible: {

@@ -12,9 +12,9 @@
                             grid_view
                         </span>
                     </button>
-                    <span class="material-icons action-icon">
+                    <!-- <span class="material-icons action-icon">
                         info
-                    </span>
+                    </span> -->
                 </li>
 
             </ol>

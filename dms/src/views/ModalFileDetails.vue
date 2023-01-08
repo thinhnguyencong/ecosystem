@@ -61,7 +61,7 @@
                                                             <p class="font-weight-bold">Upload At :</p>
                                                         </div>
                                                         <div class="col-8">
-                                                            <p>{{(new Date(file.createdAt)).toDateString()}}</p>
+                                                            <p>{{(new Date(file.createdAt)).toLocaleTimeString()+ " " + (new Date(file.createdAt)).toDateString()}}</p>
                                                         </div>
                                                     </div>
                                             </div>
@@ -162,13 +162,13 @@
                                                     <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
                                                     <p></p>
                                                     <p class="font-weight-bold">Review History: </p>
-                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList" :key="index">{{reviewer.name}}: &nbsp; 
+                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList" :key="index+reviewer.name">{{reviewer.name}}: &nbsp; 
                                                         <span v-if="reviewer.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
                                                         <span v-if="reviewer.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer.time)}}</span>
                                                         <span v-if="reviewer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer.time)}}</span>
                                                     </p>
                                                     <p class="font-weight-bold">Sign History: </p>
-                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList" :key="index">{{signer.name}}: &nbsp; 
+                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList" :key="index+signer.name">{{signer.name}}: &nbsp; 
                                                         <span v-if="signer.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
                                                         <span v-if="signer.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer.time)}}</span>
                                                         <span v-if="signer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer.time)}}</span>
@@ -413,6 +413,12 @@ export default {
                     this.initData(newVal)
                 }
             },
+        },
+        '$store.state.document.file': {
+            handler(newVal, oldVal) {
+                this.file = newVal
+            },
+            immediate: true
         },
     }
 }

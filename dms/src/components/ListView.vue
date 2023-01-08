@@ -15,7 +15,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder, index) in folders" :key="index">
+                    <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in folders" :key="folder._id">
                         <th class="truncate" scope="row">
                             <i class="mdi mdi-folder text-custom-color-blue"></i> {{folder.name}}
                         </th>
@@ -29,8 +29,8 @@
                     <router-link
                         tag="tr"
                         class="item cursor-pointer" 
-                        v-for="(file, index) in files"
-                        :key="index"
+                        v-for="(file) in files"
+                        :key="file._id"
                         :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
                     >
                         <th class="truncate" scope="row">

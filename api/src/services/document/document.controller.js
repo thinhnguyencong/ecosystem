@@ -574,8 +574,10 @@ export const signDoc = async (req, res, next) => {
 							type: type
 						})
 					} else {
-						console.log("Error when send transaction to the network", error);
-						throw new Error(error)
+						console.log("Error when send transaction to the network", error.message);
+						return res.status(500).send({
+							msg: error.message
+						})
 					}
 				})
 			}else if(type =="sign") {
@@ -617,8 +619,10 @@ export const signDoc = async (req, res, next) => {
 							type: type
 						})
 					} else {
-						console.log("Error when send transaction to the network", error);
-						throw new Error(error)
+						console.log("Error when send transaction to the network", error.message);
+						return res.status(500).send({
+							msg: error.message
+						})
 					}
 				})
 			}else {
@@ -698,8 +702,10 @@ export const rejectDoc = async (req, res, next) => {
 							type: type
 						})
 					} else {
-						console.log("Error when send transaction to the network", error);
-						throw new Error(error)
+						console.log("Error when send transaction to the network", error.message);
+						return res.status(500).send({
+							msg: error.message
+						})
 					}
 				})
 			}else if(type =="sign") {
@@ -741,8 +747,10 @@ export const rejectDoc = async (req, res, next) => {
 							type: type
 						})
 					} else {
-						console.log("Error when send transaction to the network", error);
-						throw new Error(error)
+						console.log("Error when send transaction to the network", error.message);
+						return res.status(500).send({
+							msg: error.message
+						})
 					}
 				})
 			}else {
