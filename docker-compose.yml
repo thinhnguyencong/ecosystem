@@ -1,28 +1,28 @@
 version: '3.4'
 
 services:
-  keycloak:
-    build: ./keycloak
-    ports:
-     # - "8443:8443"
-      - "8080:8080"
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      PROXY_ADDRESS_FORWARDING: "true"
-      REDIRECT_SOCKET: "proxy-https"
-      KEYCLOAK_FRONTEND_URL: https://login-dms.grooo.com.vn
-    command:
-      - start-dev
-      - --import-realm
-      - --features=preview
-    volumes:
-      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
-  # wallet-server:
-  #   build: ./api
+  # keycloak:
+  #   build: ./keycloak
   #   ports:
-  #     - "5555:5555"
-  #   restart: unless-stopped
+  #    # - "8443:8443"
+  #     - "8080:8080"
+  #   environment:
+  #     KEYCLOAK_ADMIN: admin
+  #     KEYCLOAK_ADMIN_PASSWORD: admin
+  #     PROXY_ADDRESS_FORWARDING: "true"
+  #     REDIRECT_SOCKET: "proxy-https"
+  #     KEYCLOAK_FRONTEND_URL: https://login-dms.grooo.com.vn
+  #   command:
+  #     - start-dev
+  #     - --import-realm
+  #     - --features=preview
+  #   volumes:
+  #     - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
+  wallet-server:
+    build: ./api
+    ports:
+      - "5555:5555"
+    restart: unless-stopped
   # auction-client:
   #   build: ./auction-client
   #   ports:
