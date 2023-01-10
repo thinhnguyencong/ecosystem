@@ -24,19 +24,19 @@ services:
     ports:
       - "5555:5555"
     restart: unless-stopped
-  auction-client:
-    build: ./auction-client
-    ports:
-      - "3001:80"
-    restart: unless-stopped
-  wallet-client:
-    build: ./wallet-management
-    ports:
-      - "3000:80"
-    restart: unless-stopped
-  dms:
-    build: ./dms
-    ports:
-      - "3002:80"
-    restart: unless-stopped
+  # auction-client:
+  #   build: ./auction-client
+  #   ports:
+  #     - "3001:80"
+  #   restart: unless-stopped
+  # wallet-client:
+  #   build: ./wallet-management
+  #   ports:
+  #     - "3000:80"
+  #   restart: unless-stopped
+  # dms:
+  #   build: ./dms
+  #   ports:
+  #     - "3002:80"
+  #   restart: unless-stopped
   
