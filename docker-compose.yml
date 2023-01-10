@@ -1,70 +1,72 @@
 version: '3.4'
 
 services:
-#  # 1. Start database
-#  postgres:
-#    image: postgres:12.3-alpine
-#    restart: always
-#    ports:
-#      - 5432:5432
-#    environment:
-#      POSTGRES_PASSWORD: root
-#      POSTGRES_USER: root
-#    volumes:
-#      - postgres:/var/lib/postgresql/data
-#  pgadmin:
-#    image: dpage/pgadmin4:4.23
-#    restart: always
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
-#      PGADMIN_DEFAULT_PASSWORD: 123456
-#      PGADMIN_LISTEN_PORT: 80
-#    ports:
-#      - 15432:80
-#    volumes:
-#      - pgadmin:/var/lib/pgadmin
-#    depends_on:
-#      - postgres
-  # 2. Create "keycloak-db" database then start keycloak
-#  keycloak:
-#    build: ./keycloak
-#    ports:
-#      - "8443:8443"
-#    environment:
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: admin
-#      PROXY_ADDRESS_FORWARDING: "true"
-#    command:
-#      - start
-#      - --optimized
-#      - --import-realm
-#    depends_on:
-#      - postgres
-#    volumes:
-#      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
-#    restart: unless-stopped
-#  # 3. Add env variable from keyclok to server env then start server and another service
-  wallet-server:
-    build: ./api
+  # 1. Start database
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "5555:5555"
-    restart: unless-stopped
-  auction-client:
-    build: ./auction-client
+      - "3306:3306"
+    volumes:
+      - ./backup/:/var/lib/mysql:ro
+    restart: always
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
     ports:
-      - "3001:80"
-    restart: unless-stopped
-  wallet-client:
-    build: ./wallet-management
+      - 8090:80
+    restart: always
+  keycloak:
+    build: ./keycloak
     ports:
-      - "3000:80"
+      - "8443:8443"
+    environment:
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      PROXY_ADDRESS_FORWARDING: "true"
+      # change these values to point to a running mysql instance
+      KC_DB_URL: ${KC_DB_URL}
+      KC_DB_USERNAME: ${MYSQL_USER}
+      KC_DB_PASSWORD: ${MYSQL_PASSWORD}
+    command:
+      - start
+      - --optimized
+      - --import-realm
+    depends_on:
+      - mysql
+    volumes:
+      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
     restart: unless-stopped
-  dms:
-    build: ./dms
-    ports:
-      - "3002:80"
-    restart: unless-stopped
-volumes:
-    postgres:
-    pgadmin:
-  
+
+  # # 2. Add env variable from keycloak to server .env, then start server and another service
+  # wallet-server:
+  #   build: ./api
+  #   ports:
+  #     - "5555:5555"
+  #   restart: unless-stopped
+  # auction-client:
+  #   build: ./auction-client
+  #   ports:
+  #       - "3001:80"
+  #   restart: unless-stopped
+  # wallet-client:
+  #   build: ./wallet-management
+  #   ports:
+  #       - "3000:80"
+  #   restart: unless-stopped
+  # dms:
+  #   build: ./dms
+  #   ports:
+  #       - "3002:80"
+  #   restart: unless-stopped
