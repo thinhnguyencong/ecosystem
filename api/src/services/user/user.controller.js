@@ -369,3 +369,36 @@ export const saveTransaction = async (transactionHash, email, clientId) => {
 	);
 	console.log("updatedUser", updatedUser)
 }
+
+export const getTransactions = async (req, res, next) => {
+	let {type, clientId} = req.query
+	try {
+		const web3Connection = await getWeb3()
+		if(!web3Connection.status) {
+			return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+		}
+		const web3 = web3Connection.web3
+		console.log(req.body.data)
+		const userEmail = req.jwtDecoded.email
+		let user = await User.findOne({email: userEmail})
+		let result;
+		if(type == 'all') {
+			user.servicesUsed.forEach(service => {
+				service.transactions.forEach(async transaction => {
+					let tx = await web3.eth.getTransaction(transaction)
+					result.push(tx)
+				})
+			})
+		}
+	} catch (error) {
+		console.log(error);
+	}
+	
+
+	// const service = await Service.findOne({client_id: clientId})
+	// const updatedUser = await User.findOneAndUpdate(
+	// 	{ email: email, 'servicesUsed.serviceId': service._id },
+	// 	{ $push: {'servicesUsed.$.transactions': transactionHash }}
+	// );
+	// console.log("updatedUser", updatedUser)
+}

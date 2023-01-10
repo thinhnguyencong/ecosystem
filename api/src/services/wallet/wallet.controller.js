@@ -10,6 +10,8 @@ import File from "../../models/file.model.js";
 import { isValidObjectId } from "mongoose";
 import requestPromise from "request-promise";
 import _ from "underscore";
+import { getWeb3 } from "../../config/web3Connection.js";
+import Service from "../../models/service.model.js";
 const NFT_ADDRESS = "0x5281c02A833a491B764a704D3907373B20E7F482"
 
 const web3 = new Web3(
@@ -514,38 +516,48 @@ export const test = async (req, res, next) => {
 	
 	// let x = await getDescendants ("63a004e8413df1816c2274e4",root);
 	// console.log(root);
-	let descendants = await Folder.find({ancestors: "63a004e8413df1816c2274e4"}).lean()
-	const getName = async (files) => {
-		// console.log("files", files);
-		return await Promise.all(files.map(async (x) => {
-			// console.log(x);
-			let file = await File.findById(x).lean()
-			let name = JSON.parse(file.tokenURI).name
-			let fileType = JSON.parse(file.tokenURI).fileType
-			// console.log('name', name);
-			return {name: name, id: x, fileType: fileType} 
-		}))
-	}
-	descendants = await Promise.all(descendants.map(async x=> ({_id: x._id.valueOf(), name: x.name, parent: x.parent, files: await getName(x.files)})))
-
-	const nest = (items, id = "63a004e8413df1816c2274e4", link = 'parent') => items.filter(item => item[link] === id).map(item => {
-		console.log("item", item);
-		return {
-			...item, children: [...nest(items, item._id), ...item.files], isDisabled: nest(items, item._id).length ? false : true
+	let {type, clientId} = req.query
+	try {
+		const web3Connection = await getWeb3()
+		if(!web3Connection.status) {
+			return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
 		}
-	})
-		
+		const web3 = web3Connection.web3
+		let user = await User.findOne({email: 'sieunhannguyen26@gmail.com'})
+		let result = [];
+		if(type == 'all') {
+			for (const service of user.servicesUsed) {
+				for (const transaction of service.transactions) {
+					let tx = await web3.eth.getTransaction(transaction)
+					let block = await web3.eth.getBlock(tx.blockNumber)
+					result.push({...tx, timestamp: block.timestamp})
+				}
+			}
+			
+		} else if(type == 'service') {
+			const service = await Service.findOne({client_id: clientId})
+			for (const s of user.servicesUsed) {
+				if(service._id.valueOf() == s._id.valueOf()) {
+					for (const transaction of s.transactions) {
+						let tx = await web3.eth.getTransaction(transaction)
+						let block = await web3.eth.getBlock(tx.blockNumber)
+						result.push({...tx, timestamp: block.timestamp})
+					}
+				}
+			}
+		}else {
+			res.status(400).json({
+				msg: "Bad Request"
+			})
+		}
+		res.status(200).json({
+			result
+		})
+	} catch (error) {
+		console.log(error);
+	}
 	
-	let result = await nest(descendants)
 	
-	res.json({
-		// getUserNotSignedList: x,
-		// // getUserSignedDoc: y,
-		// // getUserSignedList: z,
-		// checkUserSignedStatus: a,
-		// getUserCollectionList: b
-		descendants: result
-	})
 	
 }
 

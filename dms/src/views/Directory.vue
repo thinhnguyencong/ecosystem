@@ -62,7 +62,7 @@
                         <GridViewVue :folders="documentState.children" :files="documentState.folder.files"/>
                     </div>
                     <div v-if="layout == 'list'">
-                        <ListTableVue :folders="documentState.children" :files="documentState.folder.files"/>
+                        <ListTableVue :folders="documentState.children" :files="documentState.folder.files" :hasStatus="false"/>
                     </div>
                 </div>
                     <transition :name="transition">

@@ -34,7 +34,7 @@
                         <GridView :folders="documentState.children" :files="documentState.folder.files"/>
                     </div>
                     <div v-if="layout == 'list'">
-                        <ListTable :folders="documentState.children" :files="documentState.folder.files"/>
+                        <ListView :folders="documentState.children" :files="documentState.folder.files" :hasStatus="false"/>
                     </div>
                 </div>
                 <transition :name="transition">
@@ -62,7 +62,7 @@
 <script setup>
 import ModalFileDetails from './ModalFileDetails.vue';
 import GridView from '../components/GridView.vue';
-import ListTable from '../components/ListView.vue';
+import ListView from '../components/ListView.vue';
 import ManageKey from '../components/ManageKey.vue'
 import ModalAddNewFolder from './ModalAddNewFolder.vue';
 import ModalUploadFile from './ModalUploadFile.vue';
@@ -78,7 +78,7 @@ $(document).ready(function() {
 <script>
 
 export default {
-    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListTable, GridView, ModalFileDetails, FolderDetail },
+    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListView, GridView, ModalFileDetails, FolderDetail },
     mounted() {
         this.$router.push(this.$route.path)
     },

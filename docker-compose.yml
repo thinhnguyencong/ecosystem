@@ -18,6 +18,7 @@ services:
   #     - --features=preview
   #   volumes:
   #     - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
+  #   restart: unless-stopped
   wallet-server:
     build: ./api
     ports:

@@ -26,7 +26,7 @@
                 <GridViewVue :folders="documentState.children" :files="[]"/>
             </div>
             <div v-if="layout == 'list'">
-                <ListView :folders="documentState.children" :files="[]"/>
+                <ListView :folders="documentState.children" :files="[]" :hasStatus="false"/>
             </div>
         </div>
         <div v-else class="pl-4 pr-4">
