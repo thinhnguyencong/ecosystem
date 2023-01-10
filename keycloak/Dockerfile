@@ -18,7 +18,8 @@ COPY --from=builder /opt/keycloak/ /opt/keycloak/
 ENV KC_HOSTNAME=10.10.1.16
 ENV KC_HOSTNAME_PORT=8080
 # change these values to point to a running postgres instance
-ENV KC_DB_USERNAME=postgres
-ENV KC_DB_PASSWORD=postgres
+ENV KC_DB_URL='jdbc:postgresql://postgres/keycloak-db'
+ENV KC_DB_USERNAME=root
+ENV KC_DB_PASSWORD=root
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
