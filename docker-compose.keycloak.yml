@@ -42,7 +42,7 @@ services:
       DB_DUMP_FREQ: 600
       DB_DUMP_BEGIN: '+5'
       DB_DUMP_SAFECHARS: no-colons
-      DB_DUMP_DEBUG: true
+      DB_DUMP_DEBUG: 'true'
       #DB_RESTORE_TARGET: /db/db_backup_****-**-**T**-**-**Z.tgz
     volumes:
       - ./keycloak/backup/:/db
