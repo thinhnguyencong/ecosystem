@@ -11,7 +11,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
     restart: always
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -20,7 +20,7 @@ services:
       - mysql
     environment:
       PMA_HOST: mysql
-      PMA_PORT: 3306
+      PMA_PORT: ${MYSQL_PORT}
     ports:
       - 8090:80
     restart: unless-stopped
@@ -31,8 +31,8 @@ services:
       - mysql
     environment:
       DB_SERVER: mysql
-      DB_PORT: 3306
-      DB_NAMES: keycloak-db
+      DB_PORT: ${MYSQL_PORT}
+      DB_NAMES: ${MYSQL_DATABASE}
       DB_USER: ${MYSQL_ROOT_USER}
       DB_PASS: ${MYSQL_ROOT_PASSWORD}
       DB_DUMP_TARGET: "/db ${AWS_S3_DESTINATION}"
@@ -50,10 +50,10 @@ services:
   keycloak:
     build: ./keycloak
     ports:
-      - "8080:8443"
+      - "${KC_HOSTNAME_PORT}:8443"
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
-      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_PORT: ${KC_HOSTNAME_PORT}
       KC_HOSTNAME_URL: ${KC_HOSTNAME_URL}
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
