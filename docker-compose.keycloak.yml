@@ -1,19 +1,17 @@
 version: '3.4'
 
 services:
-  # 1. Start database
   mysql:
     image: mysql:5.7
     container_name: mysql
     environment:
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
-    volumes:
-      - ./backup/:/var/lib/mysql:ro
     restart: always
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -25,13 +23,38 @@ services:
       PMA_PORT: 3306
     ports:
       - 8090:80
-    restart: always
+    restart: unless-stopped
+  mysql-backup:
+    image: databack/mysql-backup
+    container_name: mysql-backup
+    depends_on:
+      - mysql
+    environment:
+      DB_SERVER: mysql
+      DB_PORT: 3306
+      DB_NAMES: keycloak-db
+      DB_USER: ${MYSQL_ROOT_USER}
+      DB_PASS: ${MYSQL_ROOT_PASSWORD}
+      DB_DUMP_TARGET: "/db ${AWS_S3_DESTINATION}"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      DB_DUMP_FREQ: 600
+      DB_DUMP_BEGIN: '+5'
+      DB_DUMP_SAFECHARS: no-colons
+      DB_DUMP_DEBUG: true
+      #DB_RESTORE_TARGET: /db/db_backup_****-**-**T**-**-**Z.tgz
+    volumes:
+      - ./keycloak/backup/:/db
+    restart: unless-stopped
   keycloak:
     build: ./keycloak
     ports:
-      - "8443:8443"
+      - "8080:8443"
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_URL: ${KC_HOSTNAME_URL}
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       PROXY_ADDRESS_FORWARDING: "true"
@@ -42,31 +65,7 @@ services:
     command:
       - start
       - --optimized
-      - --import-realm
+      # - --import-realm
     depends_on:
       - mysql
-    volumes:
-      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/realm.json
     restart: unless-stopped
-
-  # # 2. Add env variable from keycloak to server .env, then start server and another service
-  # wallet-server:
-  #   build: ./api
-  #   ports:
-  #     - "5555:5555"
-  #   restart: unless-stopped
-  # auction-client:
-  #   build: ./auction-client
-  #   ports:
-  #       - "3001:80"
-  #   restart: unless-stopped
-  # wallet-client:
-  #   build: ./wallet-management
-  #   ports:
-  #       - "3000:80"
-  #   restart: unless-stopped
-  # dms:
-  #   build: ./dms
-  #   ports:
-  #       - "3002:80"
-  #   restart: unless-stopped
