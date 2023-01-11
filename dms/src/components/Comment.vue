@@ -3,7 +3,7 @@
         <div v-if="documentState.file?.comments?.length>0"> 
             <div class="comment-widgets">
                 <div v-for="(comment, index) in comments" :key="index" class="d-flex flex-row comment-row">
-                    <div class="p-2"><span class="round"><img src="https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png" alt="user" width="40"></span></div>
+                    <div class="p-2"><span class="round"><img src="https://thumbs.dreamstime.com/b/default-avatar-profile-image-vector-social-media-user-icon-potrait-182347582.jpg" alt="user" width="40"></span></div>
                     <div class="p-2 comment-text w-100">
                         <h5 class="d-inline">{{ comment.name }}</h5> &nbsp; &nbsp; &nbsp;<small class="date">{{customTime(comment.createdAt)}}</small>
                         <p class="m-b-5 m-t-10">{{comment.content}}</p>
