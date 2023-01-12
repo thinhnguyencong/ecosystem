@@ -75,6 +75,7 @@ import GridView from '../components/GridView.vue';
 import ListView from '../components/ListView.vue';
 import logoURL from '../assets/img-doc.png'
 import socketIOClient from "socket.io-client";
+import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
 </script>
 <script>
   export default {
@@ -84,13 +85,14 @@ import socketIOClient from "socket.io-client";
         files: [],
         folders: [],
         showModal: false,
-        layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
+        layout: "",
         active: 1,
       }
     },
     mounted() {
       // let x = socketIOClient(import.meta.env.VITE_SERVER_URL)
       // console.log("x", x);
+      this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
       this.$router.push(this.$route.path)
       console.log("home");
     },
@@ -101,12 +103,13 @@ import socketIOClient from "socket.io-client";
     },
     methods: {
       switchLayout() {
+        console.log(this.layout);
         if(this.layout === "list"){
+            setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
             this.layout = "grid"
-            localStorage.setItem("layout", "grid")
         }else if (this.layout === "grid"){
             this.layout = "list"
-            localStorage.setItem("layout", "list")
+            setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
         }
       },
       async callAPI() { 
@@ -125,6 +128,7 @@ import socketIOClient from "socket.io-client";
     },
     computed: {
         documentState() {return this.$store.state.document },
+        authState() {return this.$store.state.auth },
     },
     watch: {
     },

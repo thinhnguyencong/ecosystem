@@ -1,10 +1,10 @@
 <template>
-    <div @click="handleAccessFolder(id)" class="tile folder">
-      <div>
-        <span class="material-icons">folder</span>
-        <h4 class="truncate">{{name}}</h4>
-      </div>
+  <div class="tile folder">
+    <div>
+      <span class="material-icons">folder</span>
+      <h4 class="truncate">{{name}}</h4>
     </div>
+  </div>
 </template>
 <script>
 
@@ -13,10 +13,15 @@ export default {
     id: String,
     name: String
   },
+  data() {
+    return {
+    }
+  },
+
    methods: {
     handleAccessFolder() {
       this.$router.push('/folder/' + this.id )
-    }
+    },
    }
 }
 </script>

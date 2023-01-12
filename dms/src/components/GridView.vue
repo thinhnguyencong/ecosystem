@@ -7,14 +7,25 @@
                 <hr>
                 
                 <div class="item-grid-card">
-                    
-                    <FolderVue
-                        v-for="(folder, index) in folderList"
-                        :key="index"
-                        :name="folder.name"
-                        :id="folder._id"
-                    />
+                    <div v-for="(folder, index) in folderList">
+                        <div @contextmenu="(event) => openContextMenu(folder._id, event)">
+                            <FolderVue
+                                :key="index"
+                                :name="folder.name"
+                                :id="folder._id"
+                                @click="handleAccessFolder(id)" 
+                            />
+                        </div>
+                        
+                        <div v-click-outside="(event) => closeContextMenu(folder._id, event)"
+                            tabindex="0" class="dropdown-menu dropdown-menu-sm" :id="'context-menu-'+folder._id">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </div>
                 </div>
+                
                 <br>
                 <br>
             </div>
@@ -58,6 +69,7 @@
 <script setup>
 import FileVue from '../components/File.vue'
 import FolderVue from '../components/Folder.vue';
+import $ from "jquery"
 </script>
 
 <script> 
@@ -77,13 +89,33 @@ export default {
         return {
             showModal: false,
             fileList: [],
-            folderList: []
+            folderList: [],
+            styleObject:{}
         }
     },
     mounted() {
         
     },
     methods: {
+        openContextMenu(id, e) {
+            console.log(e);
+            e.preventDefault()
+            console.log(e.clientX, e.clientY);
+            var top = e.clientY-150;
+            var left = e.clientX-280;
+            
+            $("#context-menu-"+id).css({
+                display: "block",
+                top: top,
+                left: left
+            })
+        },
+        closeContextMenu(id, e) {
+            console.log(id);
+            $("#context-menu-"+id).css({
+                display: "none",
+            })
+        }
     },
     computed: {
         documentState() {return this.$store.state.document },

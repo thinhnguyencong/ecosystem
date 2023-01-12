@@ -20,11 +20,13 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 // tree select
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import vClickOutside from 'v-click-outside'
 
 dayjs.extend(window.dayjs_plugin_relativeTime);
 Vue.use(VueSweetalert2);
 Vue.use(Vuetify)
 Vue.use(VueQuillEditor)
+Vue.use(vClickOutside)
 Vue.mixin({
   beforeCreate() {
     if (this.$options.watch) {

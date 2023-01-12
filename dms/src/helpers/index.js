@@ -21,3 +21,51 @@ export const getClassFileType = (type) => {
         default: return "mdi mdi-file text-secondary"
     }
 }
+
+export const getLayoutOfPage = (publicAddress, route) => {
+    const DEFAULT_LAYOUT = "grid"
+    const LAYOUT_PAGE = ["Home", "My Folder", "Shared With Me", "Directory"]
+    if(!LAYOUT_PAGE.includes(route.name)) {
+        return
+    }
+    let userConfigs = localStorage.getItem("configs")
+    userConfigs=JSON.parse(userConfigs)
+
+    if (!userConfigs) {
+        userConfigs = initUserConfig(publicAddress)
+        localStorage.setItem("configs", JSON.stringify(userConfigs))
+    }
+    if(!userConfigs[publicAddress]) {
+        let newUser = initUserConfig(publicAddress)
+        userConfigs = {
+            ...userConfigs,
+            ...newUser
+        }
+        localStorage.setItem("configs", JSON.stringify(userConfigs))
+    }
+    if (userConfigs[publicAddress]["layout"][route.path]){
+       return userConfigs[publicAddress]["layout"][route.path]
+    }
+    userConfigs[publicAddress]["layout"][route.path] = DEFAULT_LAYOUT
+    localStorage.setItem("configs", JSON.stringify(userConfigs))
+    return DEFAULT_LAYOUT
+}
+
+export const setLayoutOfPage = (publicAddress, route, layout) => {
+    let userConfigs = localStorage.getItem("configs")
+    userConfigs=JSON.parse(userConfigs)
+    userConfigs[publicAddress]["layout"][route.path] = layout
+    console.log(userConfigs[publicAddress]["layout"][route.path]);
+    localStorage.setItem("configs", JSON.stringify(userConfigs))
+}
+const initUserConfig = (publicAddress) => {
+    const initConfig = {
+        [publicAddress]: {
+            "layout": {
+                "/": "grid",
+                "/my-folder": "grid"
+            }
+        }
+    }
+    return initConfig
+}

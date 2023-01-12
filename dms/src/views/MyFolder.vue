@@ -67,6 +67,7 @@ import ManageKey from '../components/ManageKey.vue'
 import ModalAddNewFolder from './ModalAddNewFolder.vue';
 import ModalUploadFile from './ModalUploadFile.vue';
 import FolderDetail from '../components/FolderDetail.vue';
+import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
 import $ from "jquery"
 $(document).ready(function() {
   $('#modalCreateFolder').on('shown.bs.modal', function() {
@@ -81,6 +82,7 @@ export default {
     components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListView, GridView, ModalFileDetails, FolderDetail },
     mounted() {
         this.$router.push(this.$route.path)
+        this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
     },
     created() {
         this.callAPI()
@@ -88,7 +90,7 @@ export default {
     data() {
         return {
             name: "Untitled Folder",
-            layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
+            layout: "",
             drawerVisible: false,
             showModal: false,
             transition: 'slide-fade'
@@ -96,6 +98,7 @@ export default {
     },
     computed: {
         documentState() {return this.$store.state.document },
+        authState() {return this.$store.state.auth },
     },
     methods: {
         async callAPI() {
@@ -106,10 +109,10 @@ export default {
         switchLayout() {
             if(this.layout === "list"){
                 this.layout = "grid"
-                localStorage.setItem("layout", "grid")
+                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
             }else if (this.layout === "grid"){
                 this.layout = "list"
-                localStorage.setItem("layout", "list")
+                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
             }
         },
         handleDrawer() {

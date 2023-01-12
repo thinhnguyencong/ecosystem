@@ -92,6 +92,7 @@
     import GridViewVue from '../components/GridView.vue';
     import ModalFileDetails from './ModalFileDetails.vue';
     import FolderDetail from '../components/FolderDetail.vue';
+    import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
     import $ from "jquery"
 
     $(document).ready(function() {
@@ -110,11 +111,11 @@ export default {
     },
     created() {
         this.callAPI()
-        
+        this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
     },
     data() {
         return {
-            layout: localStorage.getItem("layout") ? localStorage.getItem("layout") : "grid",
+            layout: null,
             transition: 'slide-fade',
             drawerVisible: false,
         }
@@ -131,10 +132,10 @@ export default {
         switchLayout() {
             if(this.layout === "list"){
                 this.layout = "grid"
-                localStorage.setItem("layout", "grid")
+                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
             }else if (this.layout === "grid"){
                 this.layout = "list"
-                localStorage.setItem("layout", "list")
+                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
             }
         },
         handleDrawer() {
