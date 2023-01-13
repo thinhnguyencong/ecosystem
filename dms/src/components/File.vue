@@ -38,7 +38,7 @@ export default {
     border: 1px solid #eeeeee;
     transition: 0.2s all cubic-bezier(0.4, 0.0, 0.2, 1);
     position: relative;
-    padding: 35px 16px 25px;
+    padding: 3.5rem 1rem 3rem;
     margin-right: 17px;
     cursor: pointer;
 }

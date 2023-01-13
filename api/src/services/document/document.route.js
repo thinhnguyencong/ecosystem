@@ -7,6 +7,7 @@ documentRouter.get('/get-root-folders', controller.getRootFolders);
 documentRouter.get('/get-folder-by-id', controller.getFolderById);
 documentRouter.get('/my-folder', controller.getFoldersInMyFolder);
 documentRouter.post('/create-folder', controller.createFolder);
+documentRouter.post('/edit-folder', controller.editFolder);
 documentRouter.post('/share-folder', controller.shareFolder);
 documentRouter.get('/shared-with-me-folder', controller.getSharedWithMeFolder);
 documentRouter.get('/tree-folder', controller.getTreeFolder);

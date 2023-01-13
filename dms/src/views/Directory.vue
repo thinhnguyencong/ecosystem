@@ -1,52 +1,9 @@
 <template>
-	<div >
-        <nav aria-label="breadcrumb" class="mt-4">
-            <ol class="breadcrumb mt-2">
-                <li v-if="documentState.folder.status=='my-folder'" class="ml-4" aria-current="page">
-                    <router-link class="align-self-center d-flex flex-row" to="/my-folder"><span class="material-icons">folder</span><span class="align-self-center mt-1">&nbsp;My Folder</span></router-link>
-                </li>
-                <li v-else-if="documentState.folder.status=='shared-with-me'" class="ml-4" aria-current="page">
-                    <router-link class="align-self-center d-flex flex-row" to="/shared-with-me"><span class="material-icons">folder</span><span class="align-self-center mt-1">&nbsp;Shared with me</span></router-link>
-                </li>
-                <li v-else class="ml-4" aria-current="page">
-                    <router-link class="align-self-center d-flex flex-row" to="/"><span class="material-icons">folder</span><span class="align-self-center mt-1">&nbsp;Home</span></router-link>
-                </li>
-                <li v-for="(folder, index) in documentState.ancestors" :key="index" 
-                    aria-current="page">
-                    <router-link class="align-self-center d-flex flex-row" :to="'/folder/'+ folder._id">
-                        <span class="material-icons">
-                            &nbsp;/ folder
-                        </span>
-                        <span class="align-self-center mt-1">&nbsp;{{folder.name}}</span>
-                    </router-link>
-                </li>
-                <li v-if="documentState.folder" class="d-flex flex-row mt-n-2" aria-current="page">
-                    <span class="material-icons">
-                        &nbsp;/ <i class="mdi mdi-folder-open text-secondary"></i>
-                    </span>
-                    <span class="align-self-center mt-1 text-secondary">
-                        &nbsp;{{documentState.folder.name}}
-                    </span>
-                </li>
-                <li class="ml-auto mr-5">
-                    <button @click="switchLayout">
-                        <span v-if="layout == 'grid'" class="material-icons action-icon ml-auto pr-4">
-                            list
-                        </span>
-                        <span v-if="layout == 'list'" class="material-icons action-icon ml-auto pr-4">
-                            grid_view
-                        </span>
-                    </button>
-                    <span class="material-icons action-icon" @click="handleDrawer">
-                        info
-                    </span>
-                </li>
-            </ol>
-             
-        </nav>
+	<div>
+        <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
         <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
         <ModalUploadFile/>
-        <div class="pl-5 pr-5 pt-3" v-if="!documentState.isLoading">
+        <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
             <div class="row">
                 <div class="col">
                     <div class="dropdown">
@@ -94,6 +51,7 @@
     import FolderDetail from '../components/FolderDetail.vue';
     import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
     import $ from "jquery"
+import NavBar from '../components/layout/NavBar.vue';
 
     $(document).ready(function() {
         $('#modalCreateFolder').on('shown.bs.modal', function() {
@@ -104,7 +62,7 @@
 </script>
 <script>
 export default {
-  components: { ModalAddNewFolder, ManageKey, ModalFileDetails  },
+  components: { ModalAddNewFolder, ManageKey, ModalFileDetails, NavBar },
     mounted() {
         // Call the API query method on page load
         
@@ -129,14 +87,8 @@ export default {
             await this.$store.dispatch("document/getTreeFolder")
             await this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
         },
-        switchLayout() {
-            if(this.layout === "list"){
-                this.layout = "grid"
-                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
-            }else if (this.layout === "grid"){
-                this.layout = "list"
-                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
-            }
+        onLayoutChange(layout) {
+            this.layout = layout
         },
         handleDrawer() {
             console.log(this.drawerVisible);
@@ -165,27 +117,7 @@ export default {
 </script>
 
 <style scoped>
-.item-grid-card {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-}
-.float-right {
-    float: right;
-}
-.text-custom-color-blue {
-    color: #00A8FF
-}
-.action-icon {
-    cursor: pointer;
-}
-.action-icon:hover {
-    background: transparent;
-	color: #0f85f4;
-}
-.mt-n-2 {
-    margin-top: -0.2rem;
-}
+
 /* Prev Scrolling */
 .slide-fade-enter-active,
 .slide-fade-leave-active {

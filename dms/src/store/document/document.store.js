@@ -280,8 +280,8 @@ export const document = {
     // ------------------uploadFile-----------------------------
     uploadFile(state){
       if(!state.isLoading) {
-          state.isLoading = true
-        }
+        state.isLoading = true
+      }
     },
     uploadFileSuccess(state, result){
         state.isLoading = false;

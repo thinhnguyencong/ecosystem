@@ -1,26 +1,6 @@
 <template>
   <div>
-    <nav aria-label="breadcrumb" class="mt-4">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active d-flex flex-row ml-4" aria-current="page">
-          <span class="material-icons">home</span>
-          <span class="align-self-center">&nbsp;Home</span>
-        </li>
-        <li class="ml-auto mr-5">
-            <button @click="switchLayout">
-                <span v-if="layout == 'grid'" class="material-icons action-icon ml-auto pr-4">
-                    list
-                </span>
-                <span v-if="layout == 'list'" class="material-icons action-icon ml-auto pr-4">
-                    grid_view
-                </span>
-            </button>
-            <!-- <span class="material-icons action-icon">
-                info
-            </span> -->
-        </li>
-      </ol>
-    </nav>
+    <NavBar @onLayoutChange="onLayoutChange"/>
     <div class="container">
       <v-tabs icons-and-text class="h-100" fixed-tabs grow v-model="active">
         <v-tabs-slider :color="active==2 ? 'green' : active== 1 ? 'red' : 'blue'"></v-tabs-slider>
@@ -75,24 +55,23 @@ import GridView from '../components/GridView.vue';
 import ListView from '../components/ListView.vue';
 import logoURL from '../assets/img-doc.png'
 import socketIOClient from "socket.io-client";
-import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
+import NavBar from '../components/layout/NavBar.vue';
 </script>
 <script>
   export default {
-    components: {ModalFileDetails},
+    components: { ModalFileDetails, NavBar },
     data() {
       return {
         files: [],
         folders: [],
         showModal: false,
-        layout: "",
         active: 1,
+        layout: ""
       }
     },
     mounted() {
       // let x = socketIOClient(import.meta.env.VITE_SERVER_URL)
       // console.log("x", x);
-      this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
       this.$router.push(this.$route.path)
       console.log("home");
     },
@@ -102,16 +81,6 @@ import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
         this.callAPI()
     },
     methods: {
-      switchLayout() {
-        console.log(this.layout);
-        if(this.layout === "list"){
-            setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
-            this.layout = "grid"
-        }else if (this.layout === "grid"){
-            this.layout = "list"
-            setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
-        }
-      },
       async callAPI() { 
         await this.$store.dispatch("document/getAllFiles")
         await this.$store.dispatch("document/getTreeFolder")
@@ -125,10 +94,12 @@ import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
       getSignedDocs() {
         return this.files.filter((file) => this.documentState.signedDocs.includes(file.tokenId));
       },
+      onLayoutChange(layout) {
+        this.layout = layout
+      }
     },
     computed: {
         documentState() {return this.$store.state.document },
-        authState() {return this.$store.state.auth },
     },
     watch: {
     },

@@ -135,7 +135,9 @@ export const user = {
   mutations: {
     // ------------------getUserInfo-----------------------------
     getUserInfo(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
     },
     getUserInfoSuccess(state, result){
       state.isLoading = false;
@@ -241,7 +243,9 @@ export const user = {
 
     // ------------------getDeptList-----------------------------
     getDeptList(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
     },
     getDeptListSuccess(state, result){
       state.isLoading = false;
@@ -255,7 +259,9 @@ export const user = {
 
     // ------------------getRoleList-----------------------------
     getRoleList(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
     },
     getRoleListSuccess(state, result){
       state.isLoading = false;
@@ -269,7 +275,9 @@ export const user = {
 
     // ------------------getSignerList-----------------------------
     getSignerList(state){
-      state.isLoading = true
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
     },
     getSignerListSuccess(state, result){
       state.isLoading = false;

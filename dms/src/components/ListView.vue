@@ -22,7 +22,7 @@
                         <td>-</td>
                         <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
                         <td v-if="status">-</td>
-                        <td>{{folder.owner}}</td>
+                        <td>{{folder.owner && folder.owner.name}}</td>
                         <td>-</td>
                         <td></td>
                     </tr>
@@ -39,16 +39,24 @@
                         <td>{{file.tokenId}}</td>
                         <td>{{(new Date(file.createdAt)).toDateString()}}</td>
                         <td v-if="status" :class="getClassStatus(file.status)">{{file.status}}</td>
-                        <td>{{file.owner}}</td>
+                        <td>{{file.owner.name}}</td>
                         <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                         <td>
-                            <span class="material-icons">visibility</span>&nbsp;&nbsp;
+                            <v-btn flat icon color="indigo">
+                                <v-icon data-toggle="tooltip" title="" color="black">
+                                    visibility
+                                </v-icon>
+                            </v-btn>
                             <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class=" spinner-border text-dark" role="status">
                                 <span class="sr-only">Loading...</span>
                             </span>
-                            <span v-else class="material-icons" @click.stop="" @click="download(file)">download</span>&nbsp;&nbsp;
-                            <!-- <span class="material-icons text-secondary">info</span>&nbsp;&nbsp;
-                            <span class="material-icons text-success">edit_calendar</span> -->
+                            <span v-else @click.stop="" @click="download(file)">
+                                <v-btn flat icon color="indigo">
+                                    <v-icon data-toggle="tooltip" title="" color="black">
+                                        download
+                                    </v-icon>
+                                </v-btn>
+                            </span>
                         </td>
                     </router-link>
                     <tr v-if="(files.length + folders.length == 0)">
@@ -170,8 +178,12 @@ export default {
 }
 </script>
 <style scoped>
-td, th, tr {
-    font-size: 1.2rem;
+.table th, .table td {
+    font-size: 1.3rem;
+    vertical-align: middle;
+}
+.v-btn {
+    margin: 0
 }
 .float-right {
     float: right;
@@ -181,13 +193,6 @@ td, th, tr {
 }
 .cursor-pointer {
     cursor: pointer;
-}
-.material-icons{
-    cursor: pointer;
-}
-.material-icons:hover {
-    background: transparent;
-	color: #0f85f4;
 }
 .modal-enter, .modal-leave-active {
     opacity: 0;

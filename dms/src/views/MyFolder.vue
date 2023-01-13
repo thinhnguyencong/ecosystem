@@ -1,23 +1,6 @@
 <template>
 	<div >
-        <nav aria-label="breadcrumb" class="mt-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active d-flex flex-row ml-4" aria-current="page"><span class="material-icons">folder</span><span class="align-self-center">&nbsp;My Folder</span></li>
-                <li class="ml-auto mr-5">
-                    <button @click="switchLayout">
-                        <span v-if="layout == 'grid'" class="material-icons action-icon ml-auto pr-4">
-                            list
-                        </span>
-                        <span v-if="layout == 'list'" class="material-icons action-icon ml-auto pr-4">
-                            grid_view
-                        </span>
-                    </button>
-                    <span class="material-icons action-icon" @click="handleDrawer">
-                        info
-                    </span>
-                </li>
-            </ol>
-        </nav>
+        <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
         <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
             <div class="row">
                 <div class="col">
@@ -69,6 +52,7 @@ import ModalUploadFile from './ModalUploadFile.vue';
 import FolderDetail from '../components/FolderDetail.vue';
 import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
 import $ from "jquery"
+import NavBar from '../components/layout/NavBar.vue';
 $(document).ready(function() {
   $('#modalCreateFolder').on('shown.bs.modal', function() {
     $('#newFolderName').trigger('focus');
@@ -79,7 +63,7 @@ $(document).ready(function() {
 <script>
 
 export default {
-    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListView, GridView, ModalFileDetails, FolderDetail },
+    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListView, GridView, ModalFileDetails, FolderDetail, NavBar },
     mounted() {
         this.$router.push(this.$route.path)
         this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
@@ -106,15 +90,6 @@ export default {
             await this.$store.dispatch("document/getMyFolders") 
             await this.$store.dispatch("document/getTreeFolder")
         },
-        switchLayout() {
-            if(this.layout === "list"){
-                this.layout = "grid"
-                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
-            }else if (this.layout === "grid"){
-                this.layout = "list"
-                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
-            }
-        },
         handleDrawer() {
             console.log(this.drawerVisible);
             this.drawerVisible = !this.drawerVisible
@@ -124,22 +99,15 @@ export default {
             }else {
                 this.transition = 'slide-fade'
             }
+        },
+        onLayoutChange(layout) {
+            this.layout = layout
         }
     },
   }
 </script>
 
 <style scoped>
-.float-right {
-    float: right;
-}
-.action-icon {
-    cursor: pointer;
-}
-.action-icon:hover {
-    background: transparent;
-	color: #0f85f4;
-}
 /* Prev Scrolling */
 .slide-fade-enter-active,
 .slide-fade-leave-active {

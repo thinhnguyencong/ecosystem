@@ -237,6 +237,9 @@ export const createFolder = async (req, res, next) => {
 		})
 	}
 }
+export const editFolder = async (req, res, next) => {
+
+}
 export const shareFolder = async (req, res, next) => {
 	// get from token
 	let owner = "6375eef4dc06c9e8cf391eb3"
@@ -421,31 +424,31 @@ const getFile = async (userId, allFiles) => {
 }
 export const getAllFiles = async (req, res, next) => {
 	try {
-		const web3Connection = await getWeb3()
-		if(!web3Connection.status) {
-			return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-		}
-		const web3 = web3Connection.web3
-		const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
+		// const web3Connection = await getWeb3()
+		// if(!web3Connection.status) {
+		// 	return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+		// }
+		// const web3 = web3Connection.web3
+		// const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail}) 
 		let userId = user._id.valueOf()
-		// những tài liệu mà user có public address chưa kí
-		let pendingDocs = await dmsContract.methods.getUserNotSignedList().call({ from: user.publicAddress });
+		// // những tài liệu mà user có public address chưa kí
+		// let pendingDocs = await dmsContract.methods.getUserNotSignedList().call({ from: user.publicAddress });
 
-		// // những tài liệu đã kí của user.publicaddress
-		let signedDocs = await dmsContract.methods.getUserSignedList().call({ from: user.publicAddress });
-		console.log("X", pendingDocs);
-		console.log("z", signedDocs);
+		// // // những tài liệu đã kí của user.publicaddress
+		// let signedDocs = await dmsContract.methods.getUserSignedList().call({ from: user.publicAddress });
+		// console.log("X", pendingDocs);
+		// console.log("z", signedDocs);
 		if(isValidObjectId(userId)) {
 			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
-			files = await Promise.all(files.map(async f=> ({...f, owner: await getNameById(f.owner)})))
+			// files = await Promise.all(files.map(async f=> ({...f, owner: await getNameById(f.owner)})))
 			return res.status(200).send({
 				msg: "Success",
 				data: {
 					files: files,
-					pendingDocs: pendingDocs,
-					signedDocs: signedDocs
+					// pendingDocs: pendingDocs,
+					// signedDocs: signedDocs
 				},
 				
 			})
@@ -868,8 +871,13 @@ export const getFileById = async (req, res, next) => {
 	
 }
 const getNameById = async (id) => {
-	let user = await User.findById(id)
-	return user.name
+	let user = await User.findById(id).lean()
+	if(user) {
+		return {
+			_id: id,
+			name: user.name
+		}
+	}
 }
 const getFileStatus = async (file, publicAddress, dmsContract) => {
 	let statusDetail = {

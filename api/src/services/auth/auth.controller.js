@@ -24,7 +24,7 @@ export const authToken = async (req, res, next) => {
 	.then(async tokenRes => {
 		const jwtAccessToken = jwt.decode(JSON.parse(tokenRes).access_token);
 		const user = authStrategy.getUser(jwtAccessToken);
-		const publicAddress = await User.findOne({username: user.username}, "publicAddress").exec()
+		const userFind = await User.findOne({username: user.username}, "publicAddress").exec()
 		console.log(`User ${user.username} successfully logged in.`);
 		res.cookie("refresh_token", JSON.parse(tokenRes).refresh_token, {
 			httpOnly: true,
@@ -36,7 +36,8 @@ export const authToken = async (req, res, next) => {
 			authToken: JSON.parse(tokenRes).access_token,
 			user: {
 				...user,
-				publicAddress: publicAddress.publicAddress
+				publicAddress: userFind.publicAddress,
+				_id: userFind._id.valueOf()
 			},
 		});
 	})
@@ -61,11 +62,12 @@ export const reAuth = async (req, res, next) => {
 			});
 		}else {
 			const user = authStrategy.getUser(JSON.parse(response));
-			const publicAddress = await User.findOne({username: user.username}, "publicAddress").exec()
+			const userFind = await User.findOne({username: user.username}).exec()
 			res.status(200).send({
 				user: {
 					...user,
-					publicAddress: publicAddress.publicAddress
+					publicAddress: userFind.publicAddress,
+					_id: userFind._id.valueOf()
 				}
 			});
 		}

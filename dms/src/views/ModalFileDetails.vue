@@ -53,7 +53,7 @@
                                                             <p class="font-weight-bold">Owner :</p>
                                                         </div>
                                                         <div class="col-8">
-                                                            <p>{{ file.owner }}</p>
+                                                            <p>{{ file.owner.name }}</p>
                                                         </div>
                                                     </div>
                                                     <div class="row">

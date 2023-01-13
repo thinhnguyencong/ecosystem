@@ -7,21 +7,32 @@
                 <hr>
                 
                 <div class="item-grid-card">
-                    <div v-for="(folder, index) in folderList">
-                        <div @contextmenu="(event) => openContextMenu(folder._id, event)">
+                    <div v-for="(folder, index) in folderList" class="tile">
+                        <div class="float-right">
+                            <div class="dropdown">
+                                <div v-if="folder.owner && folder.owner._id == authState.user._id" class="align-self-center" @click="openDropdown(folder._id)">
+                                    <v-btn flat icon color="indigo">
+                                        <v-icon data-toggle="tooltip" title="" color="#818181">
+                                            more_vert
+                                        </v-icon>
+                                    </v-btn> 
+                                </div>
+                                <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
+                                    <div class="list-group">
+                                        <a href="#" class="list-group-item list-group-item-action">@ Rename </a>
+                                        <a href="#" class="list-group-item list-group-item-action">@ Share </a>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        
+                        <div class="folder" @click="handleAccessFolder(folder._id)">
                             <FolderVue
                                 :key="index"
                                 :name="folder.name"
-                                :id="folder._id"
-                                @click="handleAccessFolder(id)" 
+                                :id="folder._id" 
                             />
-                        </div>
-                        
-                        <div v-click-outside="(event) => closeContextMenu(folder._id, event)"
-                            tabindex="0" class="dropdown-menu dropdown-menu-sm" :id="'context-menu-'+folder._id">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
                         </div>
                     </div>
                 </div>
@@ -90,35 +101,27 @@ export default {
             showModal: false,
             fileList: [],
             folderList: [],
-            styleObject:{}
+            showMenu: ""
         }
     },
     mounted() {
         
     },
     methods: {
-        openContextMenu(id, e) {
-            console.log(e);
-            e.preventDefault()
-            console.log(e.clientX, e.clientY);
-            var top = e.clientY-150;
-            var left = e.clientX-280;
-            
-            $("#context-menu-"+id).css({
-                display: "block",
-                top: top,
-                left: left
-            })
-        },
-        closeContextMenu(id, e) {
+        handleAccessFolder(id) {
             console.log(id);
-            $("#context-menu-"+id).css({
-                display: "none",
-            })
-        }
+            this.$router.push("/folder/" + id);
+        },
+       openDropdown(id) {
+        this.showMenu = id
+       },
+       closeDropdown(id) {
+        this.showMenu = ""
+       }
     },
     computed: {
         documentState() {return this.$store.state.document },
+        authState() {return this.$store.state.auth },
     },
     watch: {
       '$route': {
@@ -144,6 +147,26 @@ export default {
 }
 </script>
 <style scoped>
+.tile {
+    border-radius: 3px;
+    width: 200px;
+    height: 100%;
+    transition: 0.2s all cubic-bezier(0.4, 0.0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+}
+.folder {
+    height: 100%;
+    padding: 3.5rem 1rem 3rem;
+    text-align: center;
+    border: 1px solid #eeeeee;;
+}
+.folder:hover{
+  box-shadow: 0px 7px 5px -6px rgba(0, 0, 0, 0.12);
+  background-color: #eeeeee;
+  border: 1px solid #dddddd;;
+}
+
 .item-grid-card {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -157,5 +180,22 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  top: 3rem;
+  left: 20px;
+  display: block;
+  position: absolute;
+  background-color: #f1f1f1;
+  width: 110px;
+  height: 5rem;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
 }
 </style>

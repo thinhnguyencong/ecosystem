@@ -29,7 +29,7 @@
                     <p class="h5 font-weight-bold">Owner</p>
                 </div>
                 <div class="col-8">
-                    <p class="h5">{{ documentState.folder.owner }}</p>
+                    <p class="h5">{{ documentState.folder.owner.name }}</p>
                 </div>
             </div>
             <br>
