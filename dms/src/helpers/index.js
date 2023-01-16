@@ -26,7 +26,7 @@ export const getLayoutOfPage = (publicAddress, route) => {
     const DEFAULT_LAYOUT = "grid"
     const LAYOUT_PAGE = ["Home", "My Folder", "Shared With Me", "Directory"]
     if(!LAYOUT_PAGE.includes(route.name)) {
-        return
+        return "grid"
     }
     let userConfigs = localStorage.getItem("configs")
     userConfigs=JSON.parse(userConfigs)

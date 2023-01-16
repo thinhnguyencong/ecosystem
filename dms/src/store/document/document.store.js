@@ -7,17 +7,15 @@ const initialState = {
   ancestors: [],
   folder: {},
   isLoading: false,
-  // key: {
-  //   isActivated: false,
-  //   keyId: "",
-  //   keyAttributes: [],
-  // },
   files: [],
   file: {
     isLoading: false,
     isLoadingComment: false,
+  },
+  fileStatusList: {
+    isLoading: false,
     isLoadingSign: false,
-    isLoadingReject: false
+    isLoadingReject: false,
   },
   treeFolder: [],
   pendingDocs: [],
@@ -133,7 +131,7 @@ export const document = {
         return documentService.signDoc(data)
         .then(
           res => {
-            commit('signDocSuccess', res);
+            commit('signDocSuccess', {res, data});
           },
           error => {
             commit('signDocFailure', error);
@@ -145,7 +143,7 @@ export const document = {
         return documentService.rejectDoc(data)
         .then(
           res => {
-            commit('rejectDocSuccess', res);
+            commit('rejectDocSuccess', {res, data});
           },
           error => {
             commit('rejectDocFailure', error);
@@ -173,6 +171,19 @@ export const document = {
           },
           error => {
             commit('getFileByIdFailure', error);
+          }
+        );
+      },
+      getFileStatusById({ commit }, data) {
+        commit('getFileStatusById', data);
+        return documentService.getFileStatusById(data)
+        .then(
+          res => {
+            console.log(data);
+            commit('getFileStatusByIdSuccess', {res, data});
+          },
+          error => {
+            commit('getFileStatusByIdFailure', {error, data});
           }
         );
       },
@@ -329,32 +340,32 @@ export const document = {
 
     // ------------------signDoc-----------------------------
     signDoc(state){
-      state.file.isLoadingSign = true
+      state.fileStatusList.isLoadingSign = true
     },
     signDocSuccess(state, result){
-        state.file = {
-          ...state.file,
-          canReject: false,
-          canReview: false,
-          canSign: false,
-          isLoadingSign: false
-        }
-        if (result.data.type == "review") {
-            state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).status = "reviewed"
-            state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000) 
-            if(state.file.statusDetail.reviewerList.map(reviewer => reviewer.status).every(status => status === "reviewed")) {
-              state.file.status = "waiting-to-sign"
-            }
-        }
-        if (result.data.type == "sign") {
-          state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).status = "signed"
-          state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000)
-          console.log("state.file.statusDetail.signerList", state.file.statusDetail.signerList, state.file.statusDetail.signerList.map(signer => signer.status).every(status => status === "signed"));
-          if(state.file.statusDetail.signerList.map(signer => signer.status).every(status => status === "signed")) {
-            state.file.status = "signed"
+      state.fileStatusList[result.data.fileId] = {
+        ...state.fileStatusList[result.data.fileId],
+        canReject: false,
+        canReview: false,
+        canSign: false,
+      }
+      state.fileStatusList.isLoadingSign = false
+      if (result.data.type == "review") {
+          state.fileStatusList[result.data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).status = "reviewed"
+          state.fileStatusList[result.data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000) 
+          if(state.fileStatusList[result.data.fileId].statusDetail.reviewerList.map(reviewer => reviewer.status).every(status => status === "reviewed")) {
+            state.fileStatusList[result.data.fileId].status = "waiting-to-sign"
           }
+      }
+      if (result.data.type == "sign") {
+        state.fileStatusList[result.data.fileId].statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).status = "signed"
+        state.fileStatusList[result.data.fileId].statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000)
+        console.log("state.fileStatusList[result.data.fileId].statusDetail.signerList", state.fileStatusList[result.data.fileId].statusDetail.signerList, state.fileStatusList[result.data.fileId].statusDetail.signerList.map(signer => signer.status).every(status => status === "signed"));
+        if(state.fileStatusList[result.data.fileId].statusDetail.signerList.map(signer => signer.status).every(status => status === "signed")) {
+          state.fileStatusList[result.data.fileId].status = "signed"
         }
-        toast.success(result.data.msg)
+      }
+      toast.success(result.res.data.msg)
     },
     signDocFailure(state, error){
         state.isLoadingSign = false
@@ -367,24 +378,24 @@ export const document = {
       state.file.isLoadingReject = true
     },
     rejectDocSuccess(state, result){
-      state.file = {
-        ...state.file,
+      state.fileStatusList[result.data.fileId] = {
+        ...state.fileStatusList[result.data.fileId],
         canReject: false,
         canReview: false,
         canSign: false,
-        isLoadingReject: false
       }
+      state.fileStatusList.isLoadingReject = false
       if (result.data.type == "review") {
-        state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).status = "rejected"
-        state.file.statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000) 
-        state.file.status = "rejected"
+        state.fileStatusList[result.data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).status = "rejected"
+        state.fileStatusList[result.data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000) 
+        state.fileStatusList[result.data.fileId].status = "rejected"
       }
       if (result.data.type == "sign") {
-        state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).status = "rejected"
-        state.file.statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000)
-        state.file.status = "rejected"
+        state.fileStatusList[result.data.fileId].statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).status = "rejected"
+        state.fileStatusList[result.data.fileId].statusDetail.signerList.find(signer => signer.address == auth.state.user.publicAddress).time = Math.floor(Date.now()/1000)
+        state.fileStatusList[result.data.fileId].status = "rejected"
       }
-      toast.success(result.data.msg)
+      toast.success(result.res.data.msg)
     },
     rejectDocFailure(state, error){
       state.file.isLoadingReject = false
@@ -413,8 +424,6 @@ export const document = {
       state.file = {
         isLoading: true,
         isLoadingComment: false,
-        isLoadingSign: false,
-        isLoadingReject: false
       }
     },
     getFileByIdSuccess(state, result){
@@ -433,6 +442,33 @@ export const document = {
         } else {
           toast.error(error.response.data.msg ? error.response.data.msg : error.message);
         }
+    },
+    // ------------------getFileStatusById-----------------------------
+    getFileStatusById(state, data){
+      state.fileStatusList[data.id] = {
+        ... state.fileStatusList[data.id],
+        canReject: false,
+        canReview: false,
+        canSign: false,
+      }
+      state.fileStatusList.isLoading = true
+    },
+    getFileStatusByIdSuccess(state, result){
+      console.log(result);
+      state.fileStatusList[result.data.id] = {
+        ...result.res.data.data.fileStatus,
+      }
+      state.fileStatusList.isLoading = false
+    },
+    getFileStatusByIdFailure(state, result){
+      console.log(result.error);
+      state.fileStatusList.isLoading = false
+      if (result.error.response.status === 404) {
+        toast.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
+        router.push('/404')
+      } else {
+        toast.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
+      }
     },
   },
 };

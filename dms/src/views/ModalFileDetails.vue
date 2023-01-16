@@ -53,7 +53,7 @@
                                                             <p class="font-weight-bold">Owner :</p>
                                                         </div>
                                                         <div class="col-8">
-                                                            <p>{{ file.owner.name }}</p>
+                                                            <p>{{ file?.owner?.name }}</p>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -151,58 +151,70 @@
                                            
                                         </v-tab-item>
                                         <v-tab-item :key="2">
-                                            <br>
-                                            <h5 class="font-weight-bold">Document Information</h5>
-                                            <div class="card border border-muted">
-                                                <div class="card-body">
-                                                    <span>Status: &nbsp;</span>
-                                                    <span v-if="file.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
-                                                    <span v-if="file.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
-                                                    <span v-if="file.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
-                                                    <span v-if="file.status === 'signed'" class="font-weight-bold text-success">Signed</span>
-                                                    <p></p>
-                                                    <p class="font-weight-bold">Review History: </p>
-                                                    <p v-for="(reviewer, index) in file?.statusDetail?.reviewerList" :key="index+reviewer.name">{{reviewer.name}}: &nbsp; 
-                                                        <span v-if="reviewer.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
-                                                        <span v-if="reviewer.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer.time)}}</span>
-                                                        <span v-if="reviewer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer.time)}}</span>
-                                                    </p>
-                                                    <p class="font-weight-bold">Sign History: </p>
-                                                    <p v-for="(signer, index) in file?.statusDetail?.signerList" :key="index+signer.name">{{signer.name}}: &nbsp; 
-                                                        <span v-if="signer.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
-                                                        <span v-if="signer.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer.time)}}</span>
-                                                        <span v-if="signer.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer.time)}}</span>
-                                                    </p>
+                                            <br/>
+                                            <div v-if="!documentState.fileStatusList?.isLoading">
+                                                <div v-if="fileStatus?.status">
+                                                    <h5 class="font-weight-bold">Document Information</h5>
+                                                    <div class="card border border-muted">
+                                                        <div class="card-body">
+                                                            <span>Status: &nbsp;</span>
+                                                            <span v-if="fileStatus?.status === 'waiting-to-review'" class="font-weight-bold text-warning">Waiting to review</span>
+                                                            <span v-if="fileStatus?.status === 'waiting-to-sign'" class="font-weight-bold text-info">Waiting to sign</span>
+                                                            <span v-if="fileStatus?.status === 'rejected'" class="font-weight-bold text-danger">Rejected</span>
+                                                            <span v-if="fileStatus?.status === 'signed'" class="font-weight-bold text-success">Signed</span>
+                                                            <p></p>
+                                                            <p class="font-weight-bold">Review History: </p>
+                                                            <p v-for="(reviewer, index) in fileStatus?.statusDetail?.reviewerList" :key="index+reviewer?.name">{{reviewer?.name}}: &nbsp; 
+                                                                <span v-if="reviewer?.status === 'not-yet-reviewed'" class="font-weight-bold text-muted">Not reviewed yet</span>
+                                                                <span v-if="reviewer?.status === 'reviewed'" class="font-weight-bold text-success">Reviewed at {{formatDateTime(reviewer?.time)}}</span>
+                                                                <span v-if="reviewer?.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(reviewer?.time)}}</span>
+                                                            </p>
+                                                            <p class="font-weight-bold">Sign History: </p>
+                                                            <p v-for="(signer, index) in fileStatus?.statusDetail?.signerList" :key="index+signer?.name">{{signer?.name}}: &nbsp; 
+                                                                <span v-if="signer?.status === 'not-yet-signed'" class="font-weight-bold text-muted">Not signed yet</span>
+                                                                <span v-if="signer?.status === 'signed'" class="font-weight-bold text-info">Signed at {{formatDateTime(signer?.time)}}</span>
+                                                                <span v-if="signer?.status === 'rejected'" class="font-weight-bold text-danger">Rejected at {{formatDateTime(signer?.time)}}</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div class="row">
+                                                        <div class="col-md-4 text-center">
+                                                            
+                                                        </div>
+                                                        <div class="col-md-8 text-center">
+                                                            <span class="float-md-right">
+                                                                <button v-if="documentState.fileStatusList?.isLoadingReject" class="btn btn-danger btn-lg" type="button" disabled>
+                                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                                    Rejecting...
+                                                                </button>
+                                                                <span v-else>
+                                                                    <button v-if="fileStatus?.canSign" class="btn btn-danger btn-lg" aria-disabled="false" @click="handleReject('sign')">Reject</button>
+                                                                    <button v-else-if="fileStatus?.canReview" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('review')">Reject</button>
+                                                                </span>
+                                                                <button v-if="documentState.fileStatusList?.isLoadingSign && fileStatus?.canReview" class="btn btn-warning btn-lg" type="button" disabled>
+                                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                                    Reviewing...
+                                                                </button>
+                                                                <button v-else-if="documentState.fileStatusList?.isLoadingSign && fileStatus?.canSign" class="btn btn-success btn-lg" type="button" disabled>
+                                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                                    Signing...
+                                                                </button>
+                                                                <span v-else>
+                                                                    <button v-if="fileStatus?.canReview" class="btn btn-warning btn-lg" role="button" aria-disabled="false" @click="handleSign('review')">Review</button>
+                                                                    <button v-if="fileStatus?.canSign" class="btn btn-success btn-lg" role="button" aria-disabled="false" @click="handleSign('sign')">Sign</button>
+                                                                </span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div v-else>
+                                                    <p>Something wrong when loading document status </p> <span><a href="#" @click="handleGetFileStatus">Try Again</a></span>
                                                 </div>
                                             </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="col-md-4 text-center">
-                                                    
-                                                </div>
-                                                <div class="col-md-8 text-center">
-                                                    <span class="float-md-right">
-                                                        <button v-if="documentState.file.isLoadingReject" class="btn btn-danger btn-lg" type="button" disabled>
-                                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                            Rejecting...
-                                                        </button>
-                                                        <span v-else>
-                                                            <button v-if="file.canSign" class="btn btn-danger btn-lg" aria-disabled="false" @click="handleReject('sign')">Reject</button>
-                                                            <button v-else-if="file.canReview" class="btn btn-danger btn-lg" role="button" aria-disabled="false" @click="handleReject('review')">Reject</button>
-                                                        </span>
-                                                        <button v-if="documentState.file.isLoadingSign && file.canReview" class="btn btn-warning btn-lg" type="button" disabled>
-                                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                            Reviewing...
-                                                        </button>
-                                                        <button v-else-if="documentState.file.isLoadingSign && file.canSign" class="btn btn-success btn-lg" type="button" disabled>
-                                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                            Signing...
-                                                        </button>
-                                                        <span v-else>
-                                                            <button v-if="file.canReview" class="btn btn-warning btn-lg" role="button" aria-disabled="false" @click="handleSign('review')">Review</button>
-                                                            <button v-if="file.canSign" class="btn btn-success btn-lg" role="button" aria-disabled="false" @click="handleSign('sign')">Sign</button>
-                                                        </span>
-                                                    </span>
+                                            <div v-else>
+                                                <div class="spinner-border text-dark" role="status">
+                                                    <span class="sr-only">Loading...</span>
                                                 </div>
                                             </div>
                                         </v-tab-item>
@@ -231,7 +243,7 @@ import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 import {renderAsync} from "docx-preview/dist/docx-preview"
-console.log("ABCCCCCC");
+
 export default {
     props: ["fileId"],
     components: { Treeselect, Comment },
@@ -240,6 +252,7 @@ export default {
             showAttach: false,
             ipfs: null,
             file: {},
+            fileStatus: {},
             link: "",
             error: null,
             content: "",
@@ -271,62 +284,72 @@ export default {
                 try {
                     await this.$store.dispatch("document/getFileById", {id: fileId})
                     this.file = this.documentState.file
+                    if(this.file.hash) {
+                        this.error=null
+                        IpfsClient().get(this.file.hash).then(async (res) =>{
+                            console.log("res", res);
+                            let resultDecrypt = decrypt(res[0].content, this.file.key)
+                            let tokenUri = JSON.parse(this.file.tokenURI)
+                            if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                                renderAsync(resultDecrypt, document.getElementById("wrap"))
+                                .then(x => {
+                                    console.log(this.isLoadingFile);
+                                    this.$set(this, 'isLoadingFile', false);
+                                    console.log("docx: finished")
+                                });
+                            }
+                            else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                                const buffer = resultDecrypt.buffer
+                                const result = await xlsxPreview.xlsx2Html(buffer, {
+                                    output: 'arrayBuffer',
+                                    minimumRows: 50,
+                                    minimumCols: 30,
+                                });
+                                const url = URL.createObjectURL(new Blob([result], {
+                                    type: 'text/html'
+                                }));
+                                document.querySelector('#wrap').innerHTML =
+                                    `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
+                                    console.log(this.isLoadingFile);
+                                this.$set(this, 'isLoadingFile', false);
+                            }
+                            else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+                                let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
+                                $("#wrap").pptxToHtml({
+                                    fileData: fileData,
+                                });
+                                this.$set(this, 'isLoadingFile', false);
+                            }else {
+                                let b64 = this.b64EncodeUnicode(resultDecrypt)
+                                let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
+                                this.link = abc
+                                this.$set(this, 'isLoadingFile', false);
+                            }
+                        })
+                        .catch(error =>  {
+                            this.$set(this, 'isLoadingFile', false);
+                            this.error="No file to preview"
+                        }).next
+                    } else {
+                        this.$set(this, 'isLoadingFile', false);
+                        this.error="No file to preview"
+                    }
+                    if(!this.documentState.fileStatusList[fileId]) {
+                        await this.$store.dispatch("document/getFileStatusById", {id: fileId})
+                        this.fileStatus = this.documentState.fileStatusList[fileId]
+                    }else {
+                        this.fileStatus = this.documentState.fileStatusList[fileId]
+                    }
                 } catch (error) {
                     console.log(error);
                     this.$set(this, 'isLoadingFile', false);
                     this.error="No file to preview"
                 }
             }
-            if(this.file.hash) {
-                this.error=null
-                IpfsClient().get(this.file.hash).then(async (res) =>{
-                    console.log("res", res);
-                    let resultDecrypt = decrypt(res[0].content, this.file.key)
-                    let tokenUri = JSON.parse(this.file.tokenURI)
-                    if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                        renderAsync(resultDecrypt, document.getElementById("wrap"))
-                        .then(x => {
-                            console.log(this.isLoadingFile);
-                            this.$set(this, 'isLoadingFile', false);
-                            console.log("docx: finished")
-                        });
-                    }
-                    else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                        const buffer = resultDecrypt.buffer
-                        const result = await xlsxPreview.xlsx2Html(buffer, {
-                            output: 'arrayBuffer',
-                            minimumRows: 50,
-                            minimumCols: 30,
-                        });
-                        const url = URL.createObjectURL(new Blob([result], {
-                            type: 'text/html'
-                        }));
-                        document.querySelector('#wrap').innerHTML =
-                            `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
-                            console.log(this.isLoadingFile);
-                        this.$set(this, 'isLoadingFile', false);
-                    }
-                    else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-                        let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
-                        $("#wrap").pptxToHtml({
-                            fileData: fileData,
-                        });
-                        this.$set(this, 'isLoadingFile', false);
-                    }else {
-                        let b64 = this.b64EncodeUnicode(resultDecrypt)
-                        let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                        this.link = abc
-                        this.$set(this, 'isLoadingFile', false);
-                    }
-                })
-                .catch(error =>  {
-                    this.$set(this, 'isLoadingFile', false);
-                    this.error="No file to preview"
-                })
-            } else {
-                this.$set(this, 'isLoadingFile', false);
-                this.error="No file to preview"
-            }
+        },
+        async handleGetFileStatus() {
+            await this.$store.dispatch("document/getFileStatusById", {id: this.fileId})
+            this.fileStatus = this.documentState.fileStatusList[this.fileId]
         },
 
         formatDateTime(time) {
@@ -377,7 +400,7 @@ export default {
                 confirmButtonText: 'Sign'
                 }).then((result) => {
                 if (result.isConfirmed) {
-                    this.$store.dispatch("document/signDoc", {type, tokenId: this.file.tokenId})
+                    this.$store.dispatch("document/signDoc", {type, tokenId: this.file.tokenId, fileId: this.fileId})
                 }
             });
             
@@ -401,11 +424,11 @@ export default {
     computed: {
         documentState() {return this.$store.state.document },
     },
-    watch: { 
+    watch: {
         '$route.params.fileId': {
             handler(newVal, oldVal) {
+                console.log("newVal", newVal, oldVal);
                 if(newVal) {
-                    console.log("newVal", newVal, oldVal);
                     this.link = ""
                     this.file = {}
                     this.$set(this, 'isLoadingFile', true);
@@ -416,14 +439,26 @@ export default {
         },
         '$store.state.document.file': {
             handler(newVal, oldVal) {
+                console.log(newVal);
                 this.file = newVal
             },
             immediate: true
+        },
+        'documentState.fileStatusList': {
+            handler(newVal, oldVal) {
+                console.log('newVal[this.fileId]', newVal, this.fileId);
+                this.fileStatus = newVal[this.fileId]
+            },
+            immediate: true,
+            deep: true
         },
     }
 }
 </script>
 <style scoped>
+textarea {
+  resize: none;
+}
 .modal-lg {
     max-width: 80%;
     max-height: 80vh;

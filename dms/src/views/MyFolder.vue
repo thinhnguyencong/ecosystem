@@ -104,6 +104,15 @@ export default {
             this.layout = layout
         }
     },
+    watch: {
+        '$route': {
+            immediate: true,
+            handler: async function(newVal, oldVal) {
+                console.log(newVal, oldVal);
+                this.layout = await getLayoutOfPage(this.authState.user.publicAddress, newVal)
+            }
+        },
+    }
   }
 </script>
 

@@ -90,6 +90,14 @@ function getFileById(data) {
         params: data
     })
 }
+function getFileStatusById(data) {
+    return sendRequest({
+        url: url+"get-file-status-by-id",
+        method: "GET",
+        params: data
+    })
+}
+
 
 export const documentService = {
     getRootFolders,
@@ -103,5 +111,6 @@ export const documentService = {
     signDoc,
     rejectDoc,
     getTreeFolder,
-    getFileById
+    getFileById,
+    getFileStatusById
 };

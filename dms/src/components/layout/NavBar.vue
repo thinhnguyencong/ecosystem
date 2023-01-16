@@ -1,6 +1,6 @@
 <template>
     <div>
-        <nav v-if="$route.name == 'Home'" aria-label="breadcrumb" class="mt-4">
+        <nav v-if="$route.matched[0].name == 'Home'" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
                     <span class="material-icons align-self-center">home</span>
@@ -18,7 +18,7 @@
                 </li>
             </ol>
         </nav>
-        <nav v-if="$route.name == 'My Folder'" aria-label="breadcrumb" class="mt-4">
+        <nav v-if="$route.matched[0].name == 'My Folder'" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
                     <span class="material-icons">folder</span>
@@ -41,7 +41,7 @@
                 </li>
             </ol>
         </nav>
-        <nav v-if="$route.name == 'Shared With Me'" aria-label="breadcrumb" class="mt-4">
+        <nav v-if="$route.matched[0].name == 'Shared With Me'" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
                     <span class="material-icons">folder_shared</span>
@@ -59,7 +59,7 @@
                 </li>
             </ol>
         </nav>
-        <nav v-if="$route.name == 'Directory'" aria-label="breadcrumb" class="mt-4">
+        <nav v-if="$route.matched[0].name == 'Directory'" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb mt-2">
                 <li v-if="documentState.folder.status=='my-folder'" class="ml-4 align-self-center" aria-current="page">
                     <router-link class="d-flex flex-row" to="/my-folder">

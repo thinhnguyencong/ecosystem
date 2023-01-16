@@ -15,6 +15,7 @@ documentRouter.get('/tree-folder', controller.getTreeFolder);
 documentRouter.post('/upload-file', controller.uploadFile);
 documentRouter.get('/get-all-files', controller.getAllFiles);
 documentRouter.get('/get-file-by-id', controller.getFileById);
+documentRouter.get('/get-file-status-by-id', controller.getFileStatusById);
 
 documentRouter.post('/add-comment', controller.addComment);
 documentRouter.post('/sign-doc', controller.signDoc);

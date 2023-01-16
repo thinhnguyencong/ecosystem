@@ -170,7 +170,6 @@ export default {
       '$route': {
         immediate: true,
         handler: function(newVal, oldVal) {
-            console.log(newVal, oldVal);
             this.showModal = newVal.meta && newVal.meta.showModal;
         }
       },
