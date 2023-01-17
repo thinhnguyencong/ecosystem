@@ -47,7 +47,7 @@
                                     visibility
                                 </v-icon>
                             </v-btn>
-                            <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class=" spinner-border text-dark" role="status">
+                            <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class="spinner-border text-dark mr-2 mt-2" role="status">
                                 <span class="sr-only">Loading...</span>
                             </span>
                             <span v-else @click.stop="" @click="download(file)">

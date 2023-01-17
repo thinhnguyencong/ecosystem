@@ -69,7 +69,7 @@
                 </li>
                 <li v-else-if="documentState.folder.status=='shared-with-me'" class="ml-4 align-self-center" aria-current="page">
                     <router-link class="d-flex flex-row" to="/shared-with-me">
-                        <span class="material-icons">folder</span>
+                        <span class="material-icons">folder_shared</span>
                         <span class="mt-1">&nbsp;Shared with me</span>
                     </router-link>
                 </li>
@@ -84,7 +84,7 @@
                         <span class="material-icons">
                             &nbsp;/ folder
                         </span>
-                        <span class="align-self-center">&nbsp;{{folder.name}}</span>
+                        <span class="align-self-center mt-1">&nbsp;{{folder.name}}</span>
                     </router-link>
                 </li>
                 <li v-if="documentState.folder" class="d-flex flex-row align-self-center mt-n-2" aria-current="page">
@@ -92,7 +92,7 @@
                     <span class="material-icons">
                         &nbsp;/ <i class="mdi mdi-folder-open text-secondary"></i>
                     </span>
-                    <span class="mt-2 text-secondary">
+                    <span class="mt-0-5 text-secondary">
                         &nbsp;{{documentState.folder.name}}
                     </span>
                 </li>
@@ -156,5 +156,8 @@ export default {
 <style scoped>
 .mt-n-2 {
     margin-top: -0.2rem;
+}
+.mt-0-5 {
+    margin-top: 0.5rem;
 }
 </style>

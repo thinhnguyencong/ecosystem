@@ -17,7 +17,7 @@
                         </router-link>
                     </div>
                     <div v-if="!documentState.file.isLoading" class="modal-body" style="height: 80vh;">
-                        <div class="container h-100">
+                        <div class="container h-100 pb-5">
                             <div class="row h-100">
                                 <div class="col-7 h-100">
                                     <div class="tool-bar">
@@ -26,12 +26,17 @@
                                                 <i class="mdi mdi-share"></i>Share 
                                             </a>&nbsp;&nbsp;
                                             <ModalShareFolder/>
-                                            <a role="button" class="h5" @click="download(file)"><i class="mdi mdi-download"></i>Download</a>
+                                            <span v-if="isLoadingDownload" class="spinner-border text-dark" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </span>
+                                            <span v-else>
+                                                <a role="button" class="h5" @click="download(file)"><i class="mdi mdi-download"></i>Download</a>
+                                            </span>
                                         </div>
                                     </div>
                                     <div :class="file.tokenURI !== undefined && 
                                     (JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-                                    ? 'w-100 h-100 overflow-auto': 'w-100 h-100')">
+                                    ? 'w-100 h-100 overflow-auto border-top': 'w-100 h-100 border')">
                                         <div v-if="isLoadingFile">
                                             <div class="spinner-border text-dark" role="status">
                                                 <span class="sr-only">Loading...</span>
@@ -66,7 +71,8 @@
                                            
                                         </v-tab>
                                         <v-tab-item :key="0">
-                                            <div class="doc-info mt-4">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="doc-info mt-4">
                                                     <div class="row">
                                                         <div class="col-4">
                                                             <p class="font-weight-bold">Owner :</p>
@@ -83,16 +89,16 @@
                                                             <p>{{(new Date(file.createdAt)).toLocaleTimeString()+ " " + (new Date(file.createdAt)).toDateString()}}</p>
                                                         </div>
                                                     </div>
-                                            </div>
-                                            <div class="description">
-                                                <p class="font-weight-bold">Description :</p>
-                                                <div class="border border-muted description-box scrollbar">
-                                                    <div class="card-body">
-                                                        <div v-html="file.description"></div>
+                                                </div>
+                                                <div class="description">
+                                                    <p class="font-weight-bold">Description :</p>
+                                                    <div class="border border-muted description-box scrollbar">
+                                                        <div class="card-body">
+                                                            <div v-html="file.description"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                                
                                         </v-tab-item>
                                         <v-tab-item :key="1">
                                             <br>
@@ -150,10 +156,26 @@
                                                     </div>
                                                     <div class="p-2">
                                                         <div class="align-self-center ml-auto ">
-                                                            <button v-if="!documentState.file.isLoadingComment" style="float: right;" type="button" class="btn btn-primary" @click="handleAddComment"><span class="material-icons">send</span></button>
-                                                            <button v-else class="btn btn-primary" type="button" disabled style="float: right;">
-                                                                <span class="spinner-border spinner-border" role="status" aria-hidden="true"></span>
-                                                            </button>
+                                                            <v-btn v-if="!documentState.file.isLoadingComment" style="float: right;" 
+                                                                flat icon color="indigo"
+                                                                @click="handleAddComment">
+                                                                <v-icon
+                                                                    data-toggle="tooltip" 
+                                                                    title="Send"
+                                                                    color="blue"
+                                                                >
+                                                                send
+                                                                </v-icon>
+                                                            </v-btn>
+                                                            <v-btn v-else style="float: right;" disabled loading icon>
+                                                                <v-icon
+                                                                    data-toggle="tooltip" 
+                                                                    title="Send"
+                                                                    color="blue"
+                                                                >
+                                                                send
+                                                                </v-icon>
+                                                            </v-btn>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -262,7 +284,7 @@ import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 import {renderAsync} from "docx-preview/dist/docx-preview"
-import { FILE_TYPE_CANNOT_BE_PREVIEWED, getClassFileType } from '../../../helpers';
+import { FILE_TYPE_CAN_BE_PREVIEWED, getClassFileType } from '../../../helpers';
 import ModalShareFolder from './ModalShareFolder.vue';
 
 export default {
@@ -287,7 +309,8 @@ export default {
             },
             attachments: [],
             valueConsistsOf: 'LEAF_PRIORITY',
-            isLoadingFile: false
+            isLoadingFile: false,
+            isLoadingDownload: false
         }
     },
 
@@ -341,13 +364,13 @@ export default {
                                 });
                                 this.$set(this, 'isLoadingFile', false);
                             }else {
-                                if(FILE_TYPE_CANNOT_BE_PREVIEWED.includes(tokenUri.fileType)) {
+                                if(!FILE_TYPE_CAN_BE_PREVIEWED.includes(tokenUri.fileType)) {
                                     document.querySelector('#wrap').innerHTML =
                                     `<div class="w-100 h-100 border border-muted d-flex justify-content-center align-items-center" type="text/html" style="opacity: 0.78;">
                                         <div class="d-flex flex-column align-items-center">
                                             <p class="${getClassFileType(tokenUri.fileType)}" style="font-size: 6rem;height: 6rem;"></p>
                                             <p class="h5 text-align-center">This file cannot be previewed because there is no previewer installed for it.</p>
-                                            <p>(${tokenUri.fileType})</p>
+                                            <p>(${tokenUri.fileType ? tokenUri.fileType : "."+tokenUri.name.split('.').pop()})</p>
                                         </div>
                                     </div>`
                                     this.$set(this, 'isLoadingFile', false);
@@ -409,6 +432,7 @@ export default {
             return btoa(  binary);
         },
         download(file) {
+            this.isLoadingDownload = true
             IpfsClient().get(file.hash).then(async (res) =>{
                 if(res) {
                     console.log(res[0].content)
@@ -422,9 +446,11 @@ export default {
                     let fileName = tokenUri.name;
                     link.download = fileName;
                     link.click();
+                    this.isLoadingDownload = false
                 }
             }).catch(error=> {
                 console.log(error);
+                this.isLoadingDownload = false
                 alert("No file to download")
             })
         },
@@ -470,7 +496,7 @@ export default {
                 confirmButtonText: 'Reject'
                 }).then((result) => {
                 if (result.isConfirmed) {
-                    this.$store.dispatch("document/rejectDoc", {type, tokenId: this.file.tokenId})
+                    this.$store.dispatch("document/rejectDoc", {type, tokenId: this.file.tokenId, fileId: this.fileId})
                 }
             });
         },
@@ -621,13 +647,13 @@ textarea {
     height: 75%;
 }
 .comment-list {
-    height: 85%;
+    height: 95%;
 }
 .description {
     height: 80%;
 }
 .description-box {
-    height: 90%;
+    height: 95%;
 }
 .doc-info {
     min-height: 15%;

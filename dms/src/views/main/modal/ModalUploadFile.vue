@@ -194,7 +194,7 @@ export default {
                                 time: Date.now(),
                                 name: app.file.name,
                                 size: app.file.size,
-                                fileType: app.file.type,
+                                fileType: app.file.type ? app.file.type : app.file.name.split('.').pop(),
                                 lastModified:app.file.lastModified,
                                 signers: app.signerSelected,
                                 reviewers: app.reviewersSelected,

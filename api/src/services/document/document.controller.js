@@ -466,25 +466,26 @@ export const getAllFiles = async (req, res, next) => {
 
 export const addComment = async (req, res, next) => {
 	let {fileId, content, attachments} = req.body.data
-	const web3Connection = await getWeb3()
-	if(!web3Connection.status) {
-		return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	}
-	const web3 = web3Connection.web3
-	const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
+	// const web3Connection = await getWeb3()
+	// if(!web3Connection.status) {
+	// 	return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
+	// }
+	// const web3 = web3Connection.web3
+	// const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	const userEmail = req.jwtDecoded.email
 	try {
 		let user = await User.findOne({email: userEmail}) 
 		let userId = user._id.valueOf()
 		let newAttachment=[]
 		let file = await File.findById(fileId).lean()
-		let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: user.publicAddress });
+		let tokenURI = JSON.parse(file.tokenURI)
+		// let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: user.publicAddress });
 
-		//share attachment for reviewer and signer
-		if(!info) {
-			return res.status(500).json({msg: "Token ID is invalid"});
-		}
-		let signerAndReviewerListByAddress = await User.find({'publicAddress': {$in: [...new Set([...info[1], ...info[2]])]}})
+		// //share attachment for reviewer and signer
+		// if(!info) {
+		// 	return res.status(500).json({msg: "Token ID is invalid"});
+		// }
+		let signerAndReviewerListByAddress = await User.find({'publicAddress': {$in: [...new Set([...tokenURI.reviewers, ...tokenURI.signers])]}})
 		let listIdShared = signerAndReviewerListByAddress.map(x=> x._id.valueOf())
 		for (let index = 0; index < attachments.length; index++) {
 			const attachment = attachments[index];

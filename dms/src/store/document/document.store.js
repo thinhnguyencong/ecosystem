@@ -368,14 +368,14 @@ export const document = {
       toast.success(result.res.data.msg)
     },
     signDocFailure(state, error){
-        state.isLoadingSign = false
+        state.fileStatusList.isLoadingSign = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
 
     // ------------------rejectDoc-----------------------------
     rejectDoc(state){
-      state.file.isLoadingReject = true
+      state.fileStatusList.isLoadingReject = true
     },
     rejectDocSuccess(state, result){
       state.fileStatusList[result.data.fileId] = {
@@ -398,7 +398,7 @@ export const document = {
       toast.success(result.res.data.msg)
     },
     rejectDocFailure(state, error){
-      state.file.isLoadingReject = false
+      state.fileStatusList.isLoadingReject = false
       console.log(error);
       toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
