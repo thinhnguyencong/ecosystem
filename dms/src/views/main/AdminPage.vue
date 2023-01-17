@@ -72,7 +72,7 @@
 
 <script setup>
   // import Multiselect from '@vueform/multiselect'
-  import DataTableVue from "../components/DataTable.vue";
+  import DataTableVue from "../../components/DataTable.vue";
 </script>
 <script>
   export default {

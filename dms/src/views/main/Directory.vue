@@ -40,18 +40,18 @@
 	</div>
 </template>
 <script setup>
-    import FolderVue from '../components/Folder.vue';
-    import FileVue from '../components/File.vue'
-    import ModalAddNewFolder from './ModalAddNewFolder.vue';
-    import ModalUploadFile from './ModalUploadFile.vue'
-    import ManageKey from '../components/ManageKey.vue'
-    import ListTableVue from '../components/ListView.vue';
-    import GridViewVue from '../components/GridView.vue';
-    import ModalFileDetails from './ModalFileDetails.vue';
-    import FolderDetail from '../components/FolderDetail.vue';
-    import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
+    import FolderVue from '../../components/Folder.vue';
+    import FileVue from '../../components/File.vue'
+    import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
+    import ModalUploadFile from './modal/ModalUploadFile.vue'
+    import ManageKey from '../../components/ManageKey.vue'
+    import ListTableVue from '../../components/ListView.vue';
+    import GridViewVue from '../../components/GridView.vue';
+    import ModalFileDetails from './modal/ModalFileDetails.vue';
+    import FolderDetail from '../../components/FolderDetail.vue';
+    import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
     import $ from "jquery"
-import NavBar from '../components/layout/NavBar.vue';
+import NavBar from '../../components/layout/NavBar.vue';
 
     $(document).ready(function() {
         $('#modalCreateFolder').on('shown.bs.modal', function() {

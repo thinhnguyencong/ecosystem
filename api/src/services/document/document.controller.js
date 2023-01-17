@@ -33,6 +33,7 @@ export const getFolderById = async (req, res, next) => {
 			msg: "Folder not exist"
 		})
 	}
+	let myFolder = await Folder.findOne({ parent: null, owner: userId }).lean()
 	let folderById = await Folder.findById(id).lean()
 	let children = await Folder.find({ parent: id }).lean()
 	let folder = JSON.parse(JSON.stringify(folderById))
@@ -71,7 +72,7 @@ export const getFolderById = async (req, res, next) => {
 				
 			})
 		}
-		if(folder.owner == userId){
+		if(folder.owner == userId && folder.ancestors.includes(myFolder._id.valueOf())){
 			status="my-folder"
 			if(folder.ancestors.length) {
 				for (let i=0; i< folder.ancestors.length; i++ ){
@@ -153,25 +154,23 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 	let userId = user._id.valueOf()
 	// console.log(userId);
 	if(isValidObjectId(userId)) {
+		// get root "My Folder"
 		let myFolder = await Folder.findOne({ parent: null, owner: userId }).lean()
 		if(!myFolder){
 			return res.status(500).send({
 				msg: "Folder not exist"
 			})
 		}
-		let myFolderItems = await Folder.find({ owner: userId, parent: { $ne: null } }).lean()
-
+		// get all descendants folder
+		let myFolderItems = await Folder.find({ owner: userId, parent: { $ne: null }, ancestors: { "$in" : [myFolder._id.valueOf()]}}).lean()
 		let myFolderIds = myFolderItems.map(x=> x._id.valueOf())
 		
 		// filter child folder
 		let result = myFolderItems.filter(item => !item.ancestors.some(a=> myFolderIds.includes(a)))
 		result = await Promise.all(result.map(async f=> ({...f, owner: await getNameById(f.owner)})))
-		const startTime = Date.now();
-		let files = await getFile(userId, myFolder.files)
 
-		const endTime = Date.now();
-		const timeTaken = endTime - startTime;
-  		console.log(`Time taken to perform get attachFiles = ${timeTaken} milliseconds`);
+		//get permissioned files
+		let files = await getFile(userId, myFolder.files)
 		return res.send({
 			msg: "Success",
 			data: {
@@ -302,7 +301,6 @@ export const getSharedWithMeFolder = async (req, res, next) => {
 				}
 			}
 		}
-		console.log("result", result);
 		return res.status(200).send({
 			msg: "Success",
 			data: {
@@ -831,11 +829,6 @@ export const getFileById = async (req, res, next) => {
 		}
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
 			fileById.owner = await getNameById(fileById.owner)
-			const startTime = Date.now();
-			
-			const endTime = Date.now();
-			const timeTaken = endTime - startTime;
-			console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
 			
 			return res.status(200).send({
 				data: {
@@ -875,7 +868,12 @@ export const getFileStatusById = async (req, res, next) => {
 				msg: "File not exist"
 			})
 		}
+		const startTime = Date.now();
 		let fileStatus = await getFileStatus(fileById.tokenId, user.publicAddress, dmsContract)
+		const endTime = Date.now();
+		const timeTaken = endTime - startTime;
+		console.log(`Time taken to perform get file status = ${timeTaken} milliseconds`);
+		
 		return res.status(200).send({
 			data: {
 				fileStatus: fileStatus,

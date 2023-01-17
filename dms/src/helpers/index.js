@@ -1,3 +1,5 @@
+export const FILE_TYPE_CANNOT_BE_PREVIEWED = ['application/epub+zip', 'application/x-zip-compressed' ,'application/vnd.rar', 'application/zip', 'application/msword', 'application/vnd.ms-powerpoint', 'application/vnd.ms-excel']
+
 export const getClassFileType = (type) => {
     switch(type) {
         case 'application/pdf': return "mdi mdi-file-pdf-box text-danger"
@@ -18,6 +20,11 @@ export const getClassFileType = (type) => {
         case 'application/json': return "mdi mdi-code-json text-warning"
         case 'image/jpeg': return "mdi mdi-image text-primary"
         case 'text/csv': return "mdi mdi-comma-box-outline text-secondary"
+        case 'application/zip': return "mdi mdi-zip-box-outline text-secondary"
+        case 'application/vnd.rar': return "mdi mdi-zip-box-outline text-secondary"
+        case 'application/x-zip-compressed': return "mdi mdi-zip-box-outline text-secondary"
+        case 'application/epub+zip': return "mdi mdi-book-open text-primary"
+
         default: return "mdi mdi-file text-secondary"
     }
 }

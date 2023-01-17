@@ -17,9 +17,9 @@
 	</div>
 </template>
 <script setup>
-import GridViewVue from '../components/GridView.vue';
-import NavBar from '../components/layout/NavBar.vue';
-import ListView from '../components/ListView.vue';
+import GridViewVue from '../../components/GridView.vue';
+import NavBar from '../../components/layout/NavBar.vue';
+import ListView from '../../components/ListView.vue';
 </script>
 <script>
 

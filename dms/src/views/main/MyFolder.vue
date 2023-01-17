@@ -43,16 +43,16 @@
 	</div>
 </template>
 <script setup>
-import ModalFileDetails from './ModalFileDetails.vue';
-import GridView from '../components/GridView.vue';
-import ListView from '../components/ListView.vue';
-import ManageKey from '../components/ManageKey.vue'
-import ModalAddNewFolder from './ModalAddNewFolder.vue';
-import ModalUploadFile from './ModalUploadFile.vue';
-import FolderDetail from '../components/FolderDetail.vue';
-import { getLayoutOfPage, setLayoutOfPage } from '../helpers';
+import ModalFileDetails from './modal/ModalFileDetails.vue';
+import GridView from '../../components/GridView.vue';
+import ListView from '../../components/ListView.vue';
+import ManageKey from '../../components/ManageKey.vue'
+import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
+import ModalUploadFile from './modal/ModalUploadFile.vue';
+import FolderDetail from '../../components/FolderDetail.vue';
+import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
 import $ from "jquery"
-import NavBar from '../components/layout/NavBar.vue';
+import NavBar from '../../components/layout/NavBar.vue';
 $(document).ready(function() {
   $('#modalCreateFolder').on('shown.bs.modal', function() {
     $('#newFolderName').trigger('focus');

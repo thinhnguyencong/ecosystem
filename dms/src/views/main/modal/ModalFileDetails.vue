@@ -20,6 +20,15 @@
                         <div class="container h-100">
                             <div class="row h-100">
                                 <div class="col-7 h-100">
+                                    <div class="tool-bar">
+                                        <div class="text-right align-items-center">
+                                            <a role="button" data-toggle="modal" data-target="#exampleModal" class="h5">
+                                                <i class="mdi mdi-share"></i>Share 
+                                            </a>&nbsp;&nbsp;
+                                            <ModalShareFolder/>
+                                            <a role="button" class="h5" @click="download(file)"><i class="mdi mdi-download"></i>Download</a>
+                                        </div>
+                                    </div>
                                     <div :class="file.tokenURI !== undefined && 
                                     (JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
                                     ? 'w-100 h-100 overflow-auto': 'w-100 h-100')">
@@ -38,13 +47,23 @@
                                     <v-tabs icons-and-text class="h-100" fixed-tabs grow v-model="active" color="#f7f7f7">
                                         <v-tabs-slider color="blue"></v-tabs-slider>
                                         <v-tab class="file-detail-tab" active-class="tab-active text-primary font-weight-bold" :key="0" >
-                                            Document Details
+                                            <span>Document Details</span><span class="material-icons">description </span> 
                                         </v-tab>
                                         <v-tab class="file-detail-tab" active-class="tab-active text-primary font-weight-bold" :key="1">
-                                            Comments
+                                            <span>Comments</span><span class="material-icons">comment </span> 
                                         </v-tab>
                                         <v-tab class="file-detail-tab" active-class="tab-active text-primary font-weight-bold" :key="2">
-                                            Status
+                                            <span>Status</span>
+                                            <span v-if="!documentState.fileStatusList?.isLoading">
+                                                <span v-if="fileStatus?.status">
+                                                    <span class="material-icons">groups </span>
+                                                </span>
+                                                <span v-else class="material-icons text-danger">error </span>
+                                            </span>
+                                            <span v-else>
+                                                <span class="material-icons">groups </span>
+                                            </span>
+                                           
                                         </v-tab>
                                         <v-tab-item :key="0">
                                             <div class="doc-info mt-4">
@@ -237,16 +256,18 @@
 
 <script>
 import xlsxPreview from 'xlsx-preview';
-import Comment from "../components/Comment.vue"
-import { IpfsClient } from "../helpers/ipfs";
-import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
+import Comment from "../../../components/Comment.vue"
+import { IpfsClient } from "../../../helpers/ipfs";
+import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 import {renderAsync} from "docx-preview/dist/docx-preview"
+import { FILE_TYPE_CANNOT_BE_PREVIEWED, getClassFileType } from '../../../helpers';
+import ModalShareFolder from './ModalShareFolder.vue';
 
 export default {
     props: ["fileId"],
-    components: { Treeselect, Comment },
+    components: { Treeselect, Comment, ModalShareFolder },
     data() {
         return {
             showAttach: false,
@@ -320,10 +341,23 @@ export default {
                                 });
                                 this.$set(this, 'isLoadingFile', false);
                             }else {
-                                let b64 = this.b64EncodeUnicode(resultDecrypt)
-                                let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                                this.link = abc
-                                this.$set(this, 'isLoadingFile', false);
+                                if(FILE_TYPE_CANNOT_BE_PREVIEWED.includes(tokenUri.fileType)) {
+                                    document.querySelector('#wrap').innerHTML =
+                                    `<div class="w-100 h-100 border border-muted d-flex justify-content-center align-items-center" type="text/html" style="opacity: 0.78;">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <p class="${getClassFileType(tokenUri.fileType)}" style="font-size: 6rem;height: 6rem;"></p>
+                                            <p class="h5 text-align-center">This file cannot be previewed because there is no previewer installed for it.</p>
+                                            <p>(${tokenUri.fileType})</p>
+                                        </div>
+                                    </div>`
+                                    this.$set(this, 'isLoadingFile', false);
+                                }else {
+                                    let b64 = this.b64EncodeUnicode(resultDecrypt)
+                                    let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
+                                    this.link = abc
+                                    this.$set(this, 'isLoadingFile', false);
+                                }
+                                
                             }
                         })
                         .catch(error =>  {
@@ -373,6 +407,26 @@ export default {
                 binary += String.fromCharCode( bytes[ i ] );
             }
             return btoa(  binary);
+        },
+        download(file) {
+            IpfsClient().get(file.hash).then(async (res) =>{
+                if(res) {
+                    console.log(res[0].content)
+                    let resultDecrypt = decrypt(res[0].content, file.key)
+                    console.log('resultDecrypt', resultDecrypt);
+                    let tokenUri = JSON.parse(file.tokenURI)
+                    console.log("tokenUri", tokenUri);
+                    let blob = new Blob([resultDecrypt.buffer], {type: tokenUri.fileType});
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    let fileName = tokenUri.name;
+                    link.download = fileName;
+                    link.click();
+                }
+            }).catch(error=> {
+                console.log(error);
+                alert("No file to download")
+            })
         },
         handleAddComment() {
             if(!this.content) {

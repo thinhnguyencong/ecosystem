@@ -86,11 +86,10 @@
 </template>
 <script setup>
 // import Multiselect from '@vueform/multiselect'
-import { ref } from "vue";
-import myJson from './MOCK_DATA.json'
-import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
-import DataTableVue from "../components/DataTable.vue";
-import { IpfsClient } from "../helpers/ipfs";
+
+import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
+import DataTableVue from "../../../components/DataTable.vue";
+import { IpfsClient } from "../../../helpers/ipfs";
 </script>
 <script>
 export default {

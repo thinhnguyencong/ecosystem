@@ -50,12 +50,11 @@
 
 </template>
 <script setup>
-import ModalFileDetails from './ModalFileDetails.vue';
-import GridView from '../components/GridView.vue';
-import ListView from '../components/ListView.vue';
-import logoURL from '../assets/img-doc.png'
+import ModalFileDetails from './modal/ModalFileDetails.vue';
+import GridView from '../../components/GridView.vue'
+import ListView from '../../components/ListView.vue';
 import socketIOClient from "socket.io-client";
-import NavBar from '../components/layout/NavBar.vue';
+import NavBar from '../../components/layout/NavBar.vue';
 </script>
 <script>
   export default {
