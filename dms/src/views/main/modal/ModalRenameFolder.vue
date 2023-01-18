@@ -1,17 +1,22 @@
 <template>
-    <div :id="'share-'+folder._id">
+    <div :id="'rename-'+folder._id">
         <div class="modal-mask" id="exampleModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-wrapper" @click="handleCloseModal">
                 <div class="modal-container" role="document" @click.stop="">
                     <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Share</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Rename</h5>
                         <button type="button" class="close" @click="handleCloseModal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        
+                        <form v-on:submit.prevent="">
+                            <div class="form-group">
+                                <label for="name">Folder Name</label>
+                                <input id="newFolderName" v-on:keyup.enter="handleRenameFolder" v-model="name" type="text" class="form-control" placeholder="Folder name" autofocus>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="handleCloseModal">Close</button>

@@ -13,12 +13,7 @@
                             <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
                         </div>
                     </div>
-                    <div v-if="layout == 'grid'">
-                        <GridView :folders="documentState.children" :files="documentState.folder.files"/>
-                    </div>
-                    <div v-if="layout == 'list'">
-                        <ListView :folders="documentState.children" :files="documentState.folder.files" :hasStatus="false"/>
-                    </div>
+                    <MainView :folders="documentState.children" :files="documentState.folder.files" :layoutProps="layout"/>
                 </div>
                 <transition :name="transition">
                     <div v-if="drawerVisible" class="col-3">
@@ -44,15 +39,13 @@
 </template>
 <script setup>
 import ModalFileDetails from './modal/ModalFileDetails.vue';
-import GridView from '../../components/GridView.vue';
-import ListView from '../../components/ListView.vue';
-import ManageKey from '../../components/ManageKey.vue'
 import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
 import ModalUploadFile from './modal/ModalUploadFile.vue';
 import FolderDetail from '../../components/FolderDetail.vue';
 import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
 import $ from "jquery"
 import NavBar from '../../components/layout/NavBar.vue';
+import MainView from '../../components/MainView.vue';
 $(document).ready(function() {
   $('#modalCreateFolder').on('shown.bs.modal', function() {
     $('#newFolderName').trigger('focus');
@@ -63,7 +56,7 @@ $(document).ready(function() {
 <script>
 
 export default {
-    components: { ModalAddNewFolder, ManageKey, ModalUploadFile, ListView, GridView, ModalFileDetails, FolderDetail, NavBar },
+    components: { ModalAddNewFolder, ModalUploadFile, ModalFileDetails, FolderDetail, NavBar, MainView },
     mounted() {
         this.$router.push(this.$route.path)
         this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
@@ -88,7 +81,7 @@ export default {
         async callAPI() {
             this.$store.dispatch("auth/sidebarActive", "my-folder")
             await this.$store.dispatch("document/getMyFolders") 
-            await this.$store.dispatch("document/getTreeFolder")
+            // await this.$store.dispatch("document/getTreeFolder")
         },
         handleDrawer() {
             console.log(this.drawerVisible);

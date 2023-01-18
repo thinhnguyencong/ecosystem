@@ -3,6 +3,7 @@
         <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
         <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
         <ModalUploadFile/>
+        
         <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
             <div class="row">
                 <div class="col">
@@ -15,14 +16,9 @@
                             <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
                         </div>
                     </div>
-                    <div v-if="layout == 'grid'">
-                        <GridViewVue :folders="documentState.children" :files="documentState.folder.files"/>
-                    </div>
-                    <div v-if="layout == 'list'">
-                        <ListTableVue :folders="documentState.children" :files="documentState.folder.files" :hasStatus="false"/>
-                    </div>
+                    <MainView :folders="documentState.children" :files="documentState.folder.files" :layoutProps="layout"/>
                 </div>
-                    <transition :name="transition">
+                <transition :name="transition">
                     <div v-if="drawerVisible" class="col-3">
                         <div style="text-align: right; margin: 5px">
                             <button class="close" @click="handleDrawer">&#9587;</button>
@@ -40,18 +36,15 @@
 	</div>
 </template>
 <script setup>
-    import FolderVue from '../../components/Folder.vue';
-    import FileVue from '../../components/File.vue'
     import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
     import ModalUploadFile from './modal/ModalUploadFile.vue'
     import ManageKey from '../../components/ManageKey.vue'
-    import ListTableVue from '../../components/ListView.vue';
-    import GridViewVue from '../../components/GridView.vue';
     import ModalFileDetails from './modal/ModalFileDetails.vue';
     import FolderDetail from '../../components/FolderDetail.vue';
     import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
     import $ from "jquery"
 import NavBar from '../../components/layout/NavBar.vue';
+import MainView from '../../components/MainView.vue';
 
     $(document).ready(function() {
         $('#modalCreateFolder').on('shown.bs.modal', function() {
@@ -62,7 +55,7 @@ import NavBar from '../../components/layout/NavBar.vue';
 </script>
 <script>
 export default {
-  components: { ModalAddNewFolder, ManageKey, ModalFileDetails, NavBar },
+  components: { ModalAddNewFolder, ModalFileDetails, NavBar, MainView },
     mounted() {
         // Call the API query method on page load
         
@@ -84,7 +77,7 @@ export default {
     },
     methods: {
         async callAPI() {
-            await this.$store.dispatch("document/getTreeFolder")
+            // await this.$store.dispatch("document/getTreeFolder")
             await this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
         },
         onLayoutChange(layout) {

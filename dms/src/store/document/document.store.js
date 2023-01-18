@@ -467,7 +467,8 @@ export const document = {
         toast.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
         router.push('/404')
       } else {
-        toast.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
+        console.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
+        //toast.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
       }
     },
   },

@@ -132,7 +132,6 @@ export default {
     }, 
     methods: {
         switchLayout() {
-            console.log(this.layout);
             if(this.layout === "list"){
                 setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
                 this.layout = "grid"

@@ -22,10 +22,9 @@
                                 <div class="col-7 h-100">
                                     <div class="tool-bar">
                                         <div class="text-right align-items-center">
-                                            <a role="button" data-toggle="modal" data-target="#exampleModal" class="h5">
+                                            <a role="button" @click="isOpen = true" class="h5">
                                                 <i class="mdi mdi-share"></i>Share 
                                             </a>&nbsp;&nbsp;
-                                            <ModalShareFolder/>
                                             <span v-if="isLoadingDownload" class="spinner-border text-dark" role="status">
                                                 <span class="sr-only">Loading...</span>
                                             </span>
@@ -285,13 +284,14 @@ import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
 import Treeselect from '@riophae/vue-treeselect'
 import {renderAsync} from "docx-preview/dist/docx-preview"
 import { FILE_TYPE_CAN_BE_PREVIEWED, getClassFileType } from '../../../helpers';
-import ModalShareFolder from './ModalShareFolder.vue';
+import ModalShareFolder from './ModalRenameFolder.vue';
 
 export default {
     props: ["fileId"],
     components: { Treeselect, Comment, ModalShareFolder },
     data() {
         return {
+            isOpen: false,
             showAttach: false,
             ipfs: null,
             file: {},
@@ -315,7 +315,10 @@ export default {
     },
 
     mounted() {
-        this.initData(this.fileId)
+        console.log("111");
+        if(this.fileId) {
+            this.initData(this.fileId)
+        }
     },
     methods: {
         test() {
@@ -324,84 +327,86 @@ export default {
         },
         async initData(fileId) {
             this.$set(this, 'isLoadingFile', true);
-            if(fileId) {
-                try {
-                    await this.$store.dispatch("document/getFileById", {id: fileId})
-                    this.file = this.documentState.file
-                    if(this.file.hash) {
-                        this.error=null
-                        IpfsClient().get(this.file.hash).then(async (res) =>{
-                            console.log("res", res);
-                            let resultDecrypt = decrypt(res[0].content, this.file.key)
-                            let tokenUri = JSON.parse(this.file.tokenURI)
-                            if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                                renderAsync(resultDecrypt, document.getElementById("wrap"))
-                                .then(x => {
-                                    console.log(this.isLoadingFile);
-                                    this.$set(this, 'isLoadingFile', false);
-                                    console.log("docx: finished")
-                                });
-                            }
-                            else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                                const buffer = resultDecrypt.buffer
-                                const result = await xlsxPreview.xlsx2Html(buffer, {
-                                    output: 'arrayBuffer',
-                                    minimumRows: 50,
-                                    minimumCols: 30,
-                                });
-                                const url = URL.createObjectURL(new Blob([result], {
-                                    type: 'text/html'
-                                }));
-                                document.querySelector('#wrap').innerHTML =
-                                    `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
-                                    console.log(this.isLoadingFile);
+            if(!this.documentState.treeFolder.length) {
+                await this.$store.dispatch("document/getTreeFolder")
+            }
+            try {
+                await this.$store.dispatch("document/getFileById", {id: fileId})
+                console.log("this.documentState.file", this.documentState.file);
+                this.file = this.documentState.file
+                if(this.file.hash) {
+                    this.error=null
+                    IpfsClient().get(this.file.hash).then(async (res) =>{
+                        console.log("res", res);
+                        let resultDecrypt = decrypt(res[0].content, this.file.key)
+                        let tokenUri = JSON.parse(this.file.tokenURI)
+                        if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                            renderAsync(resultDecrypt, document.getElementById("wrap"))
+                            .then(x => {
+                                console.log(this.isLoadingFile);
                                 this.$set(this, 'isLoadingFile', false);
-                            }
-                            else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-                                let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
-                                $("#wrap").pptxToHtml({
-                                    fileData: fileData,
-                                });
+                                console.log("docx: finished")
+                            });
+                        }
+                        else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                            const buffer = resultDecrypt.buffer
+                            const result = await xlsxPreview.xlsx2Html(buffer, {
+                                output: 'arrayBuffer',
+                                minimumRows: 50,
+                                minimumCols: 30,
+                            });
+                            const url = URL.createObjectURL(new Blob([result], {
+                                type: 'text/html'
+                            }));
+                            document.querySelector('#wrap').innerHTML =
+                                `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
+                                console.log(this.isLoadingFile);
+                            this.$set(this, 'isLoadingFile', false);
+                        }
+                        else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+                            let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
+                            $("#wrap").pptxToHtml({
+                                fileData: fileData,
+                            });
+                            this.$set(this, 'isLoadingFile', false);
+                        }else {
+                            if(!FILE_TYPE_CAN_BE_PREVIEWED.includes(tokenUri.fileType)) {
+                                document.querySelector('#wrap').innerHTML =
+                                `<div class="w-100 h-100 border border-muted d-flex justify-content-center align-items-center" type="text/html" style="opacity: 0.78;">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <p class="${getClassFileType(tokenUri.fileType)}" style="font-size: 6rem;height: 6rem;"></p>
+                                        <p class="h5 text-align-center">This file cannot be previewed because there is no previewer installed for it.</p>
+                                        <p>(${tokenUri.fileType ? tokenUri.fileType : "."+tokenUri.name.split('.').pop()})</p>
+                                    </div>
+                                </div>`
                                 this.$set(this, 'isLoadingFile', false);
                             }else {
-                                if(!FILE_TYPE_CAN_BE_PREVIEWED.includes(tokenUri.fileType)) {
-                                    document.querySelector('#wrap').innerHTML =
-                                    `<div class="w-100 h-100 border border-muted d-flex justify-content-center align-items-center" type="text/html" style="opacity: 0.78;">
-                                        <div class="d-flex flex-column align-items-center">
-                                            <p class="${getClassFileType(tokenUri.fileType)}" style="font-size: 6rem;height: 6rem;"></p>
-                                            <p class="h5 text-align-center">This file cannot be previewed because there is no previewer installed for it.</p>
-                                            <p>(${tokenUri.fileType ? tokenUri.fileType : "."+tokenUri.name.split('.').pop()})</p>
-                                        </div>
-                                    </div>`
-                                    this.$set(this, 'isLoadingFile', false);
-                                }else {
-                                    let b64 = this.b64EncodeUnicode(resultDecrypt)
-                                    let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
-                                    this.link = abc
-                                    this.$set(this, 'isLoadingFile', false);
-                                }
-                                
+                                let b64 = this.b64EncodeUnicode(resultDecrypt)
+                                let abc = await this.bufferArrayToBlob(b64, tokenUri.fileType)
+                                this.link = abc
+                                this.$set(this, 'isLoadingFile', false);
                             }
-                        })
-                        .catch(error =>  {
-                            this.$set(this, 'isLoadingFile', false);
-                            this.error="No file to preview"
-                        }).next
-                    } else {
+                            
+                        }
+                    })
+                    .catch(error =>  {
                         this.$set(this, 'isLoadingFile', false);
                         this.error="No file to preview"
-                    }
-                    if(!this.documentState.fileStatusList[fileId]) {
-                        await this.$store.dispatch("document/getFileStatusById", {id: fileId})
-                        this.fileStatus = this.documentState.fileStatusList[fileId]
-                    }else {
-                        this.fileStatus = this.documentState.fileStatusList[fileId]
-                    }
-                } catch (error) {
-                    console.log(error);
+                    })
+                } else {
                     this.$set(this, 'isLoadingFile', false);
                     this.error="No file to preview"
                 }
+                if(!this.documentState.fileStatusList[fileId]) {
+                    await this.$store.dispatch("document/getFileStatusById", {id: fileId})
+                    this.fileStatus = this.documentState.fileStatusList[fileId]
+                }else {
+                    this.fileStatus = this.documentState.fileStatusList[fileId]
+                }
+            } catch (error) {
+                console.log(error);
+                this.$set(this, 'isLoadingFile', false);
+                this.error="No file to preview"
             }
         },
         async handleGetFileStatus() {

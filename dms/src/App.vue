@@ -9,7 +9,6 @@
 			<div id="content">
 				<router-view />
 			</div>
-			<ModalShareFolder/>
 		</div>
 	</div>
 </template>
@@ -18,7 +17,6 @@
 import Sidebar from './components/layout/Sidebar.vue'
 import Header from './components/layout/Header.vue';
 import store from './store';
-import ModalShareFolder from './views/main/modal/ModalShareFolder.vue';
 
 // $(document).on('show.bs.modal', '.modal', function() {
 //   const zIndex = 1040 + 10 * $('.modal:visible').length;

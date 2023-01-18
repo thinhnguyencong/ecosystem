@@ -18,29 +18,20 @@
         </v-tab>
         <v-tab-item :key="0">
           <br>
-          <div v-if="layout == 'grid' && active==0">
-              <GridView :folders="[]" :files="files"/>
-          </div>
-          <div v-if="layout == 'list' && active==0">
-              <ListView :folders="[]" :files="files"/>
+          <div v-if="active==0">
+            <MainView :folders="[]" :files="files" :layoutProps="layout"/>
           </div>
         </v-tab-item>
         <v-tab-item :key="1">
           <br>
-          <div v-if="layout == 'grid' && active==1">
-              <GridView :folders="[]" :files="getPendingDocs()"/>
-          </div>
-          <div v-if="layout == 'list' && active==1">
-              <ListView :folders="[]" :files="getPendingDocs()" :hasStatus="false"/>
+          <div v-if="active==1">
+            <MainView :folders="[]" :files="getPendingDocs()" :layoutProps="layout"/>
           </div>
         </v-tab-item>
         <v-tab-item :key="2">
           <br>
-          <div v-if="layout == 'grid' && active==2">
-              <GridView :folders="[]" :files="getSignedDocs()"/>
-          </div>
-          <div v-if="layout == 'list' && active==2">
-              <ListView :folders="[]" :files="getSignedDocs()" :hasStatus="false"/>
+          <div v-if="active==2">
+            <MainView :folders="[]" :files="getSignedDocs()" :layoutProps="layout"/>
           </div>
         </v-tab-item>
       </v-tabs>
@@ -51,14 +42,13 @@
 </template>
 <script setup>
 import ModalFileDetails from './modal/ModalFileDetails.vue';
-import GridView from '../../components/GridView.vue'
-import ListView from '../../components/ListView.vue';
 import socketIOClient from "socket.io-client";
 import NavBar from '../../components/layout/NavBar.vue';
+import MainView from '../../components/MainView.vue';
 </script>
 <script>
   export default {
-    components: { ModalFileDetails, NavBar },
+    components: { ModalFileDetails, NavBar, MainView },
     data() {
       return {
         files: [],
@@ -82,7 +72,7 @@ import NavBar from '../../components/layout/NavBar.vue';
     methods: {
       async callAPI() { 
         await this.$store.dispatch("document/getAllFiles")
-        await this.$store.dispatch("document/getTreeFolder")
+        // await this.$store.dispatch("document/getTreeFolder")
         console.log("this.documentState", this.documentState);
         this.files = this.documentState.files
         this.folders = this.documentState.folders

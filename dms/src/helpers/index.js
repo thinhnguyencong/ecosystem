@@ -78,7 +78,6 @@ export const setLayoutOfPage = (publicAddress, route, layout) => {
     let userConfigs = localStorage.getItem("configs")
     userConfigs=JSON.parse(userConfigs)
     userConfigs[publicAddress]["layout"][route.path] = layout
-    console.log(userConfigs[publicAddress]["layout"][route.path]);
     localStorage.setItem("configs", JSON.stringify(userConfigs))
 }
 const initUserConfig = (publicAddress) => {

@@ -2,12 +2,7 @@
 	<div>
         <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
         <div class="pl-4 pr-4" v-if="!documentState.isLoading">
-            <div v-if="layout == 'grid'">
-                <GridViewVue :folders="documentState.children" :files="[]"/>
-            </div>
-            <div v-if="layout == 'list'">
-                <ListView :folders="documentState.children" :files="[]" :hasStatus="false"/>
-            </div>
+            <MainView :folders="documentState.children" :files="[]" :layoutProps="layout"/>
         </div>
         <div v-else class="pl-4 pr-4">
             <div class="spinner-border text-dark" role="status">
@@ -17,14 +12,13 @@
 	</div>
 </template>
 <script setup>
-import GridViewVue from '../../components/GridView.vue';
 import NavBar from '../../components/layout/NavBar.vue';
-import ListView from '../../components/ListView.vue';
+import MainView from '../../components/MainView.vue';
 </script>
 <script>
 
 export default {
-  components: { File, ListView, NavBar },
+  components: { File, NavBar, MainView },
     mounted() {
         // Call the API query method on page load
         this.$router.push(this.$route.path)
