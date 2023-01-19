@@ -98,10 +98,19 @@ export default {
         
     },
     mounted() {
-        this.$store.dispatch("admin/getAllUsers")
-        this.$store.dispatch("user/getDeptList")
-        this.$store.dispatch("user/getRoleList")
-        this.$store.dispatch("user/getSignerList")
+        // Call the API query method on page load
+        if(!this.adminState.users.length){
+            this.$store.dispatch("admin/getAllUsers")
+        }
+        if(!this.userState.deptList.length){
+            this.$store.dispatch("user/getDeptList")
+        }
+        if(!this.userState.roleList.length){
+            this.$store.dispatch("user/getRoleList")
+        }
+        if(!this.userState.signerList.length){
+            this.$store.dispatch("user/getSignerList")
+        }
     },
     created() {
         if(IpfsClient()) {

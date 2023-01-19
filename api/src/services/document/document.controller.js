@@ -212,7 +212,10 @@ export const createFolder = async (req, res, next) => {
 				owner: userId,
 				shared: parentFolder.shared
 			})
-			Folder.create(newFolder, function (err, newFolderCreated) {
+			Folder.create(newFolder,async function (err, newFolderCreated) {
+				let owner = await getNameById(userId)
+				let folderNew = JSON.parse(JSON.stringify(newFolderCreated))
+				// console.log({...newFolderCreated, owner: owner});
 				if (err) {
 					console.log(err);
 					return res.status(500).send({
@@ -221,7 +224,7 @@ export const createFolder = async (req, res, next) => {
 				}
 				return res.status(200).send({
 					msg: "Create folder successfully!",
-					data: newFolderCreated
+					data: {...folderNew, _id: newFolderCreated._id.valueOf(), owner: owner}
 				})
 			});
 
@@ -237,7 +240,28 @@ export const createFolder = async (req, res, next) => {
 	}
 }
 export const editFolder = async (req, res, next) => {
+	let {data, type} = req.body.data
+	if(type == 'rename') {
+		if(data.name) {
+			console.log(data);
+			const update = { name: data.name };
+			let updatedFolder = await Folder.findByIdAndUpdate(data._id, update, {new: true});
+			console.log(updatedFolder);
+			return res.status(200).send({
+				msg: "Rename folder successfully!",
+			})
+		}else {
+			return res.status(400).send({
+				msg: "Bad Request"
+			})
+		}
+	}else if(type == 'share') {
 
+	}else {
+		return res.status(400).send({
+			msg: "Bad Request"
+		})
+	}
 }
 export const shareFolder = async (req, res, next) => {
 	// get from token

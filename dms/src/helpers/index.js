@@ -44,6 +44,24 @@ export const getClassFileType = (type) => {
         default: return "mdi mdi-file text-secondary"
     }
 }
+export const niceBytes = (bytes) => {
+    const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    let l = 0, n = parseInt(bytes, 10) || 0;
+    while (n >= 1024 && ++l) {
+        n = n / 1024;
+    }
+    return (n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l]);
+}
+
+export const getClassStatus = (type) => {
+    switch (type) {
+        case "rejected": return "text-danger";
+        case "waiting-to-review": return "text-warning";
+        case "waiting-to-sign": return "text-info";
+        case "signed": return "text-success";
+        default: return "text-secondary";
+    }
+}
 
 export const getLayoutOfPage = (publicAddress, route) => {
     const DEFAULT_LAYOUT = "grid"

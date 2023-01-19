@@ -86,6 +86,18 @@ export const document = {
           }
         );
       },
+      editFolder({ commit }, data) {
+        commit('editFolder');
+        return documentService.editFolder(data)
+        .then(
+          res => {
+            commit('editFolderSuccess', {res, data});
+          },
+          error => {
+            commit('editFolderFailure', error);
+          }
+        );
+      },
       activateKey({commit}, data){
         commit('activateKey', data);
       },
@@ -276,6 +288,26 @@ export const document = {
         toast.success(result.data.msg)
     },
     createFolderFailure(state, error){
+        state.isLoading = false
+        console.log(error);
+        toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
+
+    // ------------------editFolder-----------------------------
+    editFolder(state){
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
+    },
+    editFolderSuccess(state, result){
+        state.isLoading = false;
+        console.log(result);
+        if(result.data.type == 'rename') {
+          state.children[state.children.findIndex(el => el._id === result.data.data._id)].name = result.data.data.name
+        }
+        toast.success(result.res.data.msg)
+    },
+    editFolderFailure(state, error){
         state.isLoading = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);

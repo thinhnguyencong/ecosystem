@@ -40,6 +40,14 @@ function createFolder(data) {
     })
 }
 
+function editFolder(data) {
+    return sendRequest({
+        url: url+"edit-folder",
+        method: "POST",
+        data: data
+    })
+}
+
 function uploadFile(data) {
     return sendRequest({
         url: url+"upload-file",
@@ -105,6 +113,7 @@ export const documentService = {
     getMyFolders,
     getSharedWithMeFolders,
     createFolder,
+    editFolder,
     uploadFile,
     getAllFiles,
     addComment,

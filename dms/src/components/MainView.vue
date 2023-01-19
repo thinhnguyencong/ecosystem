@@ -18,8 +18,24 @@
                                 </div>
                                 <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
                                     <div class="list-group">
-                                        <a @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">@ Rename </a>
-                                        <a @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">@ Share </a>
+                                        <a @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">drive_file_rename_outline</i>
+                                                <span class="mt-2">Rename</span>
+                                            </p>
+                                        </a>
+                                        <a @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">person_add</i>
+                                                <span class="mt-2">Share</span>
+                                            </p>
+                                        </a>
+                                        <a @click="handleHideFolder(folder)"  class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">visibility_off</i>
+                                                <span class="mt-2">Hide</span>
+                                            </p>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -97,8 +113,24 @@
                                     </div>
                                     <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
                                         <div class="list-group">
-                                            <a @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">@ Rename </a>
-                                            <a @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">@ Share </a>
+                                            <a @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
+                                                <p class="h6 align-items-center d-flex">
+                                                    <i class="material-icons">drive_file_rename_outline</i>
+                                                    <span class="mt-2">Rename</span>
+                                                </p>
+                                            </a>
+                                            <a @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
+                                                <p class="h6 align-items-center d-flex">
+                                                    <i class="material-icons">person_add</i>
+                                                    <span class="mt-2">Share</span>
+                                                </p>
+                                            </a>
+                                            <a @click="handleHideFolder(folder)"  class="list-group-item list-group-item-action">
+                                                <p class="h6 align-items-center d-flex">
+                                                    <i class="material-icons">visibility_off</i>
+                                                    <span class="mt-2">Hide</span>
+                                                </p>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -168,7 +200,7 @@
 import FileVue from '../components/File.vue'
 import FolderVue from '../components/Folder.vue';
 import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
-import {getClassFileType}  from "../helpers/index"
+import {getClassFileType, niceBytes, getClassStatus}  from "../helpers/index"
 import { IpfsClient } from "../helpers/ipfs";
 import ModalRenameFolder from '../views/main/modal/ModalRenameFolder.vue';
 import ModalShareFolder from '../views/main/modal/ModalShareFolder.vue';
@@ -234,24 +266,14 @@ export default {
         handleCloseModalShare() {
             this.folderShare = {}
         },
+        handleHideFolder(folder) {
+            console.log(folder);
+            this.showMenu = ""
+        },
         getClassFileType: getClassFileType,
-        niceBytes(bytes) {
-            const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-            let l = 0, n = parseInt(bytes, 10) || 0;
-            while (n >= 1024 && ++l) {
-                n = n / 1024;
-            }
-            return (n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l]);
-        },
-        getClassStatus(type) {
-            switch (type) {
-                case "rejected": return "text-danger";
-                case "waiting-to-review": return "text-warning";
-                case "waiting-to-sign": return "text-info";
-                case "signed": return "text-success";
-                default: return "text-secondary";
-            }
-        },
+        niceBytes: niceBytes,
+        getClassStatus: getClassStatus,
+        
         download(file) {
             this.isLoadingDownload.value = true;
             this.isLoadingDownload.id = file._id;
@@ -344,6 +366,7 @@ export default {
 .dropdown {
   position: relative;
   display: inline-block;
+  overflow: visible;
 }
 
 .dropdown-content {
@@ -352,7 +375,7 @@ export default {
   display: block;
   position: absolute;
   background-color: #f1f1f1;
-  width: 110px;
+  width: 120px;
   height: 5rem;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;

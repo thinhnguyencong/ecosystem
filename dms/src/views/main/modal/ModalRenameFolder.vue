@@ -46,7 +46,22 @@ export default {
             this.$emit('handleCloseModal')
         },
         handleRenameFolder() {
-            console.log("new name", name);
+            if(!this.name) {
+                alert("Folder name is not valid")
+                return
+            }
+            if(this.name == this.folderProps.name) {
+                this.handleCloseModal()
+            }else {
+                console.log("new name", this.name);
+                let data = {
+                    _id: this.folderProps._id,
+                    name: this.name
+                }
+                this.$store.dispatch("document/editFolder", {type: 'rename', data})
+                this.handleCloseModal()
+            }
+            
         }
     },
     mounted() {
