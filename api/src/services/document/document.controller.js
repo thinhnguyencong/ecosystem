@@ -45,9 +45,9 @@ export const getFolderById = async (req, res, next) => {
 	let files = await getFile(userId, folder.files)
 	let ownerName=""
 	if(folder.owner){
-		ownerName = await getNameById(folder.owner)
+		ownerName = await getUserInfoById(folder.owner)
 	}
-	children = await Promise.all(children.map(async c=> ({...c, owner: await getNameById(c.owner)})))
+	children = await Promise.all(children.map(async c=> ({...c, owner: await getUserInfoById(c.owner)})))
 	// check if folder is public folder
 	if(folder.type == "public" || folder.shared.includes(userId) || folder.owner == userId) {
 		if(folder.type == "public") {
@@ -167,7 +167,7 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 		
 		// filter child folder
 		let result = myFolderItems.filter(item => !item.ancestors.some(a=> myFolderIds.includes(a)))
-		result = await Promise.all(result.map(async f=> ({...f, owner: await getNameById(f.owner)})))
+		result = await Promise.all(result.map(async f=> ({...f, owner: await getUserInfoById(f.owner)})))
 
 		//get permissioned files
 		let files = await getFile(userId, myFolder.files)
@@ -175,7 +175,7 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 			msg: "Success",
 			data: {
 				myFolders: result,
-				folder: {...myFolder, files: files, owner: await getNameById(userId)},
+				folder: {...myFolder, files: files, owner: await getUserInfoById(userId)},
 			},
 		})
 	}else {
@@ -213,7 +213,7 @@ export const createFolder = async (req, res, next) => {
 				shared: parentFolder.shared
 			})
 			Folder.create(newFolder,async function (err, newFolderCreated) {
-				let owner = await getNameById(userId)
+				let owner = await getUserInfoById(userId)
 				let folderNew = JSON.parse(JSON.stringify(newFolderCreated))
 				// console.log({...newFolderCreated, owner: owner});
 				if (err) {
@@ -441,7 +441,7 @@ export const uploadFile = async (req, res, next) => {
 const getFile = async (userId, allFiles) => {
 	const files = await File.find({'_id': {$in: allFiles}}).lean()
 	// console.log('files', files);
-	let permissionedFiles = await Promise.all(files.filter(file => file.shared.includes(userId)|| file.owner == userId).map(async c=> ({...c, owner: await getNameById(c.owner)})))
+	let permissionedFiles = await Promise.all(files.filter(file => file.shared.includes(userId)|| file.owner == userId).map(async c=> ({...c, owner: await getUserInfoById(c.owner)})))
 	return permissionedFiles
 }
 export const getAllFiles = async (req, res, next) => {
@@ -464,7 +464,7 @@ export const getAllFiles = async (req, res, next) => {
 		console.log("z", signedDocs);
 		if(isValidObjectId(userId)) {
 			let files = await File.find({$or: [{ owner: userId }, { shared: userId }]}).lean()
-			files = await Promise.all(files.map(async f=> ({...f, owner: await getNameById(f.owner)})))
+			files = await Promise.all(files.map(async f=> ({...f, owner: await getUserInfoById(f.owner)})))
 			return res.status(200).send({
 				msg: "Success",
 				data: {
@@ -853,7 +853,7 @@ export const getFileById = async (req, res, next) => {
 			})
 		}
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
-			fileById.owner = await getNameById(fileById.owner)
+			fileById.owner = await getUserInfoById(fileById.owner)
 			
 			return res.status(200).send({
 				data: {
@@ -912,7 +912,7 @@ export const getFileStatusById = async (req, res, next) => {
 	}
 }
 
-const getNameById = async (id) => {
+const getUserInfoById = async (id) => {
 	let user = await User.findById(id).lean()
 	if(user) {
 		return {

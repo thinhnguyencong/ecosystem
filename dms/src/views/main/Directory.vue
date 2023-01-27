@@ -36,22 +36,21 @@
 	</div>
 </template>
 <script setup>
-    import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
-    import ModalUploadFile from './modal/ModalUploadFile.vue'
-    import ManageKey from '../../components/ManageKey.vue'
-    import ModalFileDetails from './modal/ModalFileDetails.vue';
-    import FolderDetail from '../../components/FolderDetail.vue';
-    import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
-    import $ from "jquery"
+import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
+import ModalUploadFile from './modal/ModalUploadFile.vue'
+import ManageKey from '../../components/ManageKey.vue'
+import ModalFileDetails from './modal/ModalFileDetails.vue';
+import FolderDetail from '../../components/FolderDetail.vue';
+import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
+import $ from "jquery"
 import NavBar from '../../components/layout/NavBar.vue';
 import MainView from '../../components/MainView.vue';
-
-    $(document).ready(function() {
-        $('#modalCreateFolder').on('shown.bs.modal', function() {
-            $('#newFolderName').trigger('focus');
-            $('#newFolderName').select()
-        });
+$(document).ready(function() {
+    $('#modalCreateFolder').on('shown.bs.modal', function() {
+        $('#newFolderName').trigger('focus');
+        $('#newFolderName').select()
     });
+});
 </script>
 <script>
 export default {

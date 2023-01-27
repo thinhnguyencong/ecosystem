@@ -102,48 +102,44 @@ const router = new VueRouter({
 	mode: 'history',
   	routes,
 })
-const handleRequestKey = async () => {
-	try {
-		let data= {}
-		// console.log(ABE_MODULE);
-		//init request key, get account and nonce
-		await store.dispatch("user/initRequestKey")
+// const handleRequestKey = async () => {
+// 	try {
+// 		let data= {}
+// 		// console.log(ABE_MODULE);
+// 		//init request key, get account and nonce
+// 		await store.dispatch("user/initRequestKey")
 
-		// ABE gen nonce gen key
-		await ABE_MODULE.then((ABE) => {
-			// console.log("abe gen nonce gen key, get NewNonce {nonce, fgp}");
-			// console.log("store.state.user.nonce", store.state.user.nonce);
-			let newNonce = ABE.abe_gen_nonce_gen_key(store.state.user.nonce);
-			data.nonce = newNonce.nonce
-			data.fgp = newNonce.fgp
-			return ABE
-		}).then(async (ABE) => {
-			// console.log("data", data);
-			// confirm key, sign message(message, account), get signature
-			await store.dispatch("user/signMessage", {message: data.nonce})
-			// request key using signature, get encrypted key
-			let request = {
-				pubWallet: store.state.user.publicAddress,
-				nonce:  data.nonce,
-				sigWallet: store.state.user.signature,
-				fgp: data.fgp
-			}
-			await store.dispatch("user/requestKey", request)
-			// console.log("ABE", ABE, request);
-			// import encrypted key to ABE
-			let resultImportKey = await ABE.abe_import_key_from_kdc(store.state.user.encryptedKey, store.state.user.username)
-            console.log('resultImportKey', resultImportKey);
-			return;
-		})
-	} catch (error) {
-		console.log(error);
-		alert("error")
-	}
-	
-
-
-
-}
+// 		// ABE gen nonce gen key
+// 		await ABE_MODULE.then((ABE) => {
+// 			// console.log("abe gen nonce gen key, get NewNonce {nonce, fgp}");
+// 			// console.log("store.state.user.nonce", store.state.user.nonce);
+// 			let newNonce = ABE.abe_gen_nonce_gen_key(store.state.user.nonce);
+// 			data.nonce = newNonce.nonce
+// 			data.fgp = newNonce.fgp
+// 			return ABE
+// 		}).then(async (ABE) => {
+// 			// console.log("data", data);
+// 			// confirm key, sign message(message, account), get signature
+// 			await store.dispatch("user/signMessage", {message: data.nonce})
+// 			// request key using signature, get encrypted key
+// 			let request = {
+// 				pubWallet: store.state.user.publicAddress,
+// 				nonce:  data.nonce,
+// 				sigWallet: store.state.user.signature,
+// 				fgp: data.fgp
+// 			}
+// 			await store.dispatch("user/requestKey", request)
+// 			// console.log("ABE", ABE, request);
+// 			// import encrypted key to ABE
+// 			let resultImportKey = await ABE.abe_import_key_from_kdc(store.state.user.encryptedKey, store.state.user.username)
+//             console.log('resultImportKey', resultImportKey);
+// 			return;
+// 		})
+// 	} catch (error) {
+// 		console.log(error);
+// 		alert("error")
+// 	}
+// }
 router.beforeEach(async (to, from, next) => {
 	console.log("to",to.matched.some(record => record.meta.requiresAuth) );
 	if (to.matched.some(record => record.meta.requiresAuth)){

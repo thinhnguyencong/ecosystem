@@ -437,9 +437,9 @@ export const document = {
 
     // ------------------getTreeFolder-----------------------------
     getTreeFolder(state){
-      if(!state.isLoading) {
-          state.isLoading = true
-        }
+      // if(!state.isLoading) {
+      //     state.isLoading = true
+      //   }
     },
     getTreeFolderSuccess(state, result){
         state.isLoading = false;

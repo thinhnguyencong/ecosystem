@@ -14,7 +14,7 @@
                         <form v-on:submit.prevent="">
                             <div class="form-group">
                                 <label for="name">Folder Name</label>
-                                <input id="newFolderName" v-on:keyup.enter="handleRenameFolder" v-model="name" type="text" class="form-control" placeholder="Folder name" autofocus>
+                                <input id="folderName" v-on:keyup.enter="handleRenameFolder" v-model="name" type="text" class="form-control" placeholder="Folder name" autofocus>
                             </div>
                         </form>
                     </div>
@@ -65,8 +65,8 @@ export default {
         }
     },
     mounted() {
-        $('#newFolderName').trigger('focus');
-        $('#newFolderName').select()
+        $('#folderName').trigger('focus');
+        $('#folderName').select()
     },
     watch: {
         'folderProps' : {
