@@ -4,6 +4,6 @@
 # production
 /build
 /keycloak/backup
-
+/mongo-backup
 package-lock.json
 .env

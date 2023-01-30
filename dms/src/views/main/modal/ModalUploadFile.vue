@@ -89,7 +89,7 @@
 
 import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
 import DataTableVue from "../../../components/DataTable.vue";
-import { IpfsClient } from "../../../helpers/ipfs";
+import { IpfsClient, nftStorage } from "../../../helpers/ipfs";
 </script>
 <script>
 export default {
@@ -182,7 +182,7 @@ export default {
             this.sharedList = data.map(x => x._id)
             console.log(this.description);
         },
-        uploadFile() {
+        async uploadFile() {
             if(!this.file) {
                 alert("Please select 1 file")
             }
@@ -191,11 +191,29 @@ export default {
                 let reader = new FileReader();
                 let app = this
                 reader.readAsArrayBuffer(this.file);
-                reader.onloadend = function() {
+                reader.onloadend = async function() {
                     let msgBytes = new Uint8Array(reader.result);
                     let resultEncrypt = encrypt(msgBytes)
                     let {encryptedData, key} = resultEncrypt
+                    console.log(encryptedData);
                     if(encryptedData && key) {
+                        // upload to nft storage(test)
+                        // const metadata = await nftStorage().storeBlob(new Blob([encryptedData.buffer]))
+                        // console.log(metadata)
+                        // let url = "https://"+metadata+".ipfs.nftstorage.link"
+                        // let blob = await fetch(url).then(r => r.blob());
+                        // let arrayBuffer = await new Response(blob).arrayBuffer()
+                        // console.log({arrayBuffer});
+                        // let resultDecrypt = decrypt(new Uint8Array(arrayBuffer), key)
+                        // console.log(blob, resultDecrypt);
+                        // let blob2 = new Blob([resultDecrypt.buffer], { type: app.file.type });
+                        // let link = document.createElement('a');
+                        // link.href = window.URL.createObjectURL(blob2);
+                        // let fileName = app.file.name;
+                        // link.download = fileName;
+                        // link.click();
+
+                        //upload to ipfs
                         app.ipfs.add(encryptedData).then(res => {
                             console.log(res[0].hash)
                             const json = {

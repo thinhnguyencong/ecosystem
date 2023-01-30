@@ -1,4 +1,4 @@
-
+import { NFTStorage, File } from 'nft.storage'
 export const IpfsClient = () => {
     try {
         //const ipfs = window.IpfsHttpClient({ host: '127.0.0.1', port: 5001, protocol: 'http', timeout: 10000 })
@@ -10,4 +10,8 @@ export const IpfsClient = () => {
         return null
     }
     
+}
+
+export const nftStorage = () => {
+    return new NFTStorage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDFCN2I1Q2VFYjUwNUQ0NjZkNTA1QkViOTY4RTI4ZGQ5RDUzYzU1OTgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3NTA2MzkzNzUxMCwibmFtZSI6ImtleSJ9.47VIy2hx7MgMaCiHFz5KXcOVarFM8fa6fZ80QR5fIZ4' }) 
 }
