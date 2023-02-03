@@ -97,4 +97,7 @@ button {
 .tab-active {
 	background-color: #eee !important;
 }
+.vue-treeselect__input {
+	width: 5rem !important;
+}
 </style>

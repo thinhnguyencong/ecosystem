@@ -113,6 +113,18 @@ export const document = {
           }
         );
       },
+      editFile({ commit }, data) {
+        commit('editFile');
+        return documentService.editFile(data)
+        .then(
+          res => {
+            commit('editFileSuccess', {res, data});
+          },
+          error => {
+            commit('editFileFailure', error);
+          }
+        );
+      },
       getAllFiles({ commit }) {
         commit('getAllFiles');
         return documentService.getAllFiles()
@@ -303,7 +315,7 @@ export const document = {
         state.isLoading = false;
         console.log(result);
         if(result.data.type == 'rename') {
-          state.children[state.children.findIndex(el => el._id === result.data.data._id)].name = result.data.data.name
+          state.children[state.children.findIndex(el => el._id === result.data.data.folderId)].name = result.data.data.name
         }
         toast.success(result.res.data.msg)
     },
@@ -332,6 +344,26 @@ export const document = {
         toast.success(result.data.msg)
     },
     uploadFileFailure(state, error){
+        state.isLoading = false
+        console.log(error);
+        toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
+
+    // ------------------editFile-----------------------------
+    editFile(state){
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
+    },
+    editFileSuccess(state, result){
+        state.isLoading = false;
+        console.log(result);
+        if(result.data.type == 'rename') {
+          state.children[state.children.findIndex(el => el._id === result.data.data.folderId)].name = result.data.data.name
+        }
+        toast.success(result.res.data.msg)
+    },
+    editFileFailure(state, error){
         state.isLoading = false
         console.log(error);
         toast.error(error.response.data.msg ? error.response.data.msg : error.message);

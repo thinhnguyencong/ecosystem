@@ -98,6 +98,7 @@ export default {
             handler(newVal, oldVal) {
                 if(newVal !== oldVal) {
                     this.$store.dispatch("document/getFolderById", {id: newVal})
+                    this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
                 }
             },
             immediate: true

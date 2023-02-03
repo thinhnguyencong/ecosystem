@@ -23,6 +23,7 @@ export const authToken = async (req, res, next) => {
 	requestPromise(authStrategy.getAuthTokenOptions(code))
 	.then(async tokenRes => {
 		const jwtAccessToken = jwt.decode(JSON.parse(tokenRes).access_token);
+		console.log("jwtAccessToken", jwtAccessToken);
 		const user = authStrategy.getUser(jwtAccessToken);
 		const userFind = await User.findOne({username: user.username}, "publicAddress").exec()
 		console.log(`User ${user.username} successfully logged in.`);

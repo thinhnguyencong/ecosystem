@@ -22,15 +22,15 @@
                                 <div class="col-7 h-100">
                                     <div class="tool-bar">
                                         <div class="text-right align-items-center">
-                                            <a role="button" @click="isOpen = true" class="h5">
-                                                <i class="mdi mdi-share"></i>Share 
-                                            </a>&nbsp;&nbsp;
-                                            <span v-if="isLoadingDownload" class="spinner-border text-dark" role="status">
+                                            <span v-if="isLoadingDownload" class="spinner-border spinner-border-sm text-dark mr-2" role="status">
                                                 <span class="sr-only">Loading...</span>
                                             </span>
                                             <span v-else>
                                                 <a role="button" class="h5" @click="download(file)"><i class="mdi mdi-download"></i>Download</a>
-                                            </span>
+                                            </span>&nbsp;&nbsp;
+                                            <a role="button" @click="handleOpenModalShare(file)" class="h5">
+                                                <i class="mdi mdi-share"></i>Share 
+                                            </a>
                                         </div>
                                     </div>
                                     <div :class="file.tokenURI !== undefined && 
@@ -268,7 +268,9 @@
                             <span class="sr-only">Loading...</span>
                         </div>
                     </div>
-                    
+                    <Transition name="modal">
+                        <ModalShareFile v-if="fileShare?._id" :fileProps="file" @handleCloseModal="handleCloseModalShare"/>
+                    </Transition>
                 </div>
             </div>
         </div>
@@ -284,14 +286,15 @@ import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
 import Treeselect from '@riophae/vue-treeselect'
 import {renderAsync} from "docx-preview/dist/docx-preview"
 import { FILE_TYPE_CAN_BE_PREVIEWED, getClassFileType } from '../../../helpers';
-import ModalShareFolder from './ModalRenameFolder.vue';
+import ModalShareFile from './ModalShareFile.vue';
 
 export default {
     props: ["fileId"],
-    components: { Treeselect, Comment, ModalShareFolder },
+    components: { Treeselect, Comment, ModalShareFile },
     data() {
         return {
-            isOpen: false,
+            resultDecrypt: null,
+            fileShare: {},
             showAttach: false,
             ipfs: null,
             file: {},
@@ -339,6 +342,7 @@ export default {
                     IpfsClient().get(this.file.hash).then(async (res) =>{
                         console.log("res", res);
                         let resultDecrypt = decrypt(res[0].content, this.file.key)
+                        this.resultDecrypt = resultDecrypt
                         let tokenUri = JSON.parse(this.file.tokenURI)
                         if(tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                             renderAsync(resultDecrypt, document.getElementById("wrap"))
@@ -349,19 +353,21 @@ export default {
                             });
                         }
                         else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                            console.log({resultDecrypt});
                             const buffer = resultDecrypt.buffer
                             const result = await xlsxPreview.xlsx2Html(buffer, {
                                 output: 'arrayBuffer',
                                 minimumRows: 50,
-                                minimumCols: 30,
+                                minimumCols: 15,
                             });
+                            console.log({result});
                             const url = URL.createObjectURL(new Blob([result], {
                                 type: 'text/html'
                             }));
-                            document.querySelector('#wrap').innerHTML =
-                                `<object class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`
-                                console.log(this.isLoadingFile);
+                            console.log(url);
+                            $('#wrap').html(`<object id="object-res" class="res-obj w-100 h-100" type="text/html" data="${url}"></object>`)
                             this.$set(this, 'isLoadingFile', false);
+                            
                         }
                         else if (tokenUri.fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
                             let fileData = new File([resultDecrypt], tokenUri.name, {type:tokenUri.fileType})
@@ -438,26 +444,39 @@ export default {
         },
         download(file) {
             this.isLoadingDownload = true
-            IpfsClient().get(file.hash).then(async (res) =>{
-                if(res) {
-                    console.log(res[0].content)
-                    let resultDecrypt = decrypt(res[0].content, file.key)
-                    console.log('resultDecrypt', resultDecrypt);
-                    let tokenUri = JSON.parse(file.tokenURI)
-                    console.log("tokenUri", tokenUri);
-                    let blob = new Blob([resultDecrypt.buffer], {type: tokenUri.fileType});
-                    let link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    let fileName = tokenUri.name;
-                    link.download = fileName;
-                    link.click();
-                    this.isLoadingDownload = false
-                }
-            }).catch(error=> {
-                console.log(error);
+            if(this.resultDecrypt) {
+                let tokenUri = JSON.parse(file.tokenURI)
+                console.log("tokenUri", tokenUri);
+                let blob = new Blob([this.resultDecrypt.buffer], {type: tokenUri.fileType});
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                let fileName = tokenUri.name;
+                link.download = fileName;
+                link.click();
+                this.isLoadingDownload = false
+            }else {
                 this.isLoadingDownload = false
                 alert("No file to download")
-            })
+            }
+            // IpfsClient().get(file.hash).then(async (res) =>{
+            //     if(res) {
+            //         console.log(res[0].content)
+            //         let resultDecrypt = decrypt(res[0].content, file.key)
+            //         console.log('resultDecrypt', resultDecrypt);
+            //         let tokenUri = JSON.parse(file.tokenURI)
+            //         console.log("tokenUri", tokenUri);
+            //         let blob = new Blob([resultDecrypt.buffer], {type: tokenUri.fileType});
+            //         let link = document.createElement('a');
+            //         link.href = window.URL.createObjectURL(blob);
+            //         let fileName = tokenUri.name;
+            //         link.download = fileName;
+            //         link.click();
+            //         this.isLoadingDownload = false
+            //     }
+            // }).catch(error=> {
+            //     console.log(error);
+                
+            // })
         },
         handleAddComment() {
             if(!this.content) {
@@ -504,6 +523,13 @@ export default {
                     this.$store.dispatch("document/rejectDoc", {type, tokenId: this.file.tokenId, fileId: this.fileId})
                 }
             });
+        },
+        handleOpenModalShare(file) {
+            console.log(file);
+            this.fileShare = file
+        },
+        handleCloseModalShare() {
+            this.fileShare = {}
         },
     },
     computed: {

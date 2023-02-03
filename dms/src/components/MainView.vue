@@ -9,7 +9,7 @@
                     <div v-for="(folder, index) in folders" class="tile">
                         <div class="float-right">
                             <div class="dropdown">
-                                <div v-if="folder.owner && folder.owner._id == authState.user._id" class="align-self-center" @click="openDropdown(folder._id)">
+                                <div class="align-self-center" @click="openDropdown(folder._id)">
                                     <v-btn flat icon color="indigo">
                                         <v-icon data-toggle="tooltip" title="" color="#818181">
                                             more_vert
@@ -18,13 +18,13 @@
                                 </div>
                                 <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
                                     <div class="list-group">
-                                        <a @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
+                                        <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
                                             <p class="h6 align-items-center d-flex">
                                                 <i class="material-icons">drive_file_rename_outline</i>
                                                 <span class="mt-2">Rename</span>
                                             </p>
                                         </a>
-                                        <a @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
+                                        <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
                                             <p class="h6 align-items-center d-flex">
                                                 <i class="material-icons">person_add</i>
                                                 <span class="mt-2">Share</span>
@@ -104,7 +104,7 @@
                             <td>-</td>
                             <td @click.stop="">
                                 <div class="dropdown">
-                                    <div v-if="folder.owner && folder.owner._id == authState.user._id" class="align-self-center" @click="openDropdown(folder._id)">
+                                    <div class="align-self-center" @click="openDropdown(folder._id)">
                                         <v-btn flat icon color="indigo">
                                             <v-icon data-toggle="tooltip" title="" color="#818181">
                                                 more_vert
@@ -113,13 +113,13 @@
                                     </div>
                                     <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
                                         <div class="list-group">
-                                            <a @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
                                                 <p class="h6 align-items-center d-flex">
                                                     <i class="material-icons">drive_file_rename_outline</i>
                                                     <span class="mt-2">Rename</span>
                                                 </p>
                                             </a>
-                                            <a @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
                                                 <p class="h6 align-items-center d-flex">
                                                     <i class="material-icons">person_add</i>
                                                     <span class="mt-2">Share</span>

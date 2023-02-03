@@ -15,4 +15,5 @@ userRouter.post('/sign-message', controller.signMessage);
 userRouter.get('/department-list', controller.getListDepartment);
 userRouter.get('/role-list', controller.getListRole);
 userRouter.get('/signer-list', controller.getListSigner);
+userRouter.get('/tree-user', controller.getTreeUser);
 export default userRouter

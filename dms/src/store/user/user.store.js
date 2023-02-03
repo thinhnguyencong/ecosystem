@@ -131,6 +131,18 @@ export const user = {
         }
       );
     },
+    getTreeUser({ commit }) {
+      commit('getTreeUser');
+      return userService.getTreeUser()
+      .then(
+        res => {
+          commit('getTreeUserSuccess', res);
+        },
+        error => {
+          commit('getTreeUserFailure', error);
+        }
+      );
+    },
   },
   mutations: {
     // ------------------getUserInfo-----------------------------
@@ -284,6 +296,23 @@ export const user = {
       state.signerList = result.data.data;
     },
     getSignerListFailure(state, error){
+      state.isLoading = false
+      console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
+
+    // ------------------getTreeUser-----------------------------
+    getTreeUser(state){
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
+    },
+    getTreeUserSuccess(state, result){
+      state.isLoading = false;
+      console.log(result);
+      state.treeUser = result.data.data;
+    },
+    getTreeUserFailure(state, error){
       state.isLoading = false
       console.log(error);
       toast.error(error.response.data.msg ? error.response.data.msg : error.message);

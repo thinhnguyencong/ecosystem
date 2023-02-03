@@ -8,11 +8,11 @@ documentRouter.get('/get-folder-by-id', controller.getFolderById);
 documentRouter.get('/my-folder', controller.getFoldersInMyFolder);
 documentRouter.post('/create-folder', controller.createFolder);
 documentRouter.post('/edit-folder', controller.editFolder);
-documentRouter.post('/share-folder', controller.shareFolder);
 documentRouter.get('/shared-with-me-folder', controller.getSharedWithMeFolder);
 documentRouter.get('/tree-folder', controller.getTreeFolder);
 
 documentRouter.post('/upload-file', controller.uploadFile);
+documentRouter.post('/edit-file', controller.editFile);
 documentRouter.get('/get-all-files', controller.getAllFiles);
 documentRouter.get('/get-file-by-id', controller.getFileById);
 documentRouter.get('/get-file-status-by-id', controller.getFileStatusById);

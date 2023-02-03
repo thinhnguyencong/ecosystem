@@ -55,7 +55,12 @@ function getSignerList(data) {
         method: "GET",
     })
 }
-
+function getTreeUser(data) {
+    return sendRequest({
+        url: url+"tree-user",
+        method: "GET",
+    })
+}
 export const userService = {
     getUserInfo,
     transferToken,
@@ -64,6 +69,6 @@ export const userService = {
     signMessage,
     getDeptList,
     getRoleList,
-    getSignerList
-
+    getSignerList,
+    getTreeUser
 };

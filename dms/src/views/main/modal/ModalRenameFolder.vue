@@ -20,7 +20,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="handleCloseModal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-primary" @click="handleRenameFolder">Save changes</button>
                     </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@ export default {
             }else {
                 console.log("new name", this.name);
                 let data = {
-                    _id: this.folderProps._id,
+                    folderId: this.folderProps._id,
                     name: this.name
                 }
                 this.$store.dispatch("document/editFolder", {type: 'rename', data})

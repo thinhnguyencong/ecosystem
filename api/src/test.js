@@ -1,13 +1,5 @@
+
 let sharedFolders = [
-  {
-    id: 1,
-    name: 'name 1',
-    parent: null,
-    ancestors: [],
-    shared: [
-      "user1", "user2"
-    ]
-  },
   {
     id: 2,
     name: 'name 2',
@@ -38,8 +30,8 @@ let sharedFolders = [
   {
     id: 36,
     name: "name 36",
-    parent: 25,
-    ancestors: [23,24,25],
+    parent: 35,
+    ancestors: [33,34,35],
     shared: [
       "user2"
     ]
@@ -48,15 +40,24 @@ let sharedFolders = [
     id: 37,
     name: "name 37",
     parent: 36,
-    ancestors: [23,24,25,36],
+    ancestors: [33,34,35,36],
     shared: [
       "user2"
     ]
   },
 ]
-id = [2,3,7,36,37]
-parent = [1,2,6,25,36]
-ancestors = [[1], [1,2], [5,6], [23,24,25], [23,24,25,36]] 
-// => [1,5,23]
-// => [[2,3,..], [6,7,..], [24,25,36,37,..]]
-result = [7,36]
+let id =     [2,3,7,36,37]
+let parent = [1,2,6,35,36]
+let ancestors = [[1], [1,2], [5,6], [33,34,35], [33,34,35,36]] 
+let result =[]
+for (let index = 0; index < ancestors.length; index++) {
+  const element = ancestors[index];
+  const contains = element.some(e => {
+    return id.includes(e);
+  });
+  if(!contains) {
+    result.push(id[index])
+  }
+}
+
+console.log(result);

@@ -150,6 +150,16 @@ export default {
         documentState() {return this.$store.state.document },
         authState() {return this.$store.state.auth },
     },
+    watch: {
+        '$route.params.id': {
+            handler(newVal, oldVal) {
+                if(newVal !== oldVal) {
+                    this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
+                }
+            },
+            immediate: true
+        },
+    },
 }
 </script>
 <style scoped>

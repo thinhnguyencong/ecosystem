@@ -34,18 +34,19 @@ export const getFolderById = async (req, res, next) => {
 		})
 	}
 	let myFolder = await Folder.findOne({ parent: null, owner: userId }).lean()
-	let folderById = await Folder.findById(id).lean()
+	let folder = await Folder.findById(id).lean()
+	folder = {...folder, _id: folder._id.valueOf()}
 	let children = await Folder.find({ parent: id }).lean()
-	let folder = JSON.parse(JSON.stringify(folderById))
+	console.log({...folder});
 	if(!folder){
 		return res.status(404).send({
 			msg: "Folder not exist"
 		})
 	}
 	let files = await getFile(userId, folder.files)
-	let ownerName=""
+	let ownerInfo=""
 	if(folder.owner){
-		ownerName = await getUserInfoById(folder.owner)
+		ownerInfo = await getUserInfoById(folder.owner)
 	}
 	children = await Promise.all(children.map(async c=> ({...c, owner: await getUserInfoById(c.owner)})))
 	// check if folder is public folder
@@ -57,16 +58,10 @@ export const getFolderById = async (req, res, next) => {
 				data: {
 					children: children,
 					folder: {
-						_id: folder._id, 
-						name: folder.name, 
-						parent: folder.parent,
+						...folder,
 						status,
-						owner: ownerName,
-						type: folder.type,
+						owner: ownerInfo,
 						files: files,
-						shared: folder.shared,
-						createdAt: folder.createdAt,
-						updatedAt: folder.updatedAt,
 					},
 				},
 				
@@ -85,23 +80,16 @@ export const getFolderById = async (req, res, next) => {
 					}
 				}
 			}
-			
 			return res.send({
 				msg: "Success",
 				data: {
 					ancestors: ancestors,
 					children: children,
 					folder: {
-						_id: folder._id, 
-						name: folder.name, 
-						parent: folder.parent,
+						...folder,
 						status,
-						owner: ownerName,
-						type: folder.type,
+						owner: ownerInfo,
 						files: files,
-						shared: folder.shared,
-						createdAt: folder.createdAt,
-						updatedAt: folder.updatedAt,
 					},
 				},
 				
@@ -127,16 +115,10 @@ export const getFolderById = async (req, res, next) => {
 					ancestors: ancestors,
 					children: children.filter(child => child.shared.includes(userId) || child.owner == userId ),
 					folder: {
-						_id: folder._id, 
-						name: folder.name, 
-						parent: folder.parent,
+						...folder,
 						status,
-						owner: ownerName,
-						type: folder.type,
+						owner: ownerInfo,
 						files: files,
-						shared: folder.shared,
-						createdAt: folder.createdAt,
-						updatedAt: folder.updatedAt,
 					},
 				},
 				
@@ -241,11 +223,27 @@ export const createFolder = async (req, res, next) => {
 }
 export const editFolder = async (req, res, next) => {
 	let {data, type} = req.body.data
+	const userEmail = req.jwtDecoded.email
+	let user = await User.findOne({email: userEmail}) 
+	let userId = user._id.valueOf()
+	let folder = await Folder.findById(data.folderId)
+	// check if owner own this folder
+	if(folder.owner !== userId) {
+		return res.status(400).send({
+			msg: "Bad request"
+		})
+	}
+	// check if folder is "My Folder"
+	if(folder.parent == userId) {
+		return res.status(400).send({
+			msg: "This folder cannot be shared"
+		})
+	}
 	if(type == 'rename') {
 		if(data.name) {
 			console.log(data);
 			const update = { name: data.name };
-			let updatedFolder = await Folder.findByIdAndUpdate(data._id, update, {new: true});
+			let updatedFolder = await Folder.findByIdAndUpdate(data.folderId, update, {new: true});
 			console.log(updatedFolder);
 			return res.status(200).send({
 				msg: "Rename folder successfully!",
@@ -256,46 +254,67 @@ export const editFolder = async (req, res, next) => {
 			})
 		}
 	}else if(type == 'share') {
-
+		let {folderId, sharedList} = data
+		// check if participants is already in this list, if true remove duplicate
+		sharedList = sharedList.filter(function(item) {
+			return item !== userId
+		})
+		let updatedFolder = await Folder.findByIdAndUpdate(folderId, {$addToSet: {shared: sharedList}});
+		for (const fileId of updatedFolder.files) {
+			let updatedFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: sharedList}})
+		}
+		
+		let descendants = await Folder.find({ancestors: folderId}).lean();
+		for (const des of descendants) {
+			console.log(des);
+			let updatedFolder = await Folder.findByIdAndUpdate(des._id.valueOf(), {$addToSet: {shared: sharedList}});
+			for (const fileId of des.files) {
+				console.log(fileId);
+				let newFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: sharedList}})
+			}
+		}
+		return res.status(200).send({
+			msg: "Success",
+			data: {
+				updatedFolder: updatedFolder
+			},
+			
+		})
 	}else {
 		return res.status(400).send({
 			msg: "Bad Request"
 		})
 	}
 }
-export const shareFolder = async (req, res, next) => {
-	// get from token
-	let owner = "6375eef4dc06c9e8cf391eb3"
 
-	let {folderId, sharedList} = req.body
-	let folder = await Folder.findById(folderId)
-
+export const editFile = async (req, res, next) => {
+	let {data, type} = req.body.data
+	const userEmail = req.jwtDecoded.email
+	let user = await User.findOne({email: userEmail}) 
+	let userId = user._id.valueOf()
+	let file = await File.findById(data.fileId)
 	// check if owner own this folder
-	if(folder.owner !== owner) {
+	if(file.owner !== userId) {
 		return res.status(400).send({
 			msg: "Bad request"
 		})
 	}
-
-	// check if folder is "My Folder"
-	if(folder.parent == owner) {
+	if(type == 'rename') {
+		
+	}else if(type == 'share') {
+		let updatedFile = await File.findByIdAndUpdate(data.fileId, {$addToSet: {shared: data.sharedList}})
+		return res.status(200).send({
+			msg: "Success",
+			data: {
+				updatedFile: updatedFile
+			},
+			
+		})
+	}else {
 		return res.status(400).send({
-			msg: "This folder cannot be shared"
+			msg: "Bad Request"
 		})
 	}
-
-	// check if participants is already in this list, if true remove duplicate
-	const newSharedList = [...new Set([...sharedList,...folder.shared])];
-	const update = { shared: newSharedList };
-	console.log(newSharedList);
-	let updatedFolder = await Folder.findByIdAndUpdate(folderId, update, {new: true});
-	return res.status(200).send({
-		msg: "Success",
-		data: {
-			updatedFolder: updatedFolder
-		},
-		
-	})
 }
 
 export const getSharedWithMeFolder = async (req, res, next) => {
@@ -304,24 +323,20 @@ export const getSharedWithMeFolder = async (req, res, next) => {
 	let userId = user._id.valueOf()
 	if(isValidObjectId(userId)) {
 		let sharedWithMeFolders = await Folder.find({ shared: userId }).lean()
-		//console.log("sharedWithMeFolders", sharedWithMeFolders);
-		let result1 = []
-		let a = sharedWithMeFolders.filter(f => f.parent == null).map(x=> ({...x, _id: x._id.valueOf(), name: x.name}))
-		console.log(a)
-		let result = result1.concat(a)
-		let b = sharedWithMeFolders.filter(f => f.parent !== null)
+		let result = []
+		sharedWithMeFolders = sharedWithMeFolders.map(x=> ({...x, _id: x._id.valueOf()}))
 
-		for (let index = 0; index < b.length; index++) {
-			let folder = b[index]
-			// console.log(folder.name);
-			if(folder.ancestors.length) {
-				for (let i=0; i< folder.ancestors.length; i++ ){
-					let ancestorFolder = await Folder.findById(folder.ancestors[i]).lean()
-					// console.log("ancestorFolder", ancestorFolder);
-					// only get permissioned folder
-					if(ancestorFolder && ancestorFolder.shared.includes(userId) && ancestorFolder.parent !== null && ancestorFolder.owner !== userId) {
-						result.push(JSON.parse(JSON.stringify(ancestorFolder)))
-					}
+		let idArr = sharedWithMeFolders.map(x=> x._id)
+
+		// filter other shared folder to get the "most" parent folder (folder shared above another folder)
+		for (let index = 0; index < sharedWithMeFolders.length; index++) {
+			let folder = sharedWithMeFolders[index]
+			if(folder.ancestors) {
+				const contains = folder.ancestors.some(e => {
+					return idArr.includes(e);
+				});
+				if(!contains) {
+					result = [...result, ...sharedWithMeFolders.filter(f => f._id == idArr[index])]
 				}
 			}
 		}
@@ -1062,4 +1077,7 @@ const getFileStatus = async (tokenId, publicAddress, dmsContract) => {
 			}
 		}
 	}
+}
+function getUniqueListBy(arr, key) {
+    return [...new Map(arr.map(item => [item[key], item])).values()]
 }

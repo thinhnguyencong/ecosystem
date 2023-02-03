@@ -1,11 +1,11 @@
 <template>
-    <div :id="'share-'+folder._id">
+    <div :id="'share-'+file._id">
         <div class="modal-mask" id="exampleModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-wrapper" @click="handleCloseModal">
                 <div class="modal-container" role="document" @click.stop="">
                     <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Share folder "{{ folder.name }}"</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Share file "{{file.tokenURI ? JSON.parse(file.tokenURI).name : ""}}"</h5>
                         <button type="button" class="close" @click="handleCloseModal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="handleCloseModal">Close</button>
-                        <button v-if="value" type="button" class="btn btn-primary" @click="handleShareFolder">Share</button>
+                        <button v-if="value" type="button" class="btn btn-primary" @click="handleShareFile">Share</button>
                         <button v-else type="button" class="btn btn-primary" disabled>Share</button>
                     </div>
                     </div>
@@ -37,12 +37,11 @@ import { ASYNC_SEARCH } from '@riophae/vue-treeselect'
 import Treeselect from '@riophae/vue-treeselect'
 
 export default {
-    props: ['folderProps'],
+    props: ['fileProps'],
     components: { Treeselect },
     data() {
       return{
-        folder: {},
-        name: '',
+        file: {},
         value: null,
         valueConsistsOf: 'LEAF_PRIORITY',
         options: [],
@@ -56,8 +55,6 @@ export default {
       }
     },
     mounted() {
-        $('#newFolderName').trigger('focus');
-        $('#newFolderName').select()
         this.initData()
     },
     methods: {
@@ -65,17 +62,14 @@ export default {
             this.isOpen = false
             this.$emit('handleCloseModal')
         },
-        handleRenameFolder() {
-            console.log("new name", name);
-        },
-        handleShareFolder() {
+        handleShareFile() {
             if(!this.value.length) {
                 this.$emit('handleCloseModal')
                 return
             }
             this.$swal({
-                title: 'Are you sure sharing this folder?',
-                text: `Anyone in this list can view all files and folders in "${this.folder.name}" !`,
+                title: 'Are you sure sharing this file?',
+                text: `Anyone in this list can view all files and files in "${this.file.name}" !`,
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -84,10 +78,10 @@ export default {
                 }).then((result) => {
                 if (result.isConfirmed) {
                     let data = {
-                        folderId: this.folder._id,
+                        fileId: this.file._id,
                         sharedList: this.value
                     }
-                    this.$store.dispatch("document/editFolder", {type: 'share', data})
+                    this.$store.dispatch("document/editFile", {type: 'share', data})
                     console.log(this.value);
                 }
             });
@@ -104,12 +98,11 @@ export default {
       userState() {return this.$store.state.user },
     },
     watch: {
-        'folderProps' : {
+        'fileProps' : {
             handler(newVal, oldVal) {
                 console.log(newVal);
                 if(newVal !== oldVal) {
-                    this.folder = newVal
-                    this.name = this.folderProps.name
+                    this.file = newVal
                 }
             },
             immediate: true

@@ -197,15 +197,24 @@ export default {
                     let {encryptedData, key} = resultEncrypt
                     console.log(encryptedData);
                     if(encryptedData && key) {
-                        // upload to nft storage(test)
+                        //upload to nft storage(test)
+                        // const startTime = Date.now();
                         // const metadata = await nftStorage().storeBlob(new Blob([encryptedData.buffer]))
                         // console.log(metadata)
+                        // const endTime = Date.now();
+                        // const timeTaken = endTime - startTime;
+                        // console.log(`Time taken to upload file using NFT Storage = ${timeTaken/1000} seconds`);
+                        
+                        // const startTime1 = Date.now();
                         // let url = "https://"+metadata+".ipfs.nftstorage.link"
-                        // let blob = await fetch(url).then(r => r.blob());
-                        // let arrayBuffer = await new Response(blob).arrayBuffer()
+                        // let arrayBuffer = await fetch(url)
                         // console.log({arrayBuffer});
+                        // const endTime1 = Date.now();
+                        // const timeTaken1 = endTime1 - startTime1;
+                        // console.log(`Time taken to get file using NFT Storage = ${timeTaken1/1000} seconds`);
+                        // // let arrayBuffer = await new Response(blob).arrayBuffer()
                         // let resultDecrypt = decrypt(new Uint8Array(arrayBuffer), key)
-                        // console.log(blob, resultDecrypt);
+                        // console.log(resultDecrypt);
                         // let blob2 = new Blob([resultDecrypt.buffer], { type: app.file.type });
                         // let link = document.createElement('a');
                         // link.href = window.URL.createObjectURL(blob2);
@@ -214,8 +223,19 @@ export default {
                         // link.click();
 
                         //upload to ipfs
-                        app.ipfs.add(encryptedData).then(res => {
+                        const startTime2 = Date.now();
+                        app.ipfs.add(encryptedData).then(async res => {
+                            const endTime2 = Date.now();
+                            const timeTaken2 = endTime2 - startTime2;
+                            console.log(`Time taken to upload file using IPFS = ${timeTaken2/1000} seconds`);
                             console.log(res[0].hash)
+                            // const startTime3 = Date.now();
+                            // let blob = await fetch('http://18.136.124.115:8080/ipfs/'+ res[0].hash) 
+                            // console.log({blob});
+                            // const endTime3 = Date.now();
+                            // const timeTaken3 = endTime3 - startTime3;
+                            // console.log(`Time taken to get file using IPFS = ${timeTaken3/1000} seconds`);
+
                             const json = {
                                 hash : res[0].hash,
                                 time: Date.now(),
@@ -243,6 +263,7 @@ export default {
                             app.$store.dispatch("document/uploadFile", data)
                         })
                         .catch(err => console.log(err))
+                        
                         }
                     else {
                         alert("Error when encrypt document")

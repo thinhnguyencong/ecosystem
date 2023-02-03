@@ -56,6 +56,14 @@ function uploadFile(data) {
     })
 }
 
+function editFile(data) {
+    return sendRequest({
+        url: url+"edit-file",
+        method: "POST",
+        data: data
+    })
+}
+
 function getAllFiles() {
     return sendRequest({
         url: url+"get-all-files",
@@ -115,6 +123,7 @@ export const documentService = {
     createFolder,
     editFolder,
     uploadFile,
+    editFile,
     getAllFiles,
     addComment,
     signDoc,

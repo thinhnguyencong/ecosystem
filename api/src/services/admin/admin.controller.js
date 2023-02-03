@@ -108,8 +108,21 @@ export const createUser = async (req, res, next) => {
 							//add user to Department Internal Folder
 							let department = await Department.findById(dept)
 							const filter = { name: department.name, type: "internal" };
-							let folderUpdated = await Folder.findOneAndUpdate(filter, {$push: {shared: userAdded._id }})
-							console.log("folderUpdated", folderUpdated);
+							let folderUpdated = await Folder.findOneAndUpdate(filter, {$addToSet: {shared: [userAdded._id]}});
+							for (const fileId of folderUpdated.files) {
+								let updatedFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
+							}
+							
+							let descendants = await Folder.find({ancestors: folderUpdated._id.valueOf()}).lean();
+							for (const des of descendants) {
+								console.log(des);
+								let updatedFolder = await Folder.findByIdAndUpdate(des._id.valueOf(), {$addToSet: {shared: [userAdded._id]}});
+								for (const fileId of des.files) {
+									console.log(fileId);
+									let newFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
+								}
+							}
+							// console.log("folderUpdated", folderUpdated);
 							return res.status(200).send({
 								data: userAdded,
 								msg: "Create new user successfully"

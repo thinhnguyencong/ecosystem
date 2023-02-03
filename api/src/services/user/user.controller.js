@@ -402,3 +402,32 @@ export const getTransactions = async (req, res, next) => {
 	// );
 	// console.log("updatedUser", updatedUser)
 }
+export const getTreeUser = async (req, res, next) => {
+	let users = await User.find({}).lean()
+	let result = []
+	let children = []
+	const listDept = await Department.find({}).lean()
+	for (let index = 0; index < listDept.length; index++) {
+		const dept = listDept[index];
+		let userInDept = users.filter(u=> u.dept == dept._id.valueOf()).map(u=> ({_id: u._id.valueOf(), name: u.name}))
+		children.push({
+			_id: dept._id.valueOf(),
+			name: dept.name,
+			children: userInDept,
+			isDisabled: userInDept.length ? false : true
+		})
+	}
+	let noDeptUser = users.filter(user=> user.dept == null).map(u=> ({_id: u._id.valueOf(), name: u.name}))
+	for (let index = 0; index < noDeptUser.length; index++) {
+		children.push(noDeptUser[index])
+	}
+	result.push({
+		_id: "null",
+		name: "Company",
+		children
+	})
+	return res.status(200).send({
+		data: result,
+		msg: "Success"
+	})
+}
