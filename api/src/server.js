@@ -17,17 +17,15 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //config for HTTPS connection
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: { origin: '*' } });
 connectDB()
 const PORT = process.env.PORT || 5555;
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(origin=>origin.trim());
 
 const corsOptions ={
-  // origin: (origin, callback) => {
-  //   allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'))
-  // },
-  origin: true,
+  origin: process.env.ALL_ALLOWED_ORIGINS=='true' ? true : (origin, callback) => {
+    allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'))
+  },
   credentials:true,            //access-control-allow-credentials:true
   optionSuccessStatus:200,
 }
@@ -69,14 +67,37 @@ app.get("/health", (req, res) => {
   res.status(200).send({ message: "Health is good" });
 });
 
+// set Socket io global variable
+global.SOCKET_IO = new Server(httpServer, { cors: { origin: process.env.ALL_ALLOWED_ORIGINS=='true' ? '*' : allowedOrigins } });
+global.CONNECTED_USERS = [];
+
+// register a middleware which checks the userId and allows the connection:
+SOCKET_IO.use((socket, next) => {
+  const userId = socket.handshake.auth.userId;
+  if (!userId) {
+    return next(new Error("invalid user Id"));
+  }
+  socket.userId = userId;
+  next();
+});
+
+SOCKET_IO.on('connection', (socket) => {
+    CONNECTED_USERS.push({
+      userId: socket.userId,
+      socketId: socket.id
+    });
+  socket.emit("users", CONNECTED_USERS);
+  
+  socket.on("disconnect", function () {
+    CONNECTED_USERS = CONNECTED_USERS.filter(
+      (user) => user.socketId !== socket.id
+    );
+  });
+});
+
+
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');
-  io.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
-  });
   httpServer.listen(PORT, () =>
       console.log(`Express app listening on localhost:${PORT}`)
   );

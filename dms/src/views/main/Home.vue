@@ -42,7 +42,7 @@
 </template>
 <script setup>
 import ModalFileDetails from './modal/ModalFileDetails.vue';
-import socketIOClient from "socket.io-client";
+
 import NavBar from '../../components/layout/NavBar.vue';
 import MainView from '../../components/MainView.vue';
 </script>
@@ -59,8 +59,6 @@ import MainView from '../../components/MainView.vue';
       }
     },
     mounted() {
-      // let x = socketIOClient(import.meta.env.VITE_SERVER_URL)
-      // console.log("x", x);
       this.$router.push(this.$route.path)
       console.log("home");
     },

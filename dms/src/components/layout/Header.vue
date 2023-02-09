@@ -1,25 +1,31 @@
 <template>
-    <div class="topnav grid-container m-4 p-2">
-        <div class="grid-item-1">
+    <div class="topnav d-flex justify-content-between">
+        <div class="mr-auto p-2">
           <button @click="openNav">
             <span class="material-icons menu-button">menu</span>
           </button>
         </div>
-        <!-- <div class="grid-item-2">
-            
-        </div> -->
-        <div class="grid-item-3">
-            <button class="pr-4">
-                <span class="material-icons"> notifications </span>
-            </button>
-            <button id="profileDropdown" data-toggle="dropdown">
-                <span class="material-icons">account_circle</span>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="profileDropdown">
-              <a class="dropdown-item" href="#">{{$store.state.auth.user.name}}</a>
-              <a class="dropdown-item" href="#">Settings</a>
-            </div>
+        <div class="right mr-4">
+            <span class="mr-2">
+              <button class="icon-badge-container" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="material-icons icon-badge-icon"> notifications </span>
+                <div class="icon-badge mt-1 font-weight-bold"></div>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right dropdown-notification" aria-labelledby="notificationDropdown">
+                <Notifications/>
+              </div>
+            </span>
+            <span class="ml-2">
+              <button id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="material-icons">account_circle</span>
+              </button>
+              <div class="dropdown-menu " aria-labelledby="profileDropdown">
+                <a class="dropdown-item" href="#">{{$store.state.auth.user.name}}</a>
+                <a class="dropdown-item" href="#">Settings</a>
+              </div>
+          </span>
         </div> 
+        
         <div id="mySidebar" class="sidebar">
           <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
           <a v-if="$store.state.auth.role==='admin'" href="/admin">Admin</a>
@@ -45,11 +51,25 @@ function closeNav() {
   document.getElementById("main").style.marginLeft = "0";
 }
 </script>
+<script>
+  import socket from '../../helpers/socket'
+  import Notifications from '../Notifications.vue'
+  export default {
+    components: {Notifications},
+    created() {
+        socket.on("new notification", (data) => {
+            if(data) {
+                console.log("Notification", data.notification)
+            }
+        });
+    },
+  }
+</script>
 <style lang="scss" scoped>
 .topnav {
   background-color: rgb(255, 255, 255);
   overflow: hidden;
-  height: 4rem;
+  height: 6rem;
 }
 .material-icons {
     font-size: 3rem;
@@ -78,12 +98,12 @@ function closeNav() {
   grid-column-end: 2;
 }
 .grid-item-2 {
-  grid-column-start: 20;
-  grid-column-end: 21;
+  grid-column-start: 30;
+  grid-column-end: 31;
 }
 .grid-item-3 {
-  grid-column-start: 21;
-  grid-column-end: 22;
+  grid-column-start: 32;
+  grid-column-end: 33;
 }
 /* The sidebar menu */
 .sidebar {
@@ -128,6 +148,36 @@ function closeNav() {
   .sidebar {padding-top: 15px;}
   .sidebar a {font-size: 18px;}
 }
+.icon-badge-container {
+    position:relative;
+}
 
-
+.icon-badge-icon {
+    position: relative;
+    border-radius: 50%;
+    padding: 5px;
+}
+.icon-badge {
+  margin-left: 0.7rem;
+    background-color: red;
+    font-size: 0.9rem;
+    color: white;
+    text-align: center;
+    width:1.2rem;
+    height:1.2rem;
+    border-radius: 50%;
+    position: absolute; /* changed */
+    top: -5px; /* changed */
+    left: 19px; /* changed */
+}
+.right {
+  position: absolute;
+  right: 0px;
+  padding: 2rem;
+}
+.dropdown-notification {
+  width: 25rem;
+  max-height: 40vh;
+  overflow-y: scroll; /* Add the ability to scroll */
+}
 </style>

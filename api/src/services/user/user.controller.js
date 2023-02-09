@@ -369,7 +369,54 @@ export const saveTransaction = async (transactionHash, email, clientId) => {
 	);
 	console.log("updatedUser", updatedUser)
 }
+export const createNotification = async ({content, fromId, type, documentId}, userIdList) => {
+	if (!content|| !fromId|| !type|| !documentId ||!userIdList) {
+		return 
+	}
+	for (const userId of userIdList) {
+		const notification = {
+			content : content,
+			fromId : fromId,
+			type: type, // 'file' or 'folder'
+			documentId: documentId,
+		}
+		const updatedUser = await User.findOneAndUpdate(
+			{_id: userId},
+			{ $push: {'notifications': notification }}
+		);
+		const emitArray = CONNECTED_USERS.filter(
+			(client) => client.userId === userId
+		);
+		console.log("updatedUser", updatedUser);
+		if(emitArray.length) {
+			for (const emitUser of emitArray) {
+				SOCKET_IO.to(emitUser.socketId).emit("new notification", {notification: updatedUser.notifications[updatedUser.notifications.length -1]});
+			}
+				
+		}
+		
+	}
+	
+}
 
+export const readNotification = async (req, res, next) => {
+	let {notificationId} = req.query
+	const updatedUser = await User.findOneAndUpdate(
+		{ email: email, 'notifications._id': notificationId},
+		{ 'notifications.$.read': true }
+	);
+	console.log(updatedUser);
+	res.status(200).send({
+		msg: "Read"
+	});
+}
+export const readNotification1 = async (email) => {
+	const updatedUser = await User.findOneAndUpdate(
+		{ email: email, 'notifications._id': "63e0751be91e89a653f5acde"},
+		{ 'notifications.$.read': true }
+	);
+	console.log(updatedUser);
+}
 export const getTransactions = async (req, res, next) => {
 	let {type, clientId} = req.query
 	try {

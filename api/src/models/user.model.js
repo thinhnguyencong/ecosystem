@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema
 
+const Notifications = new Schema ( {
+    content : String,
+    fromId : String,
+    type: String, // 'file' or 'folder'
+    documentId: String,
+    read : { type: Boolean, default : false }
+}, {
+    timestamps: true
+});
 const userSchema = new Schema({
     publicAddress: {
         type: Schema.Types.String,
@@ -48,6 +57,7 @@ const userSchema = new Schema({
             transactions: [Schema.Types.String],
         }
     ],
+    notifications: [Notifications],
 }, 
 {
     timestamps: true

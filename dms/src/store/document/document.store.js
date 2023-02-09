@@ -211,6 +211,16 @@ export const document = {
           }
         );
       },
+      addCommentRealtime({commit}, data){
+        commit('addCommentRealtime', data);
+      },
+      signDocRealtime({commit}, data){
+        commit('signDocRealtime', data);
+      },
+      rejectDocRealtime({commit}, data){
+        commit('rejectDocRealtime', data);
+      },
+      
   },
   mutations: {
     // ------------------getRootFolders-----------------------------
@@ -534,6 +544,15 @@ export const document = {
         console.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
         //toast.error(result.error.response.data.msg ? result.error.response.data.msg : result.error.message);
       }
+    },
+    addCommentRealtime(state, data){
+      state.file.comments = data.comments
+    },
+    signDocRealtime(data){
+      
+    },
+    rejectDocRealtime(data){
+      
     },
   },
 };

@@ -282,6 +282,7 @@ import xlsxPreview from 'xlsx-preview';
 import Comment from "../../../components/Comment.vue"
 import { IpfsClient } from "../../../helpers/ipfs";
 import {encrypt, decrypt} from "../../../helpers/encrypt-decrypt"
+import socket from '../../../helpers/socket';
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 import {renderAsync} from "docx-preview/dist/docx-preview"
@@ -316,7 +317,18 @@ export default {
             isLoadingDownload: false
         }
     },
-
+    created() {
+        socket.on("add comment", (data) => {
+            console.log(data);
+            if(this.documentState.file._id == data.fileId) {
+                console.log("Datar", data);
+                this.$store.dispatch("document/addCommentRealtime", data)
+            }
+        });
+        // socket.on("new notification", (data) => {
+        //     console.log("Datar", data);
+        // });
+    },
     mounted() {
         console.log("111");
         if(this.fileId) {

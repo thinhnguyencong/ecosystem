@@ -5,7 +5,7 @@ import Folder from "../../models/folder.model.js"
 import User from "../../models/user.model.js"
 import { getWeb3 } from "../../config/web3Connection.js";
 import File from "../../models/file.model.js"
-import { saveTransaction } from "../user/user.controller.js"
+import { createNotification, readNotification1, saveTransaction } from "../user/user.controller.js"
 
 const DMS = JSON.parse(fs.readFileSync("src/abis/DMS.json"));
 const NFT_ADDRESS = "0x5281c02A833a491B764a704D3907373B20E7F482"
@@ -20,14 +20,15 @@ export const getRootFolders = async (req, res, next) => {
 		
 	})
 }
-
 export const getFolderById = async (req, res, next) => {
+	SOCKET_IO.emit("hello", {content: "abc"})
 	let id = req.query.id
 	let ancestors= [];
 	let status;
 	const userEmail = req.jwtDecoded.email
 	let user = await User.findOne({email: userEmail}) 
 	let userId = user._id.valueOf() 
+	// await createNotification({content: "this is content"+ randomContent, fromId: userId, type: "folder", documentId: id}, userEmail)
 	if(!isValidObjectId(id)){
 		return res.status(404).send({
 			msg: "Folder not exist"
@@ -37,7 +38,6 @@ export const getFolderById = async (req, res, next) => {
 	let folder = await Folder.findById(id).lean()
 	folder = {...folder, _id: folder._id.valueOf()}
 	let children = await Folder.find({ parent: id }).lean()
-	console.log({...folder});
 	if(!folder){
 		return res.status(404).send({
 			msg: "Folder not exist"
@@ -538,7 +538,38 @@ export const addComment = async (req, res, next) => {
 		let newComment = {content: content, userId: userId, name: user.name, createdAt: new Date(), attachments: newAttachment}
 		let update = { $push: {comments: newComment} };
 		let newFile = await File.findByIdAndUpdate(fileId, update, {new: true}).lean()
-		
+		console.log(file.owner !== userId);
+
+		console.log("listIdShared", listIdShared);
+		if(userId !== file.owner) {
+			createNotification(
+				{
+					content: "<strong>"+ user.name + "</strong>" + " add a new comment to your file.", 
+					type: "file", 
+					documentId: fileId 
+				}, 
+				[...new Set([...[file.owner], ...listIdShared.filter(id=> id !== userId)])],
+			)
+		} else {
+			createNotification(
+				{
+					content: "<strong>"+ user.name + "</strong>" + "comments on your file.", 
+					type: "file", 
+					documentId: fileId 
+				},
+				listIdShared.filter(id=> id !== file.owner),
+			)
+		}
+		const emitArray = CONNECTED_USERS.filter(
+			(client) => newFile.shared.includes(client.userId)
+		);
+		if(emitArray.length) {
+			console.log("emitArray", emitArray);
+			for (const emitUser of emitArray) {
+				SOCKET_IO.to(emitUser.socketId).emit("add comment", {fileId: fileId, comments: newFile.comments});
+			}
+		}
+
 		return res.status(200).send({
 			data: {
 				comments: newFile.comments,

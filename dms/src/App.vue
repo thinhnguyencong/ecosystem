@@ -17,13 +17,28 @@
 import Sidebar from './components/layout/Sidebar.vue'
 import Header from './components/layout/Header.vue';
 import store from './store';
-
+import socket from './helpers/socket';
+import $ from 'jquery'
 // $(document).on('show.bs.modal', '.modal', function() {
 //   const zIndex = 1040 + 10 * $('.modal:visible').length;
 //   $(this).css('z-index', zIndex);
 //   setTimeout(() => $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'));
 // });
-
+$('.dropdown-menu').on('click', function(e) {
+  e.stopPropagation();
+});
+</script>
+<script>
+	export default {
+		created() {
+			socket.on("connect_error", (err) => {
+				console.log("Socket io error", err);
+			});
+		},
+		destroyed() {
+			socket.off("connect_error");
+		},
+	}
 </script>
 
 <style lang="scss">

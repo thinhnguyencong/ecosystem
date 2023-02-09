@@ -39,8 +39,12 @@
 </template>
 <script>
 import $ from 'jquery' 
+import socket from '../helpers/socket';
 export default {
     props: {},
+    created() {
+        
+    },
     data() {
         return {
             comments: [],

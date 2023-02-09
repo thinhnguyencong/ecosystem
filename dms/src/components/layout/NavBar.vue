@@ -118,12 +118,16 @@
 </template>
 <script>
 import { getLayoutOfPage, setLayoutOfPage } from '../../helpers'
-
+import socket from '../../helpers/socket'
 export default {
     mounted() {
         let layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
         this.layout = layout
         this.$emit('onLayoutChange', layout);
+        if(this.authState.user._id) {
+            socket.auth = {userId: this.authState.user._id}
+            socket.connect();
+        }
     },
     data() {
         return {
