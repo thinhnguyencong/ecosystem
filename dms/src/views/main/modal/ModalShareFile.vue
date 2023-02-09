@@ -69,7 +69,7 @@ export default {
             }
             this.$swal({
                 title: 'Are you sure sharing this file?',
-                text: `Anyone in this list can view all files and files in "${this.file.name}" !`,
+                text: `Anyone in this list can view this file "${ JSON.parse(this.file.tokenURI).name}" !`,
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
