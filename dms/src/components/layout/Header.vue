@@ -9,7 +9,7 @@
             <span class="mr-2">
               <button class="icon-badge-container" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="material-icons icon-badge-icon"> notifications </span>
-                <div class="icon-badge mt-1 font-weight-bold"></div>
+                <div v-if="userState.notifications.some(e => e.new)" class="icon-badge mt-1 font-weight-bold"></div>
               </button>
               <div class="dropdown-menu dropdown-menu-right dropdown-notification" aria-labelledby="notificationDropdown">
                 <Notifications/>
@@ -58,10 +58,13 @@ function closeNav() {
     components: {Notifications},
     created() {
         socket.on("new notification", (data) => {
-            if(data) {
-                console.log("Notification", data.notification)
-            }
+            this.$store.dispatch("user/setNotification", data)
         });
+    },
+    computed:{
+        userState() {
+            return this.$store.state.user;
+        },
     },
   }
 </script>

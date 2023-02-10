@@ -9,6 +9,7 @@ const initialState = {
   isLoading: false,
   files: [],
   file: {
+    comments: [],
     isLoading: false,
     isLoadingComment: false,
   },
@@ -403,7 +404,7 @@ export const document = {
     },
     addCommentSuccess(state, result){
         state.file.isLoadingComment = false
-        state.file.comments = result.data.data.comments
+        state.file.comments= [...[result.data.data.comment], ...state.file.comments]
         toast.success(result.data.msg)
     },
     addCommentFailure(state, error){
@@ -546,7 +547,7 @@ export const document = {
       }
     },
     addCommentRealtime(state, data){
-      state.file.comments = data.comments
+      state.file.comments= [...[data.comment], ...state.file.comments]
     },
     signDocRealtime(data){
       

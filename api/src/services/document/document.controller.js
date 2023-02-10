@@ -6,6 +6,7 @@ import User from "../../models/user.model.js"
 import { getWeb3 } from "../../config/web3Connection.js";
 import File from "../../models/file.model.js"
 import { createNotification, readNotification1, saveTransaction } from "../user/user.controller.js"
+import mongoose from "mongoose";
 
 const DMS = JSON.parse(fs.readFileSync("src/abis/DMS.json"));
 const NFT_ADDRESS = "0x5281c02A833a491B764a704D3907373B20E7F482"
@@ -535,44 +536,52 @@ export const addComment = async (req, res, next) => {
 		}
 
 		// update new comment
-		let newComment = {content: content, userId: userId, name: user.name, createdAt: new Date(), attachments: newAttachment}
+		let newComment = {
+			_id: mongoose.Types.ObjectId(), 
+			content: content, 
+			userId: userId, 
+			name: user.name, 
+			createdAt: new Date(), 
+			attachments: newAttachment
+		}
 		let update = { $push: {comments: newComment} };
 		let newFile = await File.findByIdAndUpdate(fileId, update, {new: true}).lean()
 		console.log(file.owner !== userId);
 
 		console.log("listIdShared", listIdShared);
+		createNotification(
+			{
+				from: user.name,
+				content: "comments on a file.", 
+				type: "file", 
+				documentId: fileId 
+			}, 
+			[...new Set([...listIdShared.filter(id=> id !== userId)])],
+		)
 		if(userId !== file.owner) {
 			createNotification(
 				{
-					content: "<strong>"+ user.name + "</strong>" + " add a new comment to your file.", 
+					from: user.name,
+					content: "comments on your file.", 
 					type: "file", 
-					documentId: fileId 
-				}, 
-				[...new Set([...[file.owner], ...listIdShared.filter(id=> id !== userId)])],
-			)
-		} else {
-			createNotification(
-				{
-					content: "<strong>"+ user.name + "</strong>" + "comments on your file.", 
-					type: "file", 
-					documentId: fileId 
+					documentId: fileId
 				},
-				listIdShared.filter(id=> id !== file.owner),
+				[file.owner],
 			)
 		}
 		const emitArray = CONNECTED_USERS.filter(
-			(client) => newFile.shared.includes(client.userId)
-		);
+			(client) => [...newFile.shared, ...[newFile.owner]].includes(client.userId)
+		).filter(x => x.userId !== userId);
+		
 		if(emitArray.length) {
-			console.log("emitArray", emitArray);
 			for (const emitUser of emitArray) {
-				SOCKET_IO.to(emitUser.socketId).emit("add comment", {fileId: fileId, comments: newFile.comments});
+				SOCKET_IO.to(emitUser.socketId).emit("add comment", {fileId: fileId, comment: newComment});
 			}
 		}
 
 		return res.status(200).send({
 			data: {
-				comments: newFile.comments,
+				comment: newComment,
 				fileId: fileId
 			},
 			msg: "Add comment successfully!"

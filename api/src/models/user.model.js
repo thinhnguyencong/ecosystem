@@ -3,10 +3,11 @@ const Schema = mongoose.Schema
 
 const Notifications = new Schema ( {
     content : String,
-    fromId : String,
+    from : String,
     type: String, // 'file' or 'folder'
     documentId: String,
-    read : { type: Boolean, default : false }
+    read : { type: Boolean, default : false },
+    new : { type: Boolean, default : true }
 }, {
     timestamps: true
 });

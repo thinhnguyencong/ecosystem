@@ -369,14 +369,23 @@ export const saveTransaction = async (transactionHash, email, clientId) => {
 	);
 	console.log("updatedUser", updatedUser)
 }
-export const createNotification = async ({content, fromId, type, documentId}, userIdList) => {
-	if (!content|| !fromId|| !type|| !documentId ||!userIdList) {
+
+export const getNotifications = async (req, res, next) => {
+	const userEmail = req.jwtDecoded.email
+	let user = await User.findOne({email: userEmail})
+	return res.status(200).send({
+		data: user.notifications
+	})
+}
+
+export const createNotification = async ({content, from, type, documentId}, userIdList) => {
+	if (!content|| !from|| !type|| !documentId ||!userIdList) {
 		return 
 	}
 	for (const userId of userIdList) {
 		const notification = {
 			content : content,
-			fromId : fromId,
+			from : from,
 			type: type, // 'file' or 'folder'
 			documentId: documentId,
 		}
@@ -392,9 +401,7 @@ export const createNotification = async ({content, fromId, type, documentId}, us
 			for (const emitUser of emitArray) {
 				SOCKET_IO.to(emitUser.socketId).emit("new notification", {notification: updatedUser.notifications[updatedUser.notifications.length -1]});
 			}
-				
 		}
-		
 	}
 	
 }

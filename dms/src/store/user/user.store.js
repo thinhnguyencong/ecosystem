@@ -19,7 +19,8 @@ const initialState = {
   encryptedKey: null,
   deptList: [],
   roleList: [],
-  signerList: []
+  signerList: [], 
+  notifications: []
 };
 
 export const user = {
@@ -143,6 +144,21 @@ export const user = {
         }
       );
     },
+    getNotifications({ commit }) {
+      commit('getNotifications');
+      return userService.getNotifications()
+      .then(
+        res => {
+          commit('getNotificationsSuccess', res);
+        },
+        error => {
+          commit('getNotificationsFailure', error);
+        }
+      );
+    },
+    setNotification({commit}, data) {
+      commit('setNotification', data);
+    }
   },
   mutations: {
     // ------------------getUserInfo-----------------------------
@@ -316,6 +332,28 @@ export const user = {
       state.isLoading = false
       console.log(error);
       toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
+
+    // ------------------getNotifications-----------------------------
+    getNotifications(state){
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
+    },
+    getNotificationsSuccess(state, result){
+      state.isLoading = false;
+      console.log(result);
+      state.notifications = result.data.data;
+    },
+    getNotificationsFailure(state, error){
+      state.isLoading = false
+      console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
+
+    setNotification(state, data){
+      console.log(data);
+      state.notifications= [...[data.notification], ...state.notifications]
     },
   }
 };

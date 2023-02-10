@@ -16,4 +16,6 @@ userRouter.get('/department-list', controller.getListDepartment);
 userRouter.get('/role-list', controller.getListRole);
 userRouter.get('/signer-list', controller.getListSigner);
 userRouter.get('/tree-user', controller.getTreeUser);
+
+userRouter.get('/notifications', controller.getNotifications);
 export default userRouter

@@ -61,6 +61,12 @@ function getTreeUser(data) {
         method: "GET",
     })
 }
+function getNotifications(data) {
+    return sendRequest({
+        url: url+"notifications",
+        method: "GET",
+    })
+}
 export const userService = {
     getUserInfo,
     transferToken,
@@ -70,5 +76,6 @@ export const userService = {
     getDeptList,
     getRoleList,
     getSignerList,
-    getTreeUser
+    getTreeUser,
+    getNotifications
 };
