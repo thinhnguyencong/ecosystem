@@ -158,7 +158,20 @@ export const user = {
     },
     setNotification({commit}, data) {
       commit('setNotification', data);
-    }
+    },
+    readNotification({ commit }, data) {
+      commit('readNotification');
+      return userService.readNotification(data)
+      .then(
+        res => {
+          commit('readNotificationSuccess', {res, data});
+        },
+        error => {
+          commit('readNotificationFailure', error);
+        }
+      );
+    },
+    
   },
   mutations: {
     // ------------------getUserInfo-----------------------------
@@ -354,6 +367,26 @@ export const user = {
     setNotification(state, data){
       console.log(data);
       state.notifications= [...[data.notification], ...state.notifications]
+    },
+
+    // ------------------readNotification-----------------------------
+    readNotification(state){
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
+    },
+    readNotificationSuccess(state, result){
+      let index = state.notifications.findIndex((obj => obj._id == result.data.notificationId));
+      state.notifications[index] = {
+        ...state.notifications[index],
+        read: true,
+        new: false
+      }
+    },
+    readNotificationFailure(state, error){
+      state.isLoading = false
+      console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
     },
   }
 };

@@ -5,7 +5,7 @@ import Folder from "../../models/folder.model.js"
 import User from "../../models/user.model.js"
 import { getWeb3 } from "../../config/web3Connection.js";
 import File from "../../models/file.model.js"
-import { createNotification, readNotification1, saveTransaction } from "../user/user.controller.js"
+import { createNotification, saveTransaction } from "../user/user.controller.js"
 import mongoose from "mongoose";
 
 const DMS = JSON.parse(fs.readFileSync("src/abis/DMS.json"));

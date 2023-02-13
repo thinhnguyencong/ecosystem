@@ -3,10 +3,10 @@
         <header class="ml-3 h5">
             <strong>Notifications</strong>
         </header>
-        <div v-if="toBeShown.length">
-            <div v-for="(noti,pIndex) in sortNotification(toBeShown)" :key="pIndex">
+        <div v-if="userState.notifications.length">
+            <div v-for="(noti,pIndex) in userState.notifications.slice(0, currentPage * 3)" :key="pIndex">
                 <div v-if="noti.type == 'file'">
-                    <router-link :to="'/file/'+ noti.documentId" style="text-decoration: none; color: inherit;">  
+                    <router-link :to="'/file/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click.native="readNotification(noti._id, noti.read)">  
                         <div v-if="!noti.read">
                             <div class="read list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
                                 <div class="d-flex flex-row">
@@ -29,7 +29,7 @@
                     
                 </div>
                 <div v-if="noti.type == 'folder'">
-                    <router-link :to="'/folder/'+ noti.documentId" style="text-decoration: none; color: inherit;">
+                    <router-link :to="'/folder/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click="readNotification(noti._id)">
                         <div v-if="!noti.read">
                             <div class="read list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
                                 <div class="d-flex flex-row">
@@ -59,7 +59,7 @@
         
         <footer class="ml-3">
             <a href="#" v-if="currentPage!==1" type="button"  @click.stop="prevPage">Show less</a>
-            <a href="#" v-if="currentPage !== totalPages && toBeShown.length" type="button"  @click.stop="nextPage">Show more</a>
+            <a href="#" v-if="currentPage !== totalPages && userState.notifications.length" type="button"  @click.stop="nextPage">Show more</a>
         </footer>
     </div>
 </template>
@@ -71,21 +71,14 @@ export default {
     data() {
         return {
             currentPage: 1,
-            notifications: [
-            
-            ]
         }
     },
     computed:{
         userState() {
             return this.$store.state.user;
         },
-        toBeShown() {
-            this.notifications = this.userState.notifications
-            return this.notifications.slice(0, this.currentPage * 3);
-        },
         totalPages() {
-            return Math.ceil( this.notifications.length / 3);
+            return Math.ceil( this.userState.notifications.length / 3);
         }
     },
     methods: {
@@ -104,16 +97,19 @@ export default {
             }
             return noti.sort((a, b) =>  dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
         },
+        readNotification(id, read) {
+            if(!read) {
+                this.$store.dispatch("user/readNotification", {notificationId: id})
+            }
+        }
     },
     watch: {
-        'userState.notifications':{
+        'userState.notifications': {
             handler(newVal, oldVal) {
                 console.log(newVal, oldVal);
-                if(newVal && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-                    this.notifications = this.userState.notifications
-                }
             },
             immediate: true,
+            deep: true,
         },
     },
 }

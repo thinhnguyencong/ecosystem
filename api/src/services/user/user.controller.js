@@ -2,6 +2,7 @@ import User from "../../models/user.model.js";
 import lightwallet from "eth-lightwallet"
 import fs from "fs"
 import crypto from "crypto"
+import mongoose from "mongoose";
 // import ffi from "ffi-napi"
 import { getWeb3 } from "../../config/web3Connection.js";
 import Department from "../../models/department.model.js";
@@ -389,14 +390,14 @@ export const createNotification = async ({content, from, type, documentId}, user
 			type: type, // 'file' or 'folder'
 			documentId: documentId,
 		}
-		const updatedUser = await User.findOneAndUpdate(
+		let updatedUser = await User.findOneAndUpdate(
 			{_id: userId},
-			{ $push: {'notifications': notification }}
+			{ $push: {'notifications': notification }},
+			{ new: true }
 		);
 		const emitArray = CONNECTED_USERS.filter(
 			(client) => client.userId === userId
 		);
-		console.log("updatedUser", updatedUser);
 		if(emitArray.length) {
 			for (const emitUser of emitArray) {
 				SOCKET_IO.to(emitUser.socketId).emit("new notification", {notification: updatedUser.notifications[updatedUser.notifications.length -1]});
@@ -407,23 +408,18 @@ export const createNotification = async ({content, from, type, documentId}, user
 }
 
 export const readNotification = async (req, res, next) => {
-	let {notificationId} = req.query
+	let {notificationId} = req.body.data
+	const userEmail = req.jwtDecoded.email
 	const updatedUser = await User.findOneAndUpdate(
-		{ email: email, 'notifications._id': notificationId},
-		{ 'notifications.$.read': true }
+		{ email: userEmail, 'notifications._id': notificationId},
+		{ 'notifications.$.read': true, 'notifications.$.new': false, }
 	);
 	console.log(updatedUser);
 	res.status(200).send({
 		msg: "Read"
 	});
 }
-export const readNotification1 = async (email) => {
-	const updatedUser = await User.findOneAndUpdate(
-		{ email: email, 'notifications._id': "63e0751be91e89a653f5acde"},
-		{ 'notifications.$.read': true }
-	);
-	console.log(updatedUser);
-}
+
 export const getTransactions = async (req, res, next) => {
 	let {type, clientId} = req.query
 	try {

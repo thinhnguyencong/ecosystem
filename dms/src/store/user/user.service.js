@@ -67,6 +67,13 @@ function getNotifications(data) {
         method: "GET",
     })
 }
+function readNotification(data) {
+    return sendRequest({
+        url: url+"read-notification",
+        method: "POST",
+        data: data
+    })
+}
 export const userService = {
     getUserInfo,
     transferToken,
@@ -77,5 +84,6 @@ export const userService = {
     getRoleList,
     getSignerList,
     getTreeUser,
-    getNotifications
+    getNotifications,
+    readNotification
 };

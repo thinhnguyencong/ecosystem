@@ -18,4 +18,5 @@ userRouter.get('/signer-list', controller.getListSigner);
 userRouter.get('/tree-user', controller.getTreeUser);
 
 userRouter.get('/notifications', controller.getNotifications);
+userRouter.post('/read-notification', controller.readNotification);
 export default userRouter

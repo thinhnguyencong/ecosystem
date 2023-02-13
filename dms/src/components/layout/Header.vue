@@ -7,9 +7,9 @@
         </div>
         <div class="right mr-4">
             <span class="mr-2">
-              <button class="icon-badge-container" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button @click="readOneTime" class="icon-badge-container" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="material-icons icon-badge-icon"> notifications </span>
-                <div v-if="userState.notifications.some(e => e.new)" class="icon-badge mt-1 font-weight-bold"></div>
+                <div v-if="showIconBadge" class="icon-badge mt-1 font-weight-bold"></div>
               </button>
               <div class="dropdown-menu dropdown-menu-right dropdown-notification" aria-labelledby="notificationDropdown">
                 <Notifications/>
@@ -54,16 +54,45 @@ function closeNav() {
 <script>
   import socket from '../../helpers/socket'
   import Notifications from '../Notifications.vue'
+  
   export default {
     components: {Notifications},
     created() {
-        socket.on("new notification", (data) => {
-            this.$store.dispatch("user/setNotification", data)
-        });
+      if(this.authState.user._id) {
+          socket.auth = {userId: this.authState.user._id}
+          socket.connect();
+      }
+      socket.on("new notification", (data) => {
+          this.$store.dispatch("user/setNotification", data)
+      });
+    },
+    data() {
+      return {
+        showIconBadge: false
+      }
+    },
+    methods: {
+      readOneTime() {
+        this.showIconBadge = false
+      }
     },
     computed:{
         userState() {
             return this.$store.state.user;
+        },
+        authState() {
+            return this.$store.state.auth;
+        },
+    },
+    watch: {
+        '$store.state.user.notifications': {
+            handler(newVal, oldVal) {
+                if(newVal !== oldVal) {
+                    this.showIconBadge = newVal.some(e => e.new) ? true : false
+                }
+            },
+            immediate: true,
+            deep: true
         },
     },
   }
