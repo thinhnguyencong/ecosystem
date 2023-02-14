@@ -26,6 +26,10 @@ export const authToken = async (req, res, next) => {
 		console.log("jwtAccessToken", jwtAccessToken);
 		const user = authStrategy.getUser(jwtAccessToken);
 		const userFind = await User.findOne({username: user.username}, "publicAddress").exec()
+		if(!userFind) {
+			console.log("Not found user, contact admin for more information!");
+			return res.status(404).send({msg: "Not found user, contact admin for more information!"});
+		}
 		console.log(`User ${user.username} successfully logged in.`);
 		res.cookie("refresh_token", JSON.parse(tokenRes).refresh_token, {
 			httpOnly: true,
@@ -43,9 +47,11 @@ export const authToken = async (req, res, next) => {
 		});
 	})
 	.catch(error => {
-		console.error("Error in Auth Token", error.error);
+		console.error("Error in Auth Token", error.message);
 		const status = error.statusCode || 500
-		res.sendStatus(status);
+		res.sendStatus(status).json({
+			msg: "Error in Auth Token"
+		});
 	});
 }
 

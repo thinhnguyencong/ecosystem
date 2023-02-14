@@ -4,7 +4,11 @@ const Schema = mongoose.Schema
 const Notifications = new Schema ( {
     content : String,
     from : String,
-    type: String, // 'file' or 'folder'
+    type: {
+        type: Schema.Types.String,
+        enum: ['file', 'folder'],
+        required : true 
+    },
     documentId: String,
     read : { type: Boolean, default : false },
     new : { type: Boolean, default : true }
@@ -59,6 +63,21 @@ const userSchema = new Schema({
         }
     ],
     notifications: [Notifications],
+    recent: [
+        {
+            documentId: Schema.Types.String,
+            type: {
+                type: Schema.Types.String,
+                enum: ['file', 'folder'],
+                required : true 
+            },
+            lastAccess: {
+                type: Number,
+                default: new Date(),
+                required : true 
+            },
+        }
+    ]
 }, 
 {
     timestamps: true

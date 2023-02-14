@@ -1,26 +1,29 @@
 <template>
     <div>
-      <span class="material-icons">folder</span>
-      <h4 class="truncate">{{name}}</h4>
+      <span v-if="folder.owner?._id === authState.user._id" class="material-icons">folder</span>
+      <span v-else class="material-icons">folder_shared</span>
+      <h4 class="truncate">{{folder.name}}</h4>
     </div>
 </template>
 <script>
 
 export default {
   props: {
-    id: String,
-    name: String
+    folder: Object,
   },
   data() {
     return {
     }
   },
 
-   methods: {
+  methods: {
     handleAccessFolder() {
-      this.$router.push('/folder/' + this.id )
+      this.$router.push('/folder/' + this.folder._id )
     },
-   }
+  },
+  computed: {
+    authState() { return this.$store.state.auth; },
+  },
 }
 </script>
 <style scoped>

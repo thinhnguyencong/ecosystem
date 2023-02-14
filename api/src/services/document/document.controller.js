@@ -22,14 +22,12 @@ export const getRootFolders = async (req, res, next) => {
 	})
 }
 export const getFolderById = async (req, res, next) => {
-	SOCKET_IO.emit("hello", {content: "abc"})
 	let id = req.query.id
 	let ancestors= [];
 	let status;
 	const userEmail = req.jwtDecoded.email
 	let user = await User.findOne({email: userEmail}) 
 	let userId = user._id.valueOf() 
-	// await createNotification({content: "this is content"+ randomContent, fromId: userId, type: "folder", documentId: id}, userEmail)
 	if(!isValidObjectId(id)){
 		return res.status(404).send({
 			msg: "Folder not exist"
@@ -50,6 +48,8 @@ export const getFolderById = async (req, res, next) => {
 		ownerInfo = await getUserInfoById(folder.owner)
 	}
 	children = await Promise.all(children.map(async c=> ({...c, owner: await getUserInfoById(c.owner)})))
+	await addToRecent({documentId: id, user: user, type: 'folder'})
+
 	// check if folder is public folder
 	if(folder.type == "public" || folder.shared.includes(userId) || folder.owner == userId) {
 		if(folder.type == "public") {
@@ -169,6 +169,32 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 	
 }
 
+export const getRecentDocuments = async (req, res, next) => {
+	const userEmail = req.jwtDecoded.email
+	let user = await User.findOne({email: userEmail}).lean()
+	let userId = user._id.valueOf()
+	// console.log(userId);
+	if(isValidObjectId(userId)) {
+		let recentDocs = JSON.parse(JSON.stringify(user.recent))
+		console.log(recentDocs);
+		let recentFolders = await Promise.all(recentDocs.filter(item => item.type=='folder').map(async item => ({...item, ...JSON.parse(JSON.stringify(await Folder.findById(item.documentId)))})))
+		let recentFiles = await Promise.all(recentDocs.filter(item => item.type=='file').map(async item => ({...item, ...JSON.parse(JSON.stringify(await File.findById(item.documentId)))})))
+		console.log("recentFolders", recentFolders);
+		return res.send({
+			msg: "Success",
+			// data: {
+			// 	recentFolders: recentFolders,
+			// 	recentFiles: {...myFolder, files: files, owner: await getUserInfoById(userId)},
+			// },
+		})
+	}else {
+		return res.status(404).send({
+			msg: "Folder not found"
+		})
+	}
+	
+}
+
 export const createFolder = async (req, res, next) => { 
 	let {parentId, name} = req.body.data
 	console.log(req.body);
@@ -260,11 +286,13 @@ export const editFolder = async (req, res, next) => {
 		sharedList = sharedList.filter(function(item) {
 			return item !== userId
 		})
+		// update shareList of this folder
 		let updatedFolder = await Folder.findByIdAndUpdate(folderId, {$addToSet: {shared: sharedList}});
 		for (const fileId of updatedFolder.files) {
 			let updatedFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: sharedList}})
 		}
 		
+		// update shareList of descendants of this folder
 		let descendants = await Folder.find({ancestors: folderId}).lean();
 		for (const des of descendants) {
 			console.log(des);
@@ -274,6 +302,15 @@ export const editFolder = async (req, res, next) => {
 				let newFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: sharedList}})
 			}
 		}
+		createNotification(
+			{
+				from: user.name,
+				content: "share a folder with you.", 
+				type: "folder", 
+				documentId: data.folderId 
+			}, 
+			[...new Set([...sharedList.filter(id=> id !== userId)])]
+		)
 		return res.status(200).send({
 			msg: "Success",
 			data: {
@@ -294,16 +331,25 @@ export const editFile = async (req, res, next) => {
 	let user = await User.findOne({email: userEmail}) 
 	let userId = user._id.valueOf()
 	let file = await File.findById(data.fileId)
-	// check if owner own this folder
-	if(file.owner !== userId) {
-		return res.status(400).send({
-			msg: "Bad request"
+	if(!file) {
+		return res.status(404).send({
+			msg: "Not Found",
 		})
 	}
 	if(type == 'rename') {
 		
 	}else if(type == 'share') {
 		let updatedFile = await File.findByIdAndUpdate(data.fileId, {$addToSet: {shared: data.sharedList}})
+		createNotification(
+			{
+				from: user.name,
+				content: "share a file with you.", 
+				type: "file", 
+				documentId: data.fileId 
+			}, 
+			[...new Set([...data.sharedList.filter(id=> id !== userId)])],
+		)
+
 		return res.status(200).send({
 			msg: "Success",
 			data: {
@@ -429,12 +475,17 @@ export const uploadFile = async (req, res, next) => {
 						}
 						const filter1 = { name: "My Folder", type: "normal", parent: null, owner: user._id.valueOf()};
 						let folderUpdated = await Folder.findByIdAndUpdate(JSON.parse(tokenURI).folder, {$push: {files: newFileCreated._id.valueOf() }})
-						// let myFolderUpdated = await Folder.findOneAndUpdate(filter1, {$push: {files: newFileCreated._id.valueOf() }})
-						let fileData= {
-							tokenURI: JSON.parse(tokenURI),
-							tokenId: newFileCreated.tokenId
-						}
 
+						await createNotification(
+							{
+								from: user.name,
+								content: "upload a file for you to review/sign.", 
+								type: "file", 
+								documentId: newFileCreated._id.valueOf() 
+							}, 
+							[...new Set([...listIdShared.filter(id=> id !== user._id.valueOf())])],
+						)
+						
 						return res.status(200).send({
 							data: JSON.parse(JSON.stringify(newFileCreated)),
 							msg: "Upload file successfully!"
@@ -546,9 +597,7 @@ export const addComment = async (req, res, next) => {
 		}
 		let update = { $push: {comments: newComment} };
 		let newFile = await File.findByIdAndUpdate(fileId, update, {new: true}).lean()
-		console.log(file.owner !== userId);
 
-		console.log("listIdShared", listIdShared);
 		createNotification(
 			{
 				from: user.name,
@@ -909,6 +958,7 @@ export const getFileById = async (req, res, next) => {
 		}
 		if(fileById.shared.includes(userId)|| fileById.owner == userId) {
 			fileById.owner = await getUserInfoById(fileById.owner)
+			await addToRecent({documentId: id, user: user, type: 'file'})
 			
 			return res.status(200).send({
 				data: {
@@ -1118,6 +1168,22 @@ const getFileStatus = async (tokenId, publicAddress, dmsContract) => {
 		}
 	}
 }
-function getUniqueListBy(arr, key) {
-    return [...new Map(arr.map(item => [item[key], item])).values()]
+async function addToRecent({documentId, user, type}) {
+    if(user.recent.some(f=> f.documentId === documentId)) {
+		const updatedUser = await User.findOneAndUpdate(
+			{ email: user.email, 'recent.documentId': documentId},
+			{ 'recent.$.lastAccess' : new Date()},
+			{ upsert: true} 
+		);
+	}else {
+		const addToRecent = {
+			documentId: documentId,
+			type: type,
+		}
+		const updatedUser = await User.findOneAndUpdate(
+			{ email: user.email},
+			{ $push : {recent : addToRecent}}, 
+			{ new: true }
+		);
+	}
 }

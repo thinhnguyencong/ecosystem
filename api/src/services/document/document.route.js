@@ -10,6 +10,7 @@ documentRouter.post('/create-folder', controller.createFolder);
 documentRouter.post('/edit-folder', controller.editFolder);
 documentRouter.get('/shared-with-me-folder', controller.getSharedWithMeFolder);
 documentRouter.get('/tree-folder', controller.getTreeFolder);
+documentRouter.get('/recent-docs', controller.getRecentDocuments);
 
 documentRouter.post('/upload-file', controller.uploadFile);
 documentRouter.post('/edit-file', controller.editFile);

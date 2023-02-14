@@ -221,6 +221,19 @@ export const document = {
       rejectDocRealtime({commit}, data){
         commit('rejectDocRealtime', data);
       },
+      getRecentDocuments({ commit }) {
+        commit('getRecentDocuments');
+        return documentService.getRecentDocuments()
+        .then(
+          res => {
+            commit('getRecentDocumentsSuccess', res);
+          },
+          error => {
+            commit('getRecentDocumentsFailure', error);
+          }
+        );
+      },
+      
       
   },
   mutations: {
@@ -553,6 +566,18 @@ export const document = {
       
     },
     rejectDocRealtime(data){
+      
+    },
+    // ------------------getRecentDocuments-----------------------------
+    getRecentDocuments(state, data){
+
+    },
+    getRecentDocumentsSuccess(state, result){
+      console.log(result);
+
+    },
+    getRecentDocumentsFailure(state, result){
+      console.log(result.error);
       
     },
   },

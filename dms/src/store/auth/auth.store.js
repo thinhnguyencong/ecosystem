@@ -142,7 +142,10 @@ export const auth = {
     },
     getAuthTokenFailure(state, error) {
       state.isLoading = false
-      console.log(error);
+      console.log(error.response.data.msg);
+      if(error.response.status == 404) {
+        toast.error(error.response.data.msg)
+      }
     },
 
     // ------------------logout-----------------------------

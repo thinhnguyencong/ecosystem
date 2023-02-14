@@ -27,6 +27,8 @@ const folderSchema = new Schema({
         type: [Schema.Types.String],
         default: null,
     },
+    hidden: [Schema.Types.String],
+    favorite: [Schema.Types.String]
 },
 {
     timestamps: true

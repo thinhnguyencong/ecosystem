@@ -114,6 +114,12 @@ function getFileStatusById(data) {
     })
 }
 
+function getRecentDocuments() {
+    return sendRequest({
+        url: url+"recent-docs",
+        method: "GET",
+    })
+}
 
 export const documentService = {
     getRootFolders,
@@ -130,5 +136,6 @@ export const documentService = {
     rejectDoc,
     getTreeFolder,
     getFileById,
-    getFileStatusById
+    getFileStatusById,
+    getRecentDocuments
 };

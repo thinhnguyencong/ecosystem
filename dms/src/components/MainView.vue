@@ -44,8 +44,7 @@
                         <div class="folder" @click="handleAccessFolder(folder._id)">
                             <FolderVue
                                 :key="index"
-                                :name="folder.name"
-                                :id="folder._id" 
+                                :folder="folder" 
                             />
                         </div>
                     </div>

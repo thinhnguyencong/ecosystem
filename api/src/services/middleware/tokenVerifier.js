@@ -38,7 +38,7 @@ const tokenVerifier = (req, res, next) => {
       
     })
     .catch(error => {
-      console.error("Error in Auth Token", error.error);
+      console.error("Error in Authenticate Token", error.error);
       res.sendStatus(error.statusCode);
     });
 };

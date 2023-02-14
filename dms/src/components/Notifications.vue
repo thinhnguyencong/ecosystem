@@ -3,8 +3,8 @@
         <header class="ml-3 h5">
             <strong>Notifications</strong>
         </header>
-        <div v-if="userState.notifications.length">
-            <div v-for="(noti,pIndex) in userState.notifications.slice(0, currentPage * 3)" :key="pIndex">
+        <div v-if="notifications.length">
+            <div v-for="(noti,pIndex) in notifications.slice(0, currentPage * 3)" :key="pIndex">
                 <div v-if="noti.type == 'file'">
                     <router-link :to="'/file/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click.native="readNotification(noti._id, noti.read)">  
                         <div v-if="!noti.read">
@@ -29,7 +29,7 @@
                     
                 </div>
                 <div v-if="noti.type == 'folder'">
-                    <router-link :to="'/folder/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click="readNotification(noti._id)">
+                    <router-link :to="'/folder/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click.native="readNotification(noti._id, noti.read)">
                         <div v-if="!noti.read">
                             <div class="read list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
                                 <div class="d-flex flex-row">
@@ -58,19 +58,24 @@
         </div>
         
         <footer class="ml-3">
-            <a href="#" v-if="currentPage!==1" type="button"  @click.stop="prevPage">Show less</a>
-            <a href="#" v-if="currentPage !== totalPages && userState.notifications.length" type="button"  @click.stop="nextPage">Show more</a>
+            <div class="d-flex justify-content-between">
+                <a class="p-1" href="#" v-if="currentPage !== totalPages && notifications.length" type="button"  @click.stop="nextPage">Show more</a>
+                <a class="p-1 text-right pr-4" href="#" v-if="currentPage!==1" type="button"  @click.stop="prevPage">Show less</a>
+            </div>
+            
         </footer>
     </div>
 </template>
 <script>
 export default {
     mounted() {
-        this.$store.dispatch("user/getNotifications")
+        this.initData()
+        
     },
     data() {
         return {
             currentPage: 1,
+            notifications: []
         }
     },
     computed:{
@@ -78,10 +83,14 @@ export default {
             return this.$store.state.user;
         },
         totalPages() {
-            return Math.ceil( this.userState.notifications.length / 3);
+            return Math.ceil( this.notifications.length / 3);
         }
     },
     methods: {
+        async initData() {
+            await this.$store.dispatch("user/getNotifications")
+            this.notifications = this.sortNotification(this.userState.notifications)
+        },
         nextPage(){
             if(this.currentPage <  this.totalPages) this.currentPage++;
         },
@@ -92,21 +101,24 @@ export default {
             return dayjs(time).fromNow();
         },
         sortNotification(noti) {
-            if (noti.length == 1 || noti.length == 0) {
-                return noti;
-            }
-            return noti.sort((a, b) =>  dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
+            return noti.sort(function(a, b) {
+                console.log(a.createdAt);
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
         },
         readNotification(id, read) {
             if(!read) {
                 this.$store.dispatch("user/readNotification", {notificationId: id})
+                this.notifications.find(v => v._id === id).read = true;
+                this.notifications.find(v => v._id === id).new = false;
             }
         }
     },
     watch: {
         'userState.notifications': {
             handler(newVal, oldVal) {
-                console.log(newVal, oldVal);
+                console.log(newVal);
+                this.notifications = this.sortNotification(JSON.parse(JSON.stringify(newVal)))
             },
             immediate: true,
             deep: true,

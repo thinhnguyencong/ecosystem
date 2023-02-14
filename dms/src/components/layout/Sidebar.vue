@@ -23,6 +23,10 @@
 				<span class="material-icons">description</span>
 				<span class="text">My Folder</span>
 			</router-link>
+			<router-link to="/recent" :class="authState.active == 'recent' ? 'button sidebar-active' : 'button'">
+				<span class="material-icons">history</span>
+				<span class="text">Recent</span>
+			</router-link>
 			<router-link to="/shared-with-me" :class="authState.active == 'shared-with-me' ? 'button sidebar-active' : 'button'">
 				<span class="material-icons">folder_shared</span>
 				<span class="text">Shared With Me</span>

@@ -3,6 +3,7 @@ import jwt_decode from "jwt-decode";
 import LandingPage from '../views/main/LandingPage.vue'
 import Home from '../views/main/Home.vue'
 import MyFolder from '../views/main/MyFolder.vue'
+import Recent from '../views/main/Recent.vue'
 import ShareWithMe from '../views/main/SharedWithMe.vue'
 import Directory from '../views/main/Directory.vue'
 import AdminPage from '../views/main/AdminPage.vue'
@@ -66,6 +67,13 @@ const routes = [
     path: '/my-folder',
     name: 'My Folder',
     component: MyFolder,
+	meta: { requiresAuth: true, requiresAdmin: false },
+	children: [fileRoute]
+  },
+  {
+    path: '/recent',
+    name: 'Recent',
+    component: Recent,
 	meta: { requiresAuth: true, requiresAdmin: false },
 	children: [fileRoute]
   },

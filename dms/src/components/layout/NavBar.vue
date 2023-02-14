@@ -41,6 +41,29 @@
                 </li>
             </ol>
         </nav>
+        <nav v-if="$route.matched[0].name == 'Recent'" aria-label="breadcrumb" class="mt-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
+                    <span class="material-icons">history</span>
+                    <span class="mt-1">&nbsp;Recent</span>
+                </li>
+                <li class="ml-auto mr-5">
+                    <v-btn @click="switchLayout" flat icon color="indigo">
+                        <v-icon v-if="layout == 'grid'" data-toggle="tooltip" title="" color="black">
+                            list
+                        </v-icon>
+                        <v-icon v-if="layout == 'list'" data-toggle="tooltip" title="" color="black">
+                            grid_view
+                        </v-icon>
+                    </v-btn>
+                    <v-btn @click="handleDrawer" flat icon color="indigo">
+                        <v-icon data-toggle="tooltip" title="" color="black">
+                            info
+                        </v-icon>
+                    </v-btn>
+                </li>
+            </ol>
+        </nav>
         <nav v-if="$route.matched[0].name == 'Shared With Me'" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">

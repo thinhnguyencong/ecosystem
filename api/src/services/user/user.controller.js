@@ -359,7 +359,7 @@ export const getListSigner = async (req, res, next) => {
 	
 	res.status(200).send({
 		data: signerList,
-		msg: "Get singers successfully"
+		msg: "Get signers successfully"
 	});
 }
 export const saveTransaction = async (transactionHash, email, clientId) => {
@@ -368,7 +368,6 @@ export const saveTransaction = async (transactionHash, email, clientId) => {
 		{ email: email, 'servicesUsed.serviceId': service._id },
 		{ $push: {'servicesUsed.$.transactions': transactionHash }}
 	);
-	console.log("updatedUser", updatedUser)
 }
 
 export const getNotifications = async (req, res, next) => {
@@ -378,7 +377,11 @@ export const getNotifications = async (req, res, next) => {
 		data: user.notifications
 	})
 }
-
+/**
+ * Function to send notification
+ * param1: notification content
+ * param2: userId list to send notification
+ */
 export const createNotification = async ({content, from, type, documentId}, userIdList) => {
 	if (!content|| !from|| !type|| !documentId ||!userIdList) {
 		return 
@@ -414,7 +417,6 @@ export const readNotification = async (req, res, next) => {
 		{ email: userEmail, 'notifications._id': notificationId},
 		{ 'notifications.$.read': true, 'notifications.$.new': false, }
 	);
-	console.log(updatedUser);
 	res.status(200).send({
 		msg: "Read"
 	});
