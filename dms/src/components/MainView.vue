@@ -94,7 +94,7 @@
                     <tbody>
                         <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in folders" :key="folder._id">
                             <th class="truncate" scope="row">
-                                <i class="mdi mdi-folder text-custom-color-blue"></i> {{folder.name}}
+                                <i :class="folder.owner?._id === authState.user._id ? 'mdi mdi-folder text-custom-color-blue' : 'mdi mdi-folder-account text-custom-color-blue'"></i> {{folder.name}}
                             </th>
                             <td>-</td>
                             <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
@@ -146,7 +146,7 @@
                                 <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
                             </th>
                             <td>{{file.tokenId}}</td>
-                            <td>{{(new Date(file.createdAt)).toDateString()}}</td>
+                            <td>{{file.lastAccess ? dayjs(file.lastAccess).format('HH:mm DD/MM/YYYY') : (new Date(file.createdAt)).toDateString()}}</td>
                             <td :class="getClassStatus(file.status)">{{file.status}}</td>
                             <td>{{file.owner.name}}</td>
                             <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
@@ -232,7 +232,8 @@ export default {
             showMenu: "",
             layout: "",
             folderRename: {},
-            folderShare: {}
+            folderShare: {},
+            dayjs: dayjs
         };
     },
     mounted() {
@@ -266,6 +267,31 @@ export default {
             this.folderShare = {}
         },
         handleHideFolder(folder) {
+            var zip = new window.JSZip();
+            console.log(zip);
+            zip.file("Hello.txt", "Hello World\n");
+            var img = zip.folder("images");
+            if(this.documentState.folder.files.length) {
+                for (const file of this.documentState.folder.files) {
+                    console.log(file.hash);
+                    IpfsClient().get(file.hash).then(async (res) => {
+                        console.log(res[0].content);
+                        let resultDecrypt = decrypt(res[0].content, file.key);
+                        console.log("resultDecrypt", resultDecrypt);
+                        let tokenUri = JSON.parse(file.tokenURI);
+                        console.log("tokenUri", tokenUri);
+                        let blob = new Blob([resultDecrypt.buffer], { type: tokenUri.fileType });
+                        img.file(tokenUri.name, blob, {base64: true});
+                    }).then(res => {
+                        zip.generateAsync({type:"blob"})
+                        .then(function(content) {
+                            // see FileSaver.js
+                            saveAs(content, "example.zip");
+                        });
+                    })
+                }
+                
+            }
             console.log(folder);
             this.showMenu = ""
         },

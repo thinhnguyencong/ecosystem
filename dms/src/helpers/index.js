@@ -109,3 +109,10 @@ const initUserConfig = (publicAddress) => {
     }
     return initConfig
 }
+
+export const sortByUnixTimestamps = (array, property) => {
+    if (array.length == 1 || array.length == 0) {
+        return array;
+    }
+    return array.sort((a, b) => b[property] - a[property]);
+}

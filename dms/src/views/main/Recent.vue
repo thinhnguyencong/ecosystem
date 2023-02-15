@@ -4,16 +4,8 @@
         <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
             <div class="row">
                 <div class="col">
-                    <MainView :folders="documentState.children" :files="documentState.folder.files" :layoutProps="layout"/>
+                    <MainView :folders="[]" :files="sortByUnixTimestamps(documentState.recentFiles.slice(), 'lastAccess')" :layoutProps="layout"/>
                 </div>
-                <transition :name="transition">
-                    <div v-if="drawerVisible" class="col-3">
-                        <div style="text-align: right; margin: 5px">
-                            <button class="close" @click="handleDrawer">&#9587;</button>
-                        </div>
-                        <FolderDetail :drawerVisible="drawerVisible"/>
-                    </div>
-                </transition>
             </div>
             
             
@@ -29,24 +21,16 @@
 
 <script setup>
 import ModalFileDetails from './modal/ModalFileDetails.vue';
-import ModalAddNewFolder from './modal/ModalAddNewFolder.vue';
-import ModalUploadFile from './modal/ModalUploadFile.vue';
-import FolderDetail from '../../components/FolderDetail.vue';
-import { getLayoutOfPage, setLayoutOfPage } from '../../helpers';
+import { getLayoutOfPage, sortByUnixTimestamps } from '../../helpers';
 import $ from "jquery"
 import NavBar from '../../components/layout/NavBar.vue';
 import MainView from '../../components/MainView.vue';
-$(document).ready(function() {
-  $('#modalCreateFolder').on('shown.bs.modal', function() {
-    $('#newFolderName').trigger('focus');
-    $('#newFolderName').select()
-  });
-});
+
 </script>
 <script>
 
 export default {
-    components: { ModalAddNewFolder, ModalUploadFile, ModalFileDetails, FolderDetail, NavBar, MainView },
+    components: { ModalFileDetails, NavBar, MainView },
     mounted() {
         this.$router.push(this.$route.path)
         this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
@@ -57,9 +41,8 @@ export default {
     data() {
         return {
             layout: "",
-            drawerVisible: false,
             showModal: false,
-            transition: 'slide-fade'
+            sortByUnixTimestamps: sortByUnixTimestamps
         }
     },
     computed: {
@@ -72,18 +55,9 @@ export default {
             await this.$store.dispatch("document/getRecentDocuments") 
             // await this.$store.dispatch("document/getTreeFolder")
         },
-        handleDrawer() {
-            console.log(this.drawerVisible);
-            this.drawerVisible = !this.drawerVisible
-            console.log(this.drawerVisible);
-            if(this.drawerVisible) {
-                this.transition = 'slide-fade-reverse'
-            }else {
-                this.transition = 'slide-fade'
-            }
-        },
         onLayoutChange(layout) {
             this.layout = layout
+            console.log(layout);
         }
     },
     watch: {
@@ -99,26 +73,5 @@ export default {
 </script>
 
 <style scoped>
-/* Prev Scrolling */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-    transition: all .5s ease;
-}
 
-.slide-fade-leave-from,
-.slide-fade-leave-to {
-    transform: translateX(-100px);
-    opacity: 0;
-}
-
-.slide-fade-reverse-enter-active,
-.slide-fade-reverse-leave-active {
-    transition: all .3s ease;
-}
-
-.slide-fade-reverse-leave-from,
-.slide-fade-reverse-leave-to {
-    transform: translateX(100px);
-    opacity: 0;
-}
 </style>

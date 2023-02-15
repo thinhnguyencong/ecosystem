@@ -32,7 +32,7 @@
           <a href="/">Home</a>
           <a href="/my-folder">My Folder</a>
           <a href="/shared-with-me">Shared With Me</a>
-          <a href="" @click="$store.dispatch('auth/logout')">
+          <a class="text-secondary" type="button" @click="$store.dispatch('auth/logout')">
 				    Logout
           </a>
         </div>
@@ -211,5 +211,15 @@ function closeNav() {
   width: 25rem;
   max-height: 40vh;
   overflow-y: scroll; /* Add the ability to scroll */
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.dropdown-notification::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.dropdown-notification {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 </style>

@@ -325,6 +325,28 @@ export default {
                 this.$store.dispatch("document/addCommentRealtime", data)
             }
         });
+        socket.on("review doc", (data) => {
+            console.log(data);
+            if(this.documentState.file._id == data.fileId) {
+                this.$store.dispatch("document/reviewDocRealtime", data)
+            }
+        });
+        socket.on("sign doc", (data) => {
+            console.log(data);
+            if(this.documentState.file._id == data.fileId) {
+                this.$store.dispatch("document/signDocRealtime", data)
+            }
+        });
+        socket.on("reject review doc", (data) => {
+            if(this.documentState.file._id == data.fileId) {
+                this.$store.dispatch("document/rejectReviewDocRealtime", data)
+            }
+        });
+        socket.on("reject sign doc", (data) => {
+            if(this.documentState.file._id == data.fileId) {
+                this.$store.dispatch("document/rejectSignDocRealtime", data)
+            }
+        });
         // socket.on("new notification", (data) => {
         //     console.log("Datar", data);
         // });
@@ -550,26 +572,22 @@ export default {
     watch: {
         '$route.params.fileId': {
             handler(newVal, oldVal) {
-                console.log("newVal", newVal, oldVal);
                 if(newVal) {
                     this.link = ""
                     this.file = {}
                     this.$set(this, 'isLoadingFile', true);
-                    console.log("2");
                     this.initData(newVal)
                 }
             },
         },
         '$store.state.document.file': {
             handler(newVal, oldVal) {
-                console.log(newVal);
                 this.file = newVal
             },
             immediate: true
         },
         'documentState.fileStatusList': {
             handler(newVal, oldVal) {
-                console.log('newVal[this.fileId]', newVal, this.fileId);
                 this.fileStatus = newVal[this.fileId]
             },
             immediate: true,

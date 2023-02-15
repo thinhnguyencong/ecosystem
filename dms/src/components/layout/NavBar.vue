@@ -103,11 +103,16 @@
                     </router-link>
                 </li>
                 <li v-for="(folder, index) in documentState.ancestors" :key="index" class="align-self-center" aria-current="page">
-                    <router-link class="align-self-center d-flex flex-row" :to="'/folder/'+ folder._id">
+                    <router-link v-if="documentState.ancestors.length <=2" class="align-self-center d-flex flex-row" :to="'/folder/'+ folder._id">
                         <span class="material-icons">
                             &nbsp;/ folder
                         </span>
                         <span class="align-self-center mt-1">&nbsp;{{folder.name}}</span>
+                    </router-link>
+                    <router-link v-else to="#">
+                        <span class="material-icons">
+                            &nbsp;/ home
+                        </span>
                     </router-link>
                 </li>
                 <li v-if="documentState.folder" class="d-flex flex-row align-self-center mt-n-2" aria-current="page">
@@ -140,48 +145,51 @@
     
 </template>
 <script>
+import { RouterLink } from 'vue-router';
 import { getLayoutOfPage, setLayoutOfPage } from '../../helpers'
 export default {
     mounted() {
-        let layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
-        this.layout = layout
-        this.$emit('onLayoutChange', layout);
+        let layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route);
+        this.layout = layout;
+        this.$emit("onLayoutChange", layout);
     },
     data() {
         return {
             layout: "",
-        }
-    }, 
+        };
+    },
     methods: {
         switchLayout() {
-            if(this.layout === "list"){
-                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid")
-                this.layout = "grid"
-                this.$emit('onLayoutChange', "grid");
-            }else if (this.layout === "grid"){
-                this.layout = "list"
-                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list")
-                this.$emit('onLayoutChange', "list");
+            if (this.layout === "list") {
+                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid");
+                this.layout = "grid";
+                this.$emit("onLayoutChange", "grid");
+            }
+            else if (this.layout === "grid") {
+                this.layout = "list";
+                setLayoutOfPage(this.authState.user.publicAddress, this.$route, "list");
+                this.$emit("onLayoutChange", "list");
             }
         },
         handleDrawer() {
-            this.$emit('handleDrawer', "list");
+            this.$emit("handleDrawer", "list");
         }
     },
     computed: {
-        documentState() {return this.$store.state.document },
-        authState() {return this.$store.state.auth },
+        documentState() { return this.$store.state.document; },
+        authState() { return this.$store.state.auth; },
     },
     watch: {
-        '$route.params.id': {
+        "$route.params.id": {
             handler(newVal, oldVal) {
-                if(newVal !== oldVal) {
-                    this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route)
+                if (newVal !== oldVal) {
+                    this.layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route);
                 }
             },
             immediate: true
         },
     },
+    components: { RouterLink }
 }
 </script>
 <style scoped>

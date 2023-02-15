@@ -175,17 +175,20 @@ export const getRecentDocuments = async (req, res, next) => {
 	let userId = user._id.valueOf()
 	// console.log(userId);
 	if(isValidObjectId(userId)) {
+		let recentFiles = []
 		let recentDocs = JSON.parse(JSON.stringify(user.recent))
 		console.log(recentDocs);
-		let recentFolders = await Promise.all(recentDocs.filter(item => item.type=='folder').map(async item => ({...item, ...JSON.parse(JSON.stringify(await Folder.findById(item.documentId)))})))
-		let recentFiles = await Promise.all(recentDocs.filter(item => item.type=='file').map(async item => ({...item, ...JSON.parse(JSON.stringify(await File.findById(item.documentId)))})))
-		console.log("recentFolders", recentFolders);
+		for (const item of recentDocs) {
+			if(item.type=='file'){
+				let file = await File.findById(item.documentId)
+				recentFiles.push({...item, ...JSON.parse(JSON.stringify(file)), owner: await getUserInfoById(file.owner)})
+			}
+		}
 		return res.send({
 			msg: "Success",
-			// data: {
-			// 	recentFolders: recentFolders,
-			// 	recentFiles: {...myFolder, files: files, owner: await getUserInfoById(userId)},
-			// },
+			data: {
+				recentFiles: recentFiles,
+			},
 		})
 	}else {
 		return res.status(404).send({
@@ -642,7 +645,7 @@ export const addComment = async (req, res, next) => {
 }
 
 export const signDoc = async (req, res, next) => {
-	let {type, tokenId} = req.body.data
+	let {type, tokenId, fileId} = req.body.data
 	try {
 		const web3Connection = await getWeb3()
 		if(!web3Connection.status) {
@@ -652,6 +655,7 @@ export const signDoc = async (req, res, next) => {
 		const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail}) 
+		let file = await File.findById(fileId).lean()
 		const {publicAddress, keystore} = user
 		let userId = user._id.valueOf()
 		const ks = lightwallet.keystore.deserialize(keystore)
@@ -697,8 +701,38 @@ export const signDoc = async (req, res, next) => {
 				console.log("2");
 				web3.eth.sendSignedTransaction(signedTx.rawTransaction, async function(error, hash) {
 					console.log("The hash of your transaction is: ", hash);
-					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
+						await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
+						console.log(file.shared, file.owner);
+						await createNotification(
+							{
+								from: user.name,
+								content: "has finished reviewing a file.", 
+								type: "file", 
+								documentId: fileId 
+							}, 
+							[...new Set([...file.shared.filter(id=> id !== userId)])],
+						)
+						if(userId !== file.owner) {
+							await createNotification(
+								{
+									from: user.name,
+									content: "has finished reviewing your file.", 
+									type: "file", 
+									documentId: fileId
+								},
+								[file.owner],
+							)
+						}
+						const emitArray = CONNECTED_USERS.filter(
+							(client) => [...file.shared, ...[file.owner]].includes(client.userId)
+						).filter(x => x.userId !== userId);
+						
+						if(emitArray.length) {
+							for (const emitUser of emitArray) {
+								SOCKET_IO.to(emitUser.socketId).emit("review doc", {fileId: fileId, publicAddress: publicAddress});
+							}
+						}
 						return res.status(200).send({
 							msg: "Review document successfully!",
 						})
@@ -741,8 +775,37 @@ export const signDoc = async (req, res, next) => {
 				console.log("2");
 				web3.eth.sendSignedTransaction(signedTx.rawTransaction, async function(error, hash) {
 					console.log("The hash of your transaction is: ", hash);
-					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
+						await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
+						await createNotification(
+							{
+								from: user.name,
+								content: "has finished signing a file.", 
+								type: "file", 
+								documentId: fileId 
+							}, 
+							[...new Set([...file.shared.filter(id=> id !== userId)])],
+						)
+						if(userId !== file.owner) {
+							await createNotification(
+								{
+									from: user.name,
+									content: "has finished signing your file.", 
+									type: "file", 
+									documentId: fileId
+								},
+								[file.owner],
+							)
+						}
+						const emitArray = CONNECTED_USERS.filter(
+							(client) => [...file.shared, ...[file.owner]].includes(client.userId)
+						).filter(x => x.userId !== userId);
+						
+						if(emitArray.length) {
+							for (const emitUser of emitArray) {
+								SOCKET_IO.to(emitUser.socketId).emit("sign doc", {fileId: fileId, publicAddress: publicAddress});
+							}
+						}
 						return res.status(200).send({
 							msg: "Sign document successfully!",
 						})
@@ -769,7 +832,7 @@ export const signDoc = async (req, res, next) => {
 }
 
 export const rejectDoc = async (req, res, next) => {
-	let {type, tokenId} = req.body.data
+	let {type, tokenId, fileId} = req.body.data
 	try {
 		const web3Connection = await getWeb3()
 		if(!web3Connection.status) {
@@ -779,6 +842,7 @@ export const rejectDoc = async (req, res, next) => {
 		const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail}) 
+		let file = await File.findById(fileId).lean()
 		const {publicAddress, keystore} = user
 		let userId = user._id.valueOf()
 		const ks = lightwallet.keystore.deserialize(keystore)
@@ -823,8 +887,37 @@ export const rejectDoc = async (req, res, next) => {
 				console.log("2");
 				web3.eth.sendSignedTransaction(signedTx.rawTransaction, async function(error, hash) {
 					console.log("The hash of your transaction is: ", hash);
-					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
+						await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
+						await createNotification(
+							{
+								from: user.name,
+								content: "has rejected reviewing a file.", 
+								type: "file", 
+								documentId: fileId 
+							}, 
+							[...new Set([...file.shared.filter(id=> id !== userId)])],
+						)
+						if(userId !== file.owner) {
+							await createNotification(
+								{
+									from: user.name,
+									content: "has rejected reviewing your file.", 
+									type: "file", 
+									documentId: fileId
+								},
+								[file.owner],
+							)
+						}
+						const emitArray = CONNECTED_USERS.filter(
+							(client) => [...file.shared, ...[file.owner]].includes(client.userId)
+						).filter(x => x.userId !== userId);
+						
+						if(emitArray.length) {
+							for (const emitUser of emitArray) {
+								SOCKET_IO.to(emitUser.socketId).emit("reject review doc", {fileId: fileId, publicAddress: publicAddress});
+							}
+						}
 						return res.status(200).send({
 							msg: "Reject document successfully!",
 						})
@@ -867,8 +960,37 @@ export const rejectDoc = async (req, res, next) => {
 				console.log("2");
 				web3.eth.sendSignedTransaction(signedTx.rawTransaction, async function(error, hash) {
 					console.log("The hash of your transaction is: ", hash);
-					await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
 					if(!error) {
+						await saveTransaction(hash, userEmail, req.jwtDecoded.client_id )
+						await createNotification(
+							{
+								from: user.name,
+								content: "has rejected signing a file.", 
+								type: "file", 
+								documentId: fileId 
+							}, 
+							[...new Set([...file.shared.filter(id=> id !== userId)])],
+						)
+						if(userId !== file.owner) {
+							await createNotification(
+								{
+									from: user.name,
+									content: "has rejected signing your file.", 
+									type: "file", 
+									documentId: fileId
+								},
+								[file.owner],
+							)
+						}
+						const emitArray = CONNECTED_USERS.filter(
+							(client) => [...file.shared, ...[file.owner]].includes(client.userId)
+						).filter(x => x.userId !== userId);
+						
+						if(emitArray.length) {
+							for (const emitUser of emitArray) {
+								SOCKET_IO.to(emitUser.socketId).emit("reject sign doc", {fileId: fileId, publicAddress: publicAddress});
+							}
+						}
 						return res.status(200).send({
 							msg: "Reject document successfully!",
 						})

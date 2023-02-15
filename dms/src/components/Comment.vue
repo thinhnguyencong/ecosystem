@@ -84,7 +84,6 @@ export default {
         } ,
         '$store.state.document.file.comments':{
             handler(newVal, oldVal) {
-                console.log(newVal, oldVal);
                 if(newVal && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
                     this.$set(this, 'comments', this.sortComment(newVal.map(x => ({ ...x, isActive: false }))))
                 }

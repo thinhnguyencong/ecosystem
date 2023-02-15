@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="noti-container">
         <header class="ml-3 h5">
             <strong>Notifications</strong>
         </header>
@@ -102,7 +102,6 @@ export default {
         },
         sortNotification(noti) {
             return noti.sort(function(a, b) {
-                console.log(a.createdAt);
                 return new Date(b.createdAt) - new Date(a.createdAt);
             });
         },
@@ -117,7 +116,6 @@ export default {
     watch: {
         'userState.notifications': {
             handler(newVal, oldVal) {
-                console.log(newVal);
                 this.notifications = this.sortNotification(JSON.parse(JSON.stringify(newVal)))
             },
             immediate: true,
@@ -135,5 +133,13 @@ export default {
 }
 .read {
     background-color: aliceblue;
+}
+.noti-container {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+    overflow-y: scroll; /* Add the ability to scroll */
+}
+.noti-container::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
 }
 </style>

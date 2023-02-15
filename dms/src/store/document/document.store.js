@@ -20,7 +20,9 @@ const initialState = {
   },
   treeFolder: [],
   pendingDocs: [],
-  signedDocs: []
+  signedDocs: [],
+  recentFolders: [],
+  recentFiles: []
 };
 
 export const document = {
@@ -218,8 +220,14 @@ export const document = {
       signDocRealtime({commit}, data){
         commit('signDocRealtime', data);
       },
-      rejectDocRealtime({commit}, data){
-        commit('rejectDocRealtime', data);
+      reviewDocRealtime({commit}, data){
+        commit('reviewDocRealtime', data);
+      },
+      rejectSignDocRealtime({commit}, data){
+        commit('rejectSignDocRealtime', data);
+      },
+      rejectReviewDocRealtime({commit}, data){
+        commit('rejectReviewDocRealtime', data);
       },
       getRecentDocuments({ commit }) {
         commit('getRecentDocuments');
@@ -562,18 +570,39 @@ export const document = {
     addCommentRealtime(state, data){
       state.file.comments= [...[data.comment], ...state.file.comments]
     },
-    signDocRealtime(data){
-      
+    reviewDocRealtime(state, data){
+      state.fileStatusList[data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == data.publicAddress).status = "reviewed"
+      state.fileStatusList[data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == data.publicAddress).time = Math.floor(Date.now()/1000) 
+      if(state.fileStatusList[data.fileId].statusDetail.reviewerList.map(reviewer => reviewer.status).every(status => status === "reviewed")) {
+        state.fileStatusList[data.fileId].status = "waiting-to-sign"
+      }
     },
-    rejectDocRealtime(data){
-      
+    rejectReviewDocRealtime(state, data){
+      state.fileStatusList[data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == data.publicAddress).status = "rejected"
+      state.fileStatusList[data.fileId].statusDetail.reviewerList.find(reviewer => reviewer.address == data.publicAddress).time = Math.floor(Date.now()/1000) 
+      state.fileStatusList[data.fileId].status = "rejected"
+    },
+    signDocRealtime(state, data){
+      state.fileStatusList[data.fileId].statusDetail.signerList.find(signer => signer.address == data.publicAddress).status = "signed"
+      state.fileStatusList[data.fileId].statusDetail.signerList.find(signer => signer.address == data.publicAddress).time = Math.floor(Date.now()/1000)
+      if(state.fileStatusList[data.fileId].statusDetail.signerList.map(signer => signer.status).every(status => status === "signed")) {
+        state.fileStatusList[data.fileId].status = "signed"
+      }
+    },
+    rejectSignDocRealtime(state, data){
+      state.fileStatusList[data.fileId].statusDetail.signerList.find(signer => signer.address == data.publicAddress).status = "rejected"
+      state.fileStatusList[data.fileId].statusDetail.signerList.find(signer => signer.address == data.publicAddress).time = Math.floor(Date.now()/1000)
+      state.fileStatusList[data.fileId].status = "rejected"
     },
     // ------------------getRecentDocuments-----------------------------
     getRecentDocuments(state, data){
-
+      if(!state.isLoading) {
+        state.isLoading = true
+      }
     },
     getRecentDocumentsSuccess(state, result){
-      console.log(result);
+      state.isLoading = false;
+      state.recentFiles = result.data.data.recentFiles;
 
     },
     getRecentDocumentsFailure(state, result){
