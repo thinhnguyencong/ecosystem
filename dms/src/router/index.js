@@ -1,7 +1,7 @@
 
 import jwt_decode from "jwt-decode";
-//import LandingPage from '../views/main/LandingPage.vue'
-import LandingPage from '../views/test/LandingPage1.vue'
+import LandingPage from '../views/main/LandingPage.vue'
+//import LandingPage from '../views/test/LandingPage1.vue'
 import Home from '../views/main/Home.vue'
 import MyFolder from '../views/main/MyFolder.vue'
 import Recent from '../views/main/Recent.vue'
