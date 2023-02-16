@@ -51,6 +51,10 @@ export default {
                 alert("Please provide a folder name")
                 return;
             }
+            if(this.documentState.children.filter(folder => folder.name == this.name).length) {
+                alert("This name was duplicated in this folder, please choose another name")
+                return
+            }
             let data = {
                 parentId: this.parentId,
                 name: this.name

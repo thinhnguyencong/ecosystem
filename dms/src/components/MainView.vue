@@ -268,7 +268,6 @@ export default {
     },
     methods: {
         handleAccessFolder(id) {
-            console.log(id);
             this.$router.push("/folder/" + id);
         },
         openDropdown(id) {
@@ -278,7 +277,6 @@ export default {
             this.showMenu = "";
         },
         handleOpenModalRename(folder) {
-            console.log(folder);
             this.folderRename = folder
             this.showMenu = ""
         },
@@ -314,7 +312,11 @@ export default {
                 icon: true,
                 rtl: false
             });
-            await this.zipFolder(this.documentState.treeFolder[folder._id][0].children, zip)
+            const ipfs = await IpfsClient()
+            if (!ipfs) {
+                return
+            }
+            await this.zipFolder(ipfs, this.documentState.treeFolder[folder._id][0].children, zip)
             toast.success("Successfully zipping "+ '"' + folder.name+ '"', {
                 position: "bottom-left",
                 timeout: 1500,
@@ -330,7 +332,6 @@ export default {
             toast.dismiss(toastZipping)
             zip.generateAsync({ type: "blob" })
                 .then(function (content) {
-                    console.log(content);
                     let link = document.createElement('a');
                     link.href = window.URL.createObjectURL(content);
                     let fileName = folder.name;
@@ -339,27 +340,18 @@ export default {
                 }).catch(error => {
                     console.log(error);
                 });
-            
-            
-
         },
-		async zipFolder(treeFolder, zip) {
+		async zipFolder(ipfs, treeFolder, zip) {
 			console.log(treeFolder);
 			for (let child of treeFolder) {
 				if(!child.children){
-                    const ipfs = await IpfsClient()
-                    if (!ipfs) {
-                        alert("Error when connect to IPFS Server")
-                        return
-                    }
                     let res = await ipfs.get(child.data.hash)
                     let resultDecrypt = decrypt(res[0].content, child.data.key);
-                    console.log("resultDecrypt", resultDecrypt);
                     let tokenUri = JSON.parse(child.data.tokenURI);
                     zip.file(tokenUri.name, resultDecrypt);
 				}else {
-					let folder = zip.folder(`${child.name}`);
-					this.zipFolder(child.children, folder)
+                    let folder = zip.folder(`${child.name}`);
+					this.zipFolder(ipfs, child.children, folder)
 				}
 			}
 		},

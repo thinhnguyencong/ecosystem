@@ -84,7 +84,6 @@ button {
 }
 #content {
 	transition: margin-left .5s;
-  	padding: 16px;
 }
 #layout {
 	width: 100%;

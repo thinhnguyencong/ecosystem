@@ -150,7 +150,6 @@ const router = new VueRouter({
 // 	}
 // }
 router.beforeEach(async (to, from, next) => {
-	console.log("to",to.matched.some(record => record.meta.requiresAuth) );
 	if (to.matched.some(record => record.meta.requiresAuth)){
 		const HREF = window.location.href.trim();
 		const urlParams = new UrlParams(HREF);

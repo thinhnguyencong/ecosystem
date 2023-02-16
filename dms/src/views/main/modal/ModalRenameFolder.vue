@@ -52,6 +52,9 @@ export default {
             }
             if(this.name == this.folderProps.name) {
                 this.handleCloseModal()
+            }else if(this.documentState.children.filter(folder => folder.name == this.name).length) {
+                alert("This name was duplicated in this folder, please choose another name")
+                return
             }else {
                 console.log("new name", this.name);
                 let data = {
@@ -67,6 +70,9 @@ export default {
     mounted() {
         $('#folderName').trigger('focus');
         $('#folderName').select()
+    },
+    computed: {
+        documentState() { return this.$store.state.document}
     },
     watch: {
         'folderProps' : {
