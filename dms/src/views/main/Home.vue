@@ -72,7 +72,6 @@ import MainView from '../../components/MainView.vue';
         if(!this.documentState.files.length) {
           await this.$store.dispatch("document/getAllFiles")
         }
-        // await this.$store.dispatch("document/getTreeFolder")
         console.log("this.documentState", this.documentState);
         this.files = this.documentState.files
         this.folders = this.documentState.folders

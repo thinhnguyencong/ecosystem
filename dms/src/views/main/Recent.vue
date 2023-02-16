@@ -1,6 +1,6 @@
 <template>
 	<div >
-        <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
+        <NavBar @onLayoutChange="onLayoutChange"/>
         <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
             <div class="row">
                 <div class="col">
@@ -53,7 +53,6 @@ export default {
         async callAPI() {
             this.$store.dispatch("auth/sidebarActive", "recent")
             await this.$store.dispatch("document/getRecentDocuments") 
-            // await this.$store.dispatch("document/getTreeFolder")
         },
         onLayoutChange(layout) {
             this.layout = layout

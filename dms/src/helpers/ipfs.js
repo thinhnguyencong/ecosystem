@@ -1,5 +1,5 @@
 import { NFTStorage, File } from 'nft.storage'
-export const IpfsClient = () => {
+export const IpfsClient = async () => {
     try {
         //const ipfs = window.IpfsHttpClient({ host: '127.0.0.1', port: 5001, protocol: 'http', timeout: 10000 })
         const ipfs = window.IpfsHttpClient({ host: '10.10.1.15', port: 7001, protocol: 'http', timeout: 10000 })

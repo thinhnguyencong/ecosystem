@@ -93,10 +93,11 @@ function rejectDoc(data) {
         data: data
     })
 }
-function getTreeFolder() {
+function getTreeFolder(data) {
     return sendRequest({
         url: url+"tree-folder",
         method: "GET",
+        params: data
     })
 }
 function getFileById(data) {

@@ -81,7 +81,6 @@ export default {
         async callAPI() {
             this.$store.dispatch("auth/sidebarActive", "my-folder")
             await this.$store.dispatch("document/getMyFolders") 
-            // await this.$store.dispatch("document/getTreeFolder")
         },
         handleDrawer() {
             console.log(this.drawerVisible);

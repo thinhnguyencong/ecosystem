@@ -18,7 +18,7 @@ const initialState = {
     isLoadingSign: false,
     isLoadingReject: false,
   },
-  treeFolder: [],
+  treeFolder: {},
   pendingDocs: [],
   signedDocs: [],
   recentFolders: [],
@@ -177,12 +177,12 @@ export const document = {
           }
         );
       },
-      getTreeFolder({ commit }) {
+      getTreeFolder({ commit }, data) {
         commit('getTreeFolder');
-        return documentService.getTreeFolder()
+        return documentService.getTreeFolder(data)
         .then(
           res => {
-            commit('getTreeFolderSuccess', res);
+            commit('getTreeFolderSuccess', {res, data});
           },
           error => {
             commit('getTreeFolderFailure', error);
@@ -501,13 +501,17 @@ export const document = {
 
     // ------------------getTreeFolder-----------------------------
     getTreeFolder(state){
-      // if(!state.isLoading) {
-      //     state.isLoading = true
-      //   }
+      if(!state.isLoading) {
+          state.isLoading = true
+        }
     },
     getTreeFolderSuccess(state, result){
         state.isLoading = false;
-        state.treeFolder = result.data.data;
+        if(result.data.type == "my-folder") {
+          state.treeFolder['my-folder'] = result.res.data.data
+        }else if(result.data.type == "folder") {
+          state.treeFolder[result.data.folderId] = result.res.data.data
+        }
     },
     getTreeFolderFailure(state, error){
         state.isLoading = false

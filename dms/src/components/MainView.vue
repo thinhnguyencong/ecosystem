@@ -14,23 +14,37 @@
                                         <v-icon data-toggle="tooltip" title="" color="#818181">
                                             more_vert
                                         </v-icon>
-                                    </v-btn> 
+                                    </v-btn>
                                 </div>
-                                <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
+                                <div v-click-outside="(event) => closeDropdown(folder._id, event)"
+                                    v-if="showMenu == folder._id" :id="'myDropdown-' + folder._id"
+                                    class="dropdown-content">
                                     <div class="list-group">
-                                        <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
+                                        <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                            @click="handleOpenModalRename(folder)"
+                                            class="list-group-item list-group-item-action">
                                             <p class="h6 align-items-center d-flex">
                                                 <i class="material-icons">drive_file_rename_outline</i>
                                                 <span class="mt-2">Rename</span>
                                             </p>
                                         </a>
-                                        <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
+                                        <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                            @click="handleOpenModalShare(folder)"
+                                            class="list-group-item list-group-item-action">
                                             <p class="h6 align-items-center d-flex">
                                                 <i class="material-icons">person_add</i>
                                                 <span class="mt-2">Share</span>
                                             </p>
                                         </a>
-                                        <a @click="handleHideFolder(folder)"  class="list-group-item list-group-item-action">
+                                        <a @click="handleDownloadFolder(folder)"
+                                            class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">download</i>
+                                                <span class="mt-2">Download</span>
+                                            </p>
+                                        </a>
+                                        <a @click="handleHideFolder(folder)"
+                                            class="list-group-item list-group-item-action">
                                             <p class="h6 align-items-center d-flex">
                                                 <i class="material-icons">visibility_off</i>
                                                 <span class="mt-2">Hide</span>
@@ -40,12 +54,9 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="folder" @click="handleAccessFolder(folder._id)">
-                            <FolderVue
-                                :key="index"
-                                :folder="folder" 
-                            />
+                            <FolderVue :key="index" :folder="folder" />
                         </div>
                     </div>
                 </div>
@@ -56,19 +67,10 @@
                 <h4 class="font-weight-bold">Files</h4>
                 <hr>
                 <div class="item-grid-card">
-                    <router-link
-                        tag="tr"
-                        class="item" 
-                        v-for="(file, index) in files"
-                        :key="file._id"
-                        :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
-                    >
-                        <FileVue
-                            :name="JSON.parse(file.tokenURI).name"
-                            :fileType="JSON.parse(file.tokenURI).fileType"
-                            :id="file._id"
-                            :file="file"
-                        />
+                    <router-link tag="tr" class="item" v-for="(file, index) in files" :key="file._id"
+                        :to="$route.path == '/' ? `${$route.path}file/${file._id}` : `${$route.path}/file/${file._id}`">
+                        <FileVue :name="JSON.parse(file.tokenURI).name" :fileType="JSON.parse(file.tokenURI).fileType"
+                            :id="file._id" :file="file" />
                     </router-link>
                 </div>
             </div>
@@ -76,30 +78,33 @@
                 <h5>This folder is empty</h5>
             </div>
         </div>
-        <div v-if="layout=='list'">
+        <div v-if="layout == 'list'">
             <div class="table-responsive">
                 <br>
                 <table id="transactionsTable" class="table table-hover" data-pagination="true">
                     <thead>
-                    <tr>
-                        <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
-                        <th scope="col">Token Id</th>
-                        <th scope="col">Date Modified</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Owner</th>
-                        <th scope="col">Size</th>
-                        <th scope="col">Action</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
+                            <th scope="col">Token Id</th>
+                            <th scope="col">Date Modified</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Owner</th>
+                            <th scope="col">Size</th>
+                            <th scope="col">Action</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in folders" :key="folder._id">
+                        <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in folders"
+                            :key="folder._id">
                             <th class="truncate" scope="row">
-                                <i :class="folder.owner?._id === authState.user._id ? 'mdi mdi-folder text-custom-color-blue' : 'mdi mdi-folder-account text-custom-color-blue'"></i> {{folder.name}}
+                                <i
+                                    :class="folder.owner?._id === authState.user._id ? 'mdi mdi-folder text-custom-color-blue' : 'mdi mdi-folder-account text-custom-color-blue'"></i>
+                                {{ folder.name }}
                             </th>
                             <td>-</td>
                             <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
                             <td>-</td>
-                            <td>{{folder.owner && folder.owner.name}}</td>
+                            <td>{{ folder.owner && folder.owner.name }}</td>
                             <td>-</td>
                             <td @click.stop="">
                                 <div class="dropdown">
@@ -108,23 +113,37 @@
                                             <v-icon data-toggle="tooltip" title="" color="#818181">
                                                 more_vert
                                             </v-icon>
-                                        </v-btn> 
+                                        </v-btn>
                                     </div>
-                                    <div v-click-outside="(event) => closeDropdown(folder._id, event)" v-if="showMenu == folder._id" :id="'myDropdown-'+folder._id" class="dropdown-content">
+                                    <div v-click-outside="(event) => closeDropdown(folder._id, event)"
+                                        v-if="showMenu == folder._id" :id="'myDropdown-' + folder._id"
+                                        class="dropdown-content">
                                         <div class="list-group">
-                                            <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalRename(folder)" class="list-group-item list-group-item-action">
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                                @click="handleOpenModalRename(folder)"
+                                                class="list-group-item list-group-item-action">
                                                 <p class="h6 align-items-center d-flex">
                                                     <i class="material-icons">drive_file_rename_outline</i>
                                                     <span class="mt-2">Rename</span>
                                                 </p>
                                             </a>
-                                            <a v-if="folder.owner && folder.owner._id == authState.user._id" @click="handleOpenModalShare(folder)"  class="list-group-item list-group-item-action">
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                                @click="handleOpenModalShare(folder)"
+                                                class="list-group-item list-group-item-action">
                                                 <p class="h6 align-items-center d-flex">
                                                     <i class="material-icons">person_add</i>
                                                     <span class="mt-2">Share</span>
                                                 </p>
                                             </a>
-                                            <a @click="handleHideFolder(folder)"  class="list-group-item list-group-item-action">
+                                            <a @click="handleDownloadFolder(folder)"
+                                                class="list-group-item list-group-item-action">
+                                                <p class="h6 align-items-center d-flex">
+                                                    <i class="material-icons">download</i>
+                                                    <span class="mt-2">Download</span>
+                                                </p>
+                                            </a>
+                                            <a @click="handleHideFolder(folder)"
+                                                class="list-group-item list-group-item-action">
                                                 <p class="h6 align-items-center d-flex">
                                                     <i class="material-icons">visibility_off</i>
                                                     <span class="mt-2">Hide</span>
@@ -135,28 +154,29 @@
                                 </div>
                             </td>
                         </tr>
-                        <router-link
-                            tag="tr"
-                            class="item cursor-pointer" 
-                            v-for="(file) in files"
-                            :key="file._id"
-                            :to="$route.path == '/' ? `${$route.path}file/${file._id}`: `${$route.path}/file/${file._id}`"
-                        >
+                        <router-link tag="tr" class="item cursor-pointer" v-for="(file) in files" :key="file._id"
+                            :to="$route.path == '/' ? `${$route.path}file/${file._id}` : `${$route.path}/file/${file._id}`">
                             <th class="truncate" scope="row">
-                                <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{JSON.parse(file.tokenURI).name}}
+                                <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{
+                                    JSON.parse(file.tokenURI).name
+                                }}
                             </th>
-                            <td>{{file.tokenId}}</td>
-                            <td>{{file.lastAccess ? dayjs(file.lastAccess).format('HH:mm DD/MM/YYYY') : (new Date(file.createdAt)).toDateString()}}</td>
-                            <td :class="getClassStatus(file.status)">{{file.status}}</td>
-                            <td>{{file.owner.name}}</td>
-                            <td>{{niceBytes((JSON.parse(file.tokenURI).size))}}</td>
+                            <td>{{ file.tokenId }}</td>
+                            <td>{{
+                                file.lastAccess ? dayjs(file.lastAccess).format('HH:mm DD/MM/YYYY') : (new
+                                    Date(file.createdAt)).toDateString()
+                            }}</td>
+                            <td :class="getClassStatus(file.status)">{{ file.status }}</td>
+                            <td>{{ file.owner.name }}</td>
+                            <td>{{ niceBytes((JSON.parse(file.tokenURI).size))}}</td>
                             <td>
                                 <v-btn flat icon color="indigo">
                                     <v-icon data-toggle="tooltip" title="" color="black">
                                         visibility
                                     </v-icon>
                                 </v-btn>
-                                <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value" class="spinner-border text-dark mr-2 mt-2" role="status">
+                                <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value"
+                                    class="spinner-border text-dark mr-2 mt-2" role="status">
                                     <span class="sr-only">Loading...</span>
                                 </span>
                                 <span v-else @click.stop="" @click="download(file)">
@@ -169,9 +189,11 @@
                             </td>
                         </router-link>
                         <tr v-if="(files.length + folders.length == 0)">
-                            <td class="text-center" colspan="6" scope="row"><h5>Empty</h5></td>
+                            <td class="text-center" colspan="6" scope="row">
+                                <h5>Empty</h5>
+                            </td>
                         </tr>
-                    <!-- <tr>
+                        <!-- <tr>
                         <td class="text-center" colspan="6" scope="row"><a href="">See more ...</a></td>
                     </tr> -->
                     </tbody>
@@ -182,10 +204,12 @@
             <router-view v-if="showModal"></router-view>
         </Transition>
         <Transition name="modal">
-            <ModalRenameFolder v-if="folderRename?._id" :folderProps="folderRename" @handleCloseModal="handleCloseModalRename"/>
+            <ModalRenameFolder v-if="folderRename?._id" :folderProps="folderRename"
+                @handleCloseModal="handleCloseModalRename" />
         </Transition>
         <Transition name="modal">
-            <ModalShareFolder v-if="folderShare?._id" :folderProps="folderShare" @handleCloseModal="handleCloseModalShare"/>
+            <ModalShareFolder v-if="folderShare?._id" :folderProps="folderShare"
+                @handleCloseModal="handleCloseModalShare" />
         </Transition>
     </div>
     <div v-else class="pl-4 pr-4">
@@ -198,14 +222,16 @@
 <script setup>
 import FileVue from '../components/File.vue'
 import FolderVue from '../components/Folder.vue';
-import {encrypt, decrypt} from "../helpers/encrypt-decrypt"
-import {getClassFileType, niceBytes, getClassStatus}  from "../helpers/index"
+import { toast } from '../plugins/toast';
+import { encrypt, decrypt } from "../helpers/encrypt-decrypt"
+import { getClassFileType, niceBytes, getClassStatus } from "../helpers/index"
 import { IpfsClient } from "../helpers/ipfs";
 import ModalRenameFolder from '../views/main/modal/ModalRenameFolder.vue';
 import ModalShareFolder from '../views/main/modal/ModalShareFolder.vue';
+import JSZip from "jszip"
 </script>
 
-<script> 
+<script>
 
 export default {
     props: {
@@ -233,7 +259,8 @@ export default {
             layout: "",
             folderRename: {},
             folderShare: {},
-            dayjs: dayjs
+            dayjs: dayjs,
+            folderDownload: []
         };
     },
     mounted() {
@@ -266,63 +293,105 @@ export default {
         handleCloseModalShare() {
             this.folderShare = {}
         },
-        handleHideFolder(folder) {
-            var zip = new window.JSZip();
-            console.log(zip);
-            zip.file("Hello.txt", "Hello World\n");
-            var img = zip.folder("images");
-            if(this.documentState.folder.files.length) {
-                for (const file of this.documentState.folder.files) {
-                    console.log(file.hash);
-                    IpfsClient().get(file.hash).then(async (res) => {
-                        console.log(res[0].content);
-                        let resultDecrypt = decrypt(res[0].content, file.key);
-                        console.log("resultDecrypt", resultDecrypt);
-                        let tokenUri = JSON.parse(file.tokenURI);
-                        console.log("tokenUri", tokenUri);
-                        let blob = new Blob([resultDecrypt.buffer], { type: tokenUri.fileType });
-                        img.file(tokenUri.name, blob, {base64: true});
-                    }).then(res => {
-                        zip.generateAsync({type:"blob"})
-                        .then(function(content) {
-                            // see FileSaver.js
-                            saveAs(content, "example.zip");
-                        });
-                    })
-                }
-                
-            }
-            console.log(folder);
-            this.showMenu = ""
+        handleHideFolder() {
+
         },
+        async handleDownloadFolder(folder) {
+            this.showMenu = ""
+            if(!this.documentState.treeFolder[folder._id]) {
+                await this.$store.dispatch("document/getTreeFolder", { type: "folder", folderId: folder._id })
+            }
+            let zip = new JSZip()
+            const toastZipping = toast.info("Zipping folder...", {
+                position: "bottom-left",
+                timeout: 0,
+                closeOnClick: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: true,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+            });
+            await this.zipFolder(this.documentState.treeFolder[folder._id][0].children, zip)
+            toast.success("Successfully zipping "+ '"' + folder.name+ '"', {
+                position: "bottom-left",
+                timeout: 1500,
+                closeOnClick: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: true,
+                hideProgressBar: false,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+            });
+            toast.dismiss(toastZipping)
+            zip.generateAsync({ type: "blob" })
+                .then(function (content) {
+                    console.log(content);
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(content);
+                    let fileName = folder.name;
+                    link.download = fileName;
+                    link.click();
+                }).catch(error => {
+                    console.log(error);
+                });
+            
+            
+
+        },
+		async zipFolder(treeFolder, zip) {
+			console.log(treeFolder);
+			for (let child of treeFolder) {
+				if(!child.children){
+                    const ipfs = await IpfsClient()
+                    if (!ipfs) {
+                        alert("Error when connect to IPFS Server")
+                        return
+                    }
+                    let res = await ipfs.get(child.data.hash)
+                    let resultDecrypt = decrypt(res[0].content, child.data.key);
+                    console.log("resultDecrypt", resultDecrypt);
+                    let tokenUri = JSON.parse(child.data.tokenURI);
+                    zip.file(tokenUri.name, resultDecrypt);
+				}else {
+					let folder = zip.folder(`${child.name}`);
+					this.zipFolder(child.children, folder)
+				}
+			}
+		},
         getClassFileType: getClassFileType,
         niceBytes: niceBytes,
         getClassStatus: getClassStatus,
-        
-        download(file) {
+
+        async download(file) {
             this.isLoadingDownload.value = true;
             this.isLoadingDownload.id = file._id;
-            IpfsClient().get(file.hash).then(async (res) => {
-                if (res) {
-                    console.log(res[0].content);
-                    let resultDecrypt = decrypt(res[0].content, file.key);
-                    console.log("resultDecrypt", resultDecrypt);
-                    let tokenUri = JSON.parse(file.tokenURI);
-                    console.log("tokenUri", tokenUri);
-                    let blob = new Blob([resultDecrypt.buffer], { type: tokenUri.fileType });
-                    let link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    let fileName = tokenUri.name;
-                    link.download = fileName;
-                    console.log("link", link);
-                    link.click();
-                    this.isLoadingDownload.value = false;
-                }
-            }).catch(error => {
+            const ipfs = await IpfsClient()
+            if (!ipfs) {
                 this.isLoadingDownload.value = false;
                 console.log(error);
                 alert("No file to download");
-            });
+            }
+            let res = await ipfs.get(file.hash)
+            if (res) {
+                console.log(res[0].content);
+                let resultDecrypt = decrypt(res[0].content, file.key);
+                console.log("resultDecrypt", resultDecrypt);
+                let tokenUri = JSON.parse(file.tokenURI);
+                console.log("tokenUri", tokenUri);
+                let blob = new Blob([resultDecrypt.buffer], { type: tokenUri.fileType });
+                let link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                let fileName = tokenUri.name;
+                link.download = fileName;
+                console.log("link", link);
+                link.click();
+                this.isLoadingDownload.value = false;
+            }
         },
     },
     computed: {
@@ -361,75 +430,88 @@ export default {
     position: relative;
     cursor: pointer;
 }
+
 .folder {
     height: 100%;
     padding: 3.5rem 1rem 3rem;
     text-align: center;
-    border: 1px solid #eeeeee;;
+    border: 1px solid #eeeeee;
+    ;
 }
-.folder:hover{
-  box-shadow: 0px 7px 5px -6px rgba(0, 0, 0, 0.12);
-  background-color: #eeeeee;
-  border: 1px solid #dddddd;;
+
+.folder:hover {
+    box-shadow: 0px 7px 5px -6px rgba(0, 0, 0, 0.12);
+    background-color: #eeeeee;
+    border: 1px solid #dddddd;
+    ;
 }
 
 .item-grid-card {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
 }
-.modal-enter, .modal-leave-active {
+
+.modal-enter,
+.modal-leave-active {
     opacity: 0;
 }
 
 .modal-enter .modal-container,
 .modal-leave-active .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .dropdown {
-  position: relative;
-  display: inline-block;
-  overflow: visible;
+    position: relative;
+    display: inline-block;
+    overflow: visible;
 }
 
 .dropdown-content {
-  top: 3rem;
-  left: 20px;
-  display: block;
-  position: absolute;
-  background-color: #f1f1f1;
-  width: 120px;
-  height: 5rem;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+    top: 3rem;
+    left: 20px;
+    display: block;
+    position: absolute;
+    background-color: #f1f1f1;
+    width: 10rem;
+    height: 5rem;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     font-size: 1.3rem;
     vertical-align: middle;
 }
+
 .v-btn {
     margin: 0
 }
+
 .float-right {
     float: right;
 }
+
 .text-custom-color-blue {
     color: #00A8FF
 }
+
 .cursor-pointer {
     cursor: pointer;
 }
-.modal-enter, .modal-leave-active {
+
+.modal-enter,
+.modal-leave-active {
     opacity: 0;
 }
 
 .modal-enter .modal-container,
 .modal-leave-active .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .truncate {

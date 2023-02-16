@@ -103,17 +103,17 @@
                     </router-link>
                 </li>
                 <li v-for="(folder, index) in documentState.ancestors" :key="index" class="align-self-center" aria-current="page">
-                    <router-link v-if="documentState.ancestors.length <=2" class="align-self-center d-flex flex-row" :to="'/folder/'+ folder._id">
+                    <router-link class="align-self-center d-flex flex-row" :to="'/folder/'+ folder._id">
                         <span class="material-icons">
                             &nbsp;/ folder
                         </span>
                         <span class="align-self-center mt-1">&nbsp;{{folder.name}}</span>
                     </router-link>
-                    <router-link v-else to="#">
+                    <!-- <router-link v-else to="#">
                         <span class="material-icons">
                             &nbsp;/ home
                         </span>
-                    </router-link>
+                    </router-link> -->
                 </li>
                 <li v-if="documentState.folder" class="d-flex flex-row align-self-center mt-n-2" aria-current="page">
                     

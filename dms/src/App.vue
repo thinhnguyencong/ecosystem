@@ -5,7 +5,7 @@
     
 		<!-- Content -->
 		<div id="layout">
-			<Header v-if="store.state.auth.isAuthenticated" />
+			<Header v-if="store.state.auth.isAuthenticated" @openNav="openNav" @closeNav="closeNav"/>
 			<div id="content">
 				<router-view />
 			</div>
@@ -18,11 +18,18 @@ import Sidebar from './components/layout/Sidebar.vue'
 import Header from './components/layout/Header.vue';
 import store from './store';
 import socket from './helpers/socket';
-// $(document).on('show.bs.modal', '.modal', function() {
-//   const zIndex = 1040 + 10 * $('.modal:visible').length;
-//   $(this).css('z-index', zIndex);
-//   setTimeout(() => $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'));
-// });
+
+/* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+function openNav() {
+  document.getElementById("mySidebar").style.width = "250px";
+  document.getElementById("content").style.marginLeft = "250px";
+}
+
+/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+function closeNav() {
+  document.getElementById("mySidebar").style.width = "0";
+  document.getElementById("content").style.marginLeft = "0";
+}
 </script>
 <script>
 	export default {
@@ -31,6 +38,7 @@ import socket from './helpers/socket';
 				console.log("Socket io error", err);
 			});
 		},
+
 		destroyed() {
 			socket.off("connect_error");
 		},
@@ -75,12 +83,12 @@ button {
 	}
 }
 #content {
-//   margin: 2rem
+	transition: margin-left .5s;
+  	padding: 16px;
 }
 #layout {
 	width: 100%;
 	transition: margin-left .5s; /* If you want a transition effect */
-	// padding: 20px;
 }
 </style>  
 <style lang="scss">

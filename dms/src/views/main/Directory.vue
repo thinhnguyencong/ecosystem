@@ -76,7 +76,6 @@ export default {
     },
     methods: {
         async callAPI() {
-            // await this.$store.dispatch("document/getTreeFolder")
             await this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
         },
         onLayoutChange(layout) {
