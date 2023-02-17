@@ -1,17 +1,19 @@
 FROM node:16-alpine as node
-WORKDIR /app
-COPY . .
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh
 
-# RUN apk add g++ make py3-pip
-# RUN apk add --no-cache rust cargo
-# RUN apk add pkgconfig openssl openssl-dev musl-dev
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-# # RUN cd rust-2 && cargo build --release
-# RUN npm install -g node-gyp
+WORKDIR /home/node/app
+
+COPY package.json ./
+
+USER node
+
 RUN npm install
-# RUN npm run init
+
+COPY --chown=node:node . .
+
 EXPOSE 5555
 
 CMD ["npm", "run", "dev"]

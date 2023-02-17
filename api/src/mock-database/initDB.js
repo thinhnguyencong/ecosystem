@@ -11,6 +11,7 @@ import User from '../models/user.model.js';
 import File from '../models/file.model.js';
 import Service from '../models/service.model.js';
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
 const database = mongoose.connect(process.env.DATABASE_URI, {

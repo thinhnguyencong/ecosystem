@@ -1,5 +1,5 @@
 version: '3.4'
-
+name: keycloak
 services:
   mysql:
     image: mysql:5.7
@@ -61,7 +61,7 @@ services:
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_HOSTNAME_PORT: ${KC_HOSTNAME_PORT}
-      KC_HOSTNAME_URL: ${KC_HOSTNAME_URL}
+      #KC_HOSTNAME_URL: ${KC_HOSTNAME_URL}
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       PROXY_ADDRESS_FORWARDING: "true"
