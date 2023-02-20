@@ -3,23 +3,19 @@ import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand"
 import lightwallet from "eth-lightwallet"
 import axios from 'axios';
-import Department from '../models/department.model.js';
-import Folder from '../models/folder.model.js'
-import Project from '../models/project.model.js';
-import Role from '../models/role.model.js';
-import User from '../models/user.model.js';
-import File from '../models/file.model.js';
-import Service from '../models/service.model.js';
+import Department from './models/department.model.js';
+import Folder from './models/folder.model.js'
+import Project from './models/project.model.js';
+import Role from './models/role.model.js';
+import User from './models/user.model.js';
+import File from './models/file.model.js';
+import Service from './models/service.model.js';
+import connectDB from './config/dbConnection.js';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
-const database = mongoose.connect(process.env.DATABASE_URI, {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-    });
-if (!database) throw ('Error! Cannot connect to MongoDB. Please check connection. :(');
-
+await connectDB()
 const initDB = async () => {
     const listDepts = [
         { name: "AI" }, 

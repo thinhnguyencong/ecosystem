@@ -14,6 +14,8 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
     restart: always
+    networks:
+      - my-proxy-net
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin-container
@@ -25,6 +27,8 @@ services:
     ports:
       - 8090:80
     restart: unless-stopped
+    networks:
+      - my-proxy-net
   mysql-backup:
     image: databack/mysql-backup
     container_name: mysql-backup
@@ -54,6 +58,8 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+    networks:
+      - my-proxy-net
   keycloak:
     build: ./keycloak
     ports:
@@ -75,3 +81,8 @@ services:
     depends_on:
       - mysql
     restart: unless-stopped
+    networks:
+      - my-proxy-net
+networks:
+  my-proxy-net:
+    name: custom_network

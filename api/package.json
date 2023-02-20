@@ -7,8 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/server.js",
-    "init": "node ./src/mock-database/initDB.js",
-    "update": "node ./src/mock-database/update.js"
+    "init": "node ./src/seed.js"
   },
   "keywords": [],
   "author": "",

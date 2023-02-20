@@ -1,0 +1,1 @@
+mongorestore  --db ecosystem ./dump/ecosystem
