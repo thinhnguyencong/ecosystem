@@ -159,39 +159,39 @@ const initDB = async () => {
             groups: ["admin-dms"],
             emailVerified: true
         },
-        {
-            username: "cperson",
-            email: "cperson@dms-grooo.com.vn",
-            keystore: `{"encSeed":{"encStr":"5bcDmoRSxGi5KfipYqZT6LnwitQiBDmfBYXeK6Pe/OSudyjIfhNZGKL7a9OjQdF2JLmCsVZNfL0Lju5DE3GmhlNRcr2brH69GuqZWf/W5cHXMw6Rb5coNbGLPV+W6aUc3eZbeHDamEEUE7Vh1WqYJ3XwIs9gsysw3vojkKONFnAQ0VVoJ5v3Fw==","nonce":"ziWIeqplalezrClFuwUUOau2tYkw5/Pq"},"encHdRootPriv":{"encStr":"p07h35Gb7Vu/LBdtn5N1syk6tXYJAWFHR3cqdfHPDEocUEQEcD2TZR8RnmC/U1lwSDxhepSzQf9ZZQgx85inipMWSM4NBMGJMPR9gVzATDdpQuU5MFEXX99ZK3iRwMs8X/CMpWgzIrTFlitgSLfEvTD3KPGF7Y+EsCQ1afHfRA==","nonce":"VNM9ZBii3TAKw7lSfJv1xmkzGqhpQB3F"},"addresses":[],"encPrivKeys":{},"hdPathString":"m/0'/0'/0'","salt":"dwweJ/lWb0eYFxoLL08CCbvrJgvgXiaYJYCQF6MDcdQ=","hdIndex":0,"version":3}`,
-            publicAddress: "0x09876c96F80247184921f24547c861c99083f602",
-            firstName: "Si Chun",
-            lastName: "Kim",
-            role: listRoles.find(isChairperson)._id,
-            groups: ["user-dms"],
-            emailVerified: true
-        },
-        {
-            username: "bod",
-            email: "bod@dms-grooo.com.vn",
-            keystore: `{"encSeed":{"encStr":"vK8KVzjwxv2fQWFcp8dtTp3xgCdTpOJDVun2OdvYCrpIwjIhL13vvbQR1wHuOKpY1GppAZUO6RHfdzhXTpnYfCDDumwVQSpWqKAX5yNRPZ8Ve+x1BhC0GdWIifkeexUpyf7dWJUXxKzkvLyHEak/WNIVT+wwHw/cgQnKY9VzyOeZnYZ6C+65Yw==","nonce":"sdiUYpsGW7N0vqJZayQAEfhx4PUUImNb"},"encHdRootPriv":{"encStr":"wLartzZK7/CrtOWwgWUNM8cITfpQSZMCmLyYNJFfZeFWsvi/tkg5X9GXOmVTM55d1bm+acLPF4AfEDLiqlglt8jC6Jk+X89gHtHttO0XwSvu2rONZC+ITXMptsxwmA248ZyAT5XLwnPiTvi99aOty9Hwmd59u7NIXluKqvROWg==","nonce":"E7G/0FkJOZA11x2hO6qpm+3FUlX37p79"},"addresses":["9f048a73735b6afee502ec605e08d83472857463","cc40cc0ba83048801e05ab6bcf3cdb827e31c488","9b17b0612069258b3cc9187c5a96107b8cc7968d","fe47e32e697532bba14ee50458055d1b80de4657","ff8ce8c35a2222c573352d182c50505010973244"],"encPrivKeys":{"9f048a73735b6afee502ec605e08d83472857463":{"key":"Oilu1IuI/zVTk0EOcKO4lalsgbEcmCnn1tuRGj94RelYK/4ZfUo3m/sbwG+QAFT0","nonce":"ofhgC5K+Ys10J7LFokpMUu1WmzElcOAc"},"cc40cc0ba83048801e05ab6bcf3cdb827e31c488":{"key":"43Ag+gMn45vRw92cCMpqyh4yMcViYLXPaYSmlnu2TXE00ONQFtMrP146zxDkaJHZ","nonce":"r3O6GMamtZOJ9Wu8SPCe2Hpzb4fTYghU"},"9b17b0612069258b3cc9187c5a96107b8cc7968d":{"key":"So9W5QfmIrIZiJn4dAkE4pbl98alrs2pYaTYtqDSf5/w+Ibx8B9DOpqDE+neREZ6","nonce":"Tgip+KSB3pbNQQjpCaVFUf7WRK3QpLJd"},"fe47e32e697532bba14ee50458055d1b80de4657":{"key":"dIuqZq1T9P99WXU2Ld5g/N/fMW522JukDYTvaVN8pX5rgEWOxwO0Jsx3UzAjGBeI","nonce":"dOBTux2+l7CRQatUTNshpLt+fXG1oDTS"},"ff8ce8c35a2222c573352d182c50505010973244":{"key":"g4rJrEWFPLPorpCSM9RN+Z/g+9aKoDXik/eN8N/P/JLCDUpFjBr1NnHk31f4npXJ","nonce":"tkvvfhJ+YpxlJDv7D1ah1pp9dfPUjEhy"}},"hdPathString":"m/0'/0'/0'","salt":"/k1/PWF2VJVmlb9PIJuITQR1igdA1U9AdAhiXFIZgD4=","hdIndex":5,"version":3}`,
-            publicAddress: "0xfe47e32e697532bba14ee50458055d1b80de4657",
-            firstName: "Minh Hien",
-            lastName: "Nguyen",
-            role: listRoles.find(isBod)._id,
-            groups: ["user-dms"],
-            emailVerified: true
-        },
-        {
-            username: "bod1",
-            email: "bod1@dms-grooo.com.vn",
-            keystore: `{"encSeed":{"encStr":"vK8KVzjwxv2fQWFcp8dtTp3xgCdTpOJDVun2OdvYCrpIwjIhL13vvbQR1wHuOKpY1GppAZUO6RHfdzhXTpnYfCDDumwVQSpWqKAX5yNRPZ8Ve+x1BhC0GdWIifkeexUpyf7dWJUXxKzkvLyHEak/WNIVT+wwHw/cgQnKY9VzyOeZnYZ6C+65Yw==","nonce":"sdiUYpsGW7N0vqJZayQAEfhx4PUUImNb"},"encHdRootPriv":{"encStr":"wLartzZK7/CrtOWwgWUNM8cITfpQSZMCmLyYNJFfZeFWsvi/tkg5X9GXOmVTM55d1bm+acLPF4AfEDLiqlglt8jC6Jk+X89gHtHttO0XwSvu2rONZC+ITXMptsxwmA248ZyAT5XLwnPiTvi99aOty9Hwmd59u7NIXluKqvROWg==","nonce":"E7G/0FkJOZA11x2hO6qpm+3FUlX37p79"},"addresses":["9f048a73735b6afee502ec605e08d83472857463","cc40cc0ba83048801e05ab6bcf3cdb827e31c488","9b17b0612069258b3cc9187c5a96107b8cc7968d","fe47e32e697532bba14ee50458055d1b80de4657","ff8ce8c35a2222c573352d182c50505010973244"],"encPrivKeys":{"9f048a73735b6afee502ec605e08d83472857463":{"key":"Oilu1IuI/zVTk0EOcKO4lalsgbEcmCnn1tuRGj94RelYK/4ZfUo3m/sbwG+QAFT0","nonce":"ofhgC5K+Ys10J7LFokpMUu1WmzElcOAc"},"cc40cc0ba83048801e05ab6bcf3cdb827e31c488":{"key":"43Ag+gMn45vRw92cCMpqyh4yMcViYLXPaYSmlnu2TXE00ONQFtMrP146zxDkaJHZ","nonce":"r3O6GMamtZOJ9Wu8SPCe2Hpzb4fTYghU"},"9b17b0612069258b3cc9187c5a96107b8cc7968d":{"key":"So9W5QfmIrIZiJn4dAkE4pbl98alrs2pYaTYtqDSf5/w+Ibx8B9DOpqDE+neREZ6","nonce":"Tgip+KSB3pbNQQjpCaVFUf7WRK3QpLJd"},"fe47e32e697532bba14ee50458055d1b80de4657":{"key":"dIuqZq1T9P99WXU2Ld5g/N/fMW522JukDYTvaVN8pX5rgEWOxwO0Jsx3UzAjGBeI","nonce":"dOBTux2+l7CRQatUTNshpLt+fXG1oDTS"},"ff8ce8c35a2222c573352d182c50505010973244":{"key":"g4rJrEWFPLPorpCSM9RN+Z/g+9aKoDXik/eN8N/P/JLCDUpFjBr1NnHk31f4npXJ","nonce":"tkvvfhJ+YpxlJDv7D1ah1pp9dfPUjEhy"}},"hdPathString":"m/0'/0'/0'","salt":"/k1/PWF2VJVmlb9PIJuITQR1igdA1U9AdAhiXFIZgD4=","hdIndex":5,"version":3}`,
-            publicAddress: "0xff8ce8c35a2222c573352d182c50505010973244",
-            firstName: "Van Dam",
-            lastName: "Pham",
-            role: listRoles.find(isBod)._id,
-            groups: ["user-dms"],
-            emailVerified: true
-        },
+        // {
+        //     username: "cperson",
+        //     email: "cperson@dms-grooo.com.vn",
+        //     keystore: `{"encSeed":{"encStr":"5bcDmoRSxGi5KfipYqZT6LnwitQiBDmfBYXeK6Pe/OSudyjIfhNZGKL7a9OjQdF2JLmCsVZNfL0Lju5DE3GmhlNRcr2brH69GuqZWf/W5cHXMw6Rb5coNbGLPV+W6aUc3eZbeHDamEEUE7Vh1WqYJ3XwIs9gsysw3vojkKONFnAQ0VVoJ5v3Fw==","nonce":"ziWIeqplalezrClFuwUUOau2tYkw5/Pq"},"encHdRootPriv":{"encStr":"p07h35Gb7Vu/LBdtn5N1syk6tXYJAWFHR3cqdfHPDEocUEQEcD2TZR8RnmC/U1lwSDxhepSzQf9ZZQgx85inipMWSM4NBMGJMPR9gVzATDdpQuU5MFEXX99ZK3iRwMs8X/CMpWgzIrTFlitgSLfEvTD3KPGF7Y+EsCQ1afHfRA==","nonce":"VNM9ZBii3TAKw7lSfJv1xmkzGqhpQB3F"},"addresses":[],"encPrivKeys":{},"hdPathString":"m/0'/0'/0'","salt":"dwweJ/lWb0eYFxoLL08CCbvrJgvgXiaYJYCQF6MDcdQ=","hdIndex":0,"version":3}`,
+        //     publicAddress: "0x09876c96F80247184921f24547c861c99083f602",
+        //     firstName: "Si Chun",
+        //     lastName: "Kim",
+        //     role: listRoles.find(isChairperson)._id,
+        //     groups: ["user-dms"],
+        //     emailVerified: true
+        // },
+        // {
+        //     username: "bod",
+        //     email: "bod@dms-grooo.com.vn",
+        //     keystore: `{"encSeed":{"encStr":"vK8KVzjwxv2fQWFcp8dtTp3xgCdTpOJDVun2OdvYCrpIwjIhL13vvbQR1wHuOKpY1GppAZUO6RHfdzhXTpnYfCDDumwVQSpWqKAX5yNRPZ8Ve+x1BhC0GdWIifkeexUpyf7dWJUXxKzkvLyHEak/WNIVT+wwHw/cgQnKY9VzyOeZnYZ6C+65Yw==","nonce":"sdiUYpsGW7N0vqJZayQAEfhx4PUUImNb"},"encHdRootPriv":{"encStr":"wLartzZK7/CrtOWwgWUNM8cITfpQSZMCmLyYNJFfZeFWsvi/tkg5X9GXOmVTM55d1bm+acLPF4AfEDLiqlglt8jC6Jk+X89gHtHttO0XwSvu2rONZC+ITXMptsxwmA248ZyAT5XLwnPiTvi99aOty9Hwmd59u7NIXluKqvROWg==","nonce":"E7G/0FkJOZA11x2hO6qpm+3FUlX37p79"},"addresses":["9f048a73735b6afee502ec605e08d83472857463","cc40cc0ba83048801e05ab6bcf3cdb827e31c488","9b17b0612069258b3cc9187c5a96107b8cc7968d","fe47e32e697532bba14ee50458055d1b80de4657","ff8ce8c35a2222c573352d182c50505010973244"],"encPrivKeys":{"9f048a73735b6afee502ec605e08d83472857463":{"key":"Oilu1IuI/zVTk0EOcKO4lalsgbEcmCnn1tuRGj94RelYK/4ZfUo3m/sbwG+QAFT0","nonce":"ofhgC5K+Ys10J7LFokpMUu1WmzElcOAc"},"cc40cc0ba83048801e05ab6bcf3cdb827e31c488":{"key":"43Ag+gMn45vRw92cCMpqyh4yMcViYLXPaYSmlnu2TXE00ONQFtMrP146zxDkaJHZ","nonce":"r3O6GMamtZOJ9Wu8SPCe2Hpzb4fTYghU"},"9b17b0612069258b3cc9187c5a96107b8cc7968d":{"key":"So9W5QfmIrIZiJn4dAkE4pbl98alrs2pYaTYtqDSf5/w+Ibx8B9DOpqDE+neREZ6","nonce":"Tgip+KSB3pbNQQjpCaVFUf7WRK3QpLJd"},"fe47e32e697532bba14ee50458055d1b80de4657":{"key":"dIuqZq1T9P99WXU2Ld5g/N/fMW522JukDYTvaVN8pX5rgEWOxwO0Jsx3UzAjGBeI","nonce":"dOBTux2+l7CRQatUTNshpLt+fXG1oDTS"},"ff8ce8c35a2222c573352d182c50505010973244":{"key":"g4rJrEWFPLPorpCSM9RN+Z/g+9aKoDXik/eN8N/P/JLCDUpFjBr1NnHk31f4npXJ","nonce":"tkvvfhJ+YpxlJDv7D1ah1pp9dfPUjEhy"}},"hdPathString":"m/0'/0'/0'","salt":"/k1/PWF2VJVmlb9PIJuITQR1igdA1U9AdAhiXFIZgD4=","hdIndex":5,"version":3}`,
+        //     publicAddress: "0xfe47e32e697532bba14ee50458055d1b80de4657",
+        //     firstName: "Minh Hien",
+        //     lastName: "Nguyen",
+        //     role: listRoles.find(isBod)._id,
+        //     groups: ["user-dms"],
+        //     emailVerified: true
+        // },
+        // {
+        //     username: "bod1",
+        //     email: "bod1@dms-grooo.com.vn",
+        //     keystore: `{"encSeed":{"encStr":"vK8KVzjwxv2fQWFcp8dtTp3xgCdTpOJDVun2OdvYCrpIwjIhL13vvbQR1wHuOKpY1GppAZUO6RHfdzhXTpnYfCDDumwVQSpWqKAX5yNRPZ8Ve+x1BhC0GdWIifkeexUpyf7dWJUXxKzkvLyHEak/WNIVT+wwHw/cgQnKY9VzyOeZnYZ6C+65Yw==","nonce":"sdiUYpsGW7N0vqJZayQAEfhx4PUUImNb"},"encHdRootPriv":{"encStr":"wLartzZK7/CrtOWwgWUNM8cITfpQSZMCmLyYNJFfZeFWsvi/tkg5X9GXOmVTM55d1bm+acLPF4AfEDLiqlglt8jC6Jk+X89gHtHttO0XwSvu2rONZC+ITXMptsxwmA248ZyAT5XLwnPiTvi99aOty9Hwmd59u7NIXluKqvROWg==","nonce":"E7G/0FkJOZA11x2hO6qpm+3FUlX37p79"},"addresses":["9f048a73735b6afee502ec605e08d83472857463","cc40cc0ba83048801e05ab6bcf3cdb827e31c488","9b17b0612069258b3cc9187c5a96107b8cc7968d","fe47e32e697532bba14ee50458055d1b80de4657","ff8ce8c35a2222c573352d182c50505010973244"],"encPrivKeys":{"9f048a73735b6afee502ec605e08d83472857463":{"key":"Oilu1IuI/zVTk0EOcKO4lalsgbEcmCnn1tuRGj94RelYK/4ZfUo3m/sbwG+QAFT0","nonce":"ofhgC5K+Ys10J7LFokpMUu1WmzElcOAc"},"cc40cc0ba83048801e05ab6bcf3cdb827e31c488":{"key":"43Ag+gMn45vRw92cCMpqyh4yMcViYLXPaYSmlnu2TXE00ONQFtMrP146zxDkaJHZ","nonce":"r3O6GMamtZOJ9Wu8SPCe2Hpzb4fTYghU"},"9b17b0612069258b3cc9187c5a96107b8cc7968d":{"key":"So9W5QfmIrIZiJn4dAkE4pbl98alrs2pYaTYtqDSf5/w+Ibx8B9DOpqDE+neREZ6","nonce":"Tgip+KSB3pbNQQjpCaVFUf7WRK3QpLJd"},"fe47e32e697532bba14ee50458055d1b80de4657":{"key":"dIuqZq1T9P99WXU2Ld5g/N/fMW522JukDYTvaVN8pX5rgEWOxwO0Jsx3UzAjGBeI","nonce":"dOBTux2+l7CRQatUTNshpLt+fXG1oDTS"},"ff8ce8c35a2222c573352d182c50505010973244":{"key":"g4rJrEWFPLPorpCSM9RN+Z/g+9aKoDXik/eN8N/P/JLCDUpFjBr1NnHk31f4npXJ","nonce":"tkvvfhJ+YpxlJDv7D1ah1pp9dfPUjEhy"}},"hdPathString":"m/0'/0'/0'","salt":"/k1/PWF2VJVmlb9PIJuITQR1igdA1U9AdAhiXFIZgD4=","hdIndex":5,"version":3}`,
+        //     publicAddress: "0xff8ce8c35a2222c573352d182c50505010973244",
+        //     firstName: "Van Dam",
+        //     lastName: "Pham",
+        //     role: listRoles.find(isBod)._id,
+        //     groups: ["user-dms"],
+        //     emailVerified: true
+        // },
     ]
     async function addUser(user) {
         let randomSeed = lightwallet.keystore.generateRandomSeed();

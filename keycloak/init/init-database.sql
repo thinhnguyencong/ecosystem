@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql:3306
--- Generation Time: Feb 10, 2023 at 06:12 AM
+-- Generation Time: Feb 21, 2023 at 08:19 AM
 -- Server version: 5.7.40
 -- PHP Version: 8.0.19
 
@@ -1079,6 +1079,8 @@ CREATE TABLE `CREDENTIAL` (
 --
 
 INSERT INTO `CREDENTIAL` (`ID`, `SALT`, `TYPE`, `USER_ID`, `CREATED_DATE`, `USER_LABEL`, `SECRET_DATA`, `CREDENTIAL_DATA`, `PRIORITY`) VALUES
+('2f684111-59dd-47f2-b481-3b20dc38d194', NULL, 'password', '801b5074-17de-48ad-a636-c30d530c12f6', 1673938049430, NULL, '{\"value\":\"XkWmp/xd3rYxHPS80rvVA9Mm/g1/+r8xdgSIzJG0/TsEy+MU8ya+lC9+x/lgYrIziXj9P5trWscI9lX3dO1D7g==\",\"salt\":\"xY8nll7vyC5dhXoMtQhNVQ==\",\"additionalParameters\":{}}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}', 10),
+('99205d8a-8ce5-4f0a-8e63-0a2888b998b8', NULL, 'password', '4c996821-0851-4305-94f8-b416c08a8516', 1673430336195, 'My password', '{\"value\":\"pY0zn1C6J6MXOvxHLta8NqqOS9t22sIZlvYH+/DVU2T7Jkex/tCZgmLaXdXFZgccfgVnRjw37h1GL/cDF/Txlg==\",\"salt\":\"iV7LH/VpgFMexDX03BYQ7Q==\",\"additionalParameters\":{}}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}', 10),
 ('cf42d58f-afc7-48ad-a99f-8f29aabc7c03', NULL, 'password', 'be5161db-84d8-47d2-a962-799878755e67', 1673343478232, NULL, '{\"value\":\"P1QxSmTZ8WNQ6js9Y8Znai74xt6Q+201q3tED9fU1IYu+uuWoVW0ekyMBSjB/tAbgUntR0jDIO9tQGJ0FERYtw==\",\"salt\":\"BBL4hBtckXec+9+Kf7HvxA==\",\"additionalParameters\":{}}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}', 10);
 
 -- --------------------------------------------------------
@@ -2890,7 +2892,9 @@ CREATE TABLE `USER_ENTITY` (
 --
 
 INSERT INTO `USER_ENTITY` (`ID`, `EMAIL`, `EMAIL_CONSTRAINT`, `EMAIL_VERIFIED`, `ENABLED`, `FEDERATION_LINK`, `FIRST_NAME`, `LAST_NAME`, `REALM_ID`, `USERNAME`, `CREATED_TIMESTAMP`, `SERVICE_ACCOUNT_CLIENT_LINK`, `NOT_BEFORE`) VALUES
+('4c996821-0851-4305-94f8-b416c08a8516', 'admin1@dms-grooo.com.vn', 'admin1@dms-grooo.com.vn', b'1', b'1', NULL, 'Admin 1', '', 'ebfc4b17-ab85-4133-98fa-d6c0fcfbcebf', 'admin1', 1673430330248, NULL, 0),
 ('6b723177-c94b-41a8-a8fd-51e928d07471', NULL, '099ef408-cc1f-44fe-bb89-14094c766eeb', b'0', b'1', NULL, NULL, NULL, 'ebfc4b17-ab85-4133-98fa-d6c0fcfbcebf', 'service-account-dms', 1669104614078, '68c51fb6-dfff-40f6-9e26-9464e60b6894', 0),
+('801b5074-17de-48ad-a636-c30d530c12f6', 'admin@dms-grooo.com.vn', 'admin@dms-grooo.com.vn', b'1', b'1', NULL, 'Admin', '', 'ebfc4b17-ab85-4133-98fa-d6c0fcfbcebf', 'admin', 1673430240717, NULL, 0),
 ('9b34efb0-5068-4096-bdd0-fb4b56e85806', NULL, '9e0580ac-a6e5-4b6f-a3bd-188727b3845c', b'0', b'1', NULL, NULL, NULL, 'ebfc4b17-ab85-4133-98fa-d6c0fcfbcebf', 'service-account-realm-management', 1669175159582, '343c7912-686d-4e6b-9c15-3ae53698ebfb', 0),
 ('be5161db-84d8-47d2-a962-799878755e67', NULL, 'e0951ab7-3556-4744-97c4-1e3a5ea134d0', b'0', b'1', NULL, '', '', 'ad3a9024-ffab-4299-a385-b777720941f3', 'admin', 1673343478163, NULL, 0);
 
@@ -2960,6 +2964,14 @@ CREATE TABLE `USER_GROUP_MEMBERSHIP` (
   `USER_ID` varchar(36) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `USER_GROUP_MEMBERSHIP`
+--
+
+INSERT INTO `USER_GROUP_MEMBERSHIP` (`GROUP_ID`, `USER_ID`) VALUES
+('80f08200-a29d-4471-85ea-490aaf5569d9', '4c996821-0851-4305-94f8-b416c08a8516'),
+('80f08200-a29d-4471-85ea-490aaf5569d9', '801b5074-17de-48ad-a636-c30d530c12f6');
+
 -- --------------------------------------------------------
 
 --
@@ -2987,10 +2999,12 @@ CREATE TABLE `USER_ROLE_MAPPING` (
 --
 
 INSERT INTO `USER_ROLE_MAPPING` (`ROLE_ID`, `USER_ID`) VALUES
+('c7fee8d0-eecd-4f6b-801f-a9e02dbedf85', '4c996821-0851-4305-94f8-b416c08a8516'),
 ('1826d3f2-39ba-4c06-af1c-1d7f80968540', '6b723177-c94b-41a8-a8fd-51e928d07471'),
 ('368d453f-45fc-4d6a-a0ab-d52ee83a0313', '6b723177-c94b-41a8-a8fd-51e928d07471'),
 ('c7fee8d0-eecd-4f6b-801f-a9e02dbedf85', '6b723177-c94b-41a8-a8fd-51e928d07471'),
 ('d50ac9a8-ad04-4f99-b5cc-4dbc7d1dca75', '6b723177-c94b-41a8-a8fd-51e928d07471'),
+('c7fee8d0-eecd-4f6b-801f-a9e02dbedf85', '801b5074-17de-48ad-a636-c30d530c12f6'),
 ('c7fee8d0-eecd-4f6b-801f-a9e02dbedf85', '9b34efb0-5068-4096-bdd0-fb4b56e85806'),
 ('ea9dab55-f916-4254-95c9-d1d29b1270eb', '9b34efb0-5068-4096-bdd0-fb4b56e85806'),
 ('0a7b5354-ce19-4902-81b8-651d2d340817', 'be5161db-84d8-47d2-a962-799878755e67'),

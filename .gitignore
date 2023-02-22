@@ -3,8 +3,8 @@
 
 # production
 /build
+
 /keycloak/backup
-/api/backup-mongo
-/api/mongo-backup
+api/mongo/data
 package-lock.json
 .env

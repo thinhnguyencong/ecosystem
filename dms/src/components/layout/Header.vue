@@ -21,7 +21,7 @@
               </button>
               <div class="dropdown-menu " aria-labelledby="profileDropdown">
                 <a class="dropdown-item" href="#">{{$store.state.auth.user.name}}</a>
-                <a class="dropdown-item" href="#">Settings</a>
+                <a class="dropdown-item" type="button" @click="$store.dispatch('auth/logout')">Logout</a>
               </div>
           </span>
         </div> 

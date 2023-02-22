@@ -31,7 +31,7 @@ export const getUsersByListRoles = async (req, res, next) => {
 export const createUser = async (req, res, next) => { 
 	let token = req.headers.authorization
 	let {username, password, email, firstName, lastName, dept, role} = req.body.data
-	if(!username || !password || !email || !firstName || !lastName || !dept || !role) {
+	if(!username || !password || !email || !firstName || !lastName || !role) {
 		return res.status(400).send({
 			msg: "Missing parameters"
 	  });
@@ -105,23 +105,39 @@ export const createUser = async (req, res, next) => {
 							}) 
 							await myFolder.save()
 
-							//add user to Department Internal Folder
-							let department = await Department.findById(dept)
-							const filter = { name: department.name, type: "internal" };
-							let folderUpdated = await Folder.findOneAndUpdate(filter, {$addToSet: {shared: [userAdded._id]}});
-							for (const fileId of folderUpdated.files) {
-								let updatedFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
-							}
-							
-							let descendants = await Folder.find({ancestors: folderUpdated._id.valueOf()}).lean();
-							for (const des of descendants) {
-								console.log(des);
-								let updatedFolder = await Folder.findByIdAndUpdate(des._id.valueOf(), {$addToSet: {shared: [userAdded._id]}});
-								for (const fileId of des.files) {
-									console.log(fileId);
-									let newFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
+							if (!dept && role) {
+								let departments = await Folder.find({ type: "internal" }).lean()
+								for (const dept of departments) {
+									let updatedFolderDept = await Folder.findByIdAndUpdate(dept._id.valueOf(), {$addToSet: {shared: [userAdded._id]}}, {new: true});
+									let descendants = await Folder.find({ancestors: dept._id.valueOf()}).lean();
+									for (const des of descendants) {
+										let updatedFolder = await Folder.findByIdAndUpdate(des._id.valueOf(), {$addToSet: {shared: [userAdded._id]}});
+										for (const fileId of des.files) {
+											console.log(fileId);
+											let newFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
+										}
+									}
+								}
+							} else {
+								//add user to Department Internal Folder
+								let department = await Department.findById(dept)
+								const filter = { name: department.name, type: "internal" };
+								let folderUpdated = await Folder.findOneAndUpdate(filter, {$addToSet: {shared: [userAdded._id]}});
+								for (const fileId of folderUpdated.files) {
+									let updatedFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
+								}
+								
+								let descendants = await Folder.find({ancestors: folderUpdated._id.valueOf()}).lean();
+								for (const des of descendants) {
+									console.log(des);
+									let updatedFolder = await Folder.findByIdAndUpdate(des._id.valueOf(), {$addToSet: {shared: [userAdded._id]}});
+									for (const fileId of des.files) {
+										console.log(fileId);
+										let newFile = await File.findByIdAndUpdate(fileId, {$addToSet: {shared: [userAdded._id]}})
+									}
 								}
 							}
+							
 							// console.log("folderUpdated", folderUpdated);
 							return res.status(200).send({
 								data: userAdded,

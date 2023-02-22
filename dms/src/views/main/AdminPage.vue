@@ -38,17 +38,17 @@
                                   <input v-model="userCreateForm.lastName" type="text" class="form-control" placeholder="Last name">
                               </div>
                               <div class="form-group">
+                                  <label for="role">Role</label>
+                                  <select v-model="userCreateForm.role" class="custom-select">
+                                    <option disabled value="">Choose role...</option>
+                                    <option v-for="(role, index) in userState.roleList" :key="index" :value="role">{{role.name}}</option>
+                                </select>
+                              </div>
+                              <div v-show="userCreateForm.role && userCreateForm.role.type !== 'chairperson' || userCreateForm.role.type !== 'bod'" class="form-group">
                                   <label for="department">Department</label>
                                   <select v-model="userCreateForm.dept" class="custom-select">
                                     <option disabled value="">Choose department...</option>
                                     <option v-for="(dept, index) in userState.deptList" :key="index" :value="dept._id">{{dept.name}}</option>
-                                </select>
-                              </div>
-                              <div class="form-group">
-                                  <label for="role">Role</label>
-                                  <select v-model="userCreateForm.role" class="custom-select">
-                                    <option disabled value="">Choose role...</option>
-                                    <option v-for="(role, index) in userState.roleList" :key="index" :value="role._id">{{role.name}}</option>
                                 </select>
                               </div>
                           </form>
@@ -87,7 +87,7 @@
           firstName: "",
           lastName: "",
           dept: "",
-          role: "",
+          role: {},
         },
         headers: [
             { text: 'NAME', value: 'name',filter: true },
@@ -112,7 +112,7 @@
         await this.$store.dispatch("user/getRoleList") 
       },
       handleCreateUser() {
-          let data = Object.assign({},this.userCreateForm)
+          let data = Object.assign({},{role: this.userCreateForm.role._id, ...this.userCreateForm})
           this.$store.dispatch("admin/createUser", data)
       },
       

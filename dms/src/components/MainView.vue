@@ -81,7 +81,7 @@
         <div v-if="layout == 'list'">
             <div class="table-responsive">
                 <br>
-                <table id="transactionsTable" class="table table-hover" data-pagination="true">
+                <table id="listTable" class="table table-hover" data-pagination="true">
                     <thead>
                         <tr>
                             <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>

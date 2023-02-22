@@ -13,6 +13,8 @@ services:
       MYSQL_TCP_PORT: ${MYSQL_PORT}
     ports:
       - "${MYSQL_PORT}:3306"
+    volumes:
+     - ./init:/docker-entrypoint-initdb.d/:ro
     restart: always
     networks:
       - my-proxy-net
@@ -52,7 +54,7 @@ services:
       #DB_RESTORE_TARGET: /db/db_backup_****-**-**T**-**-**Z.tgz
       # DB_RESTORE_TARGET: /db/db_backup_2023-01-12T06-17-33Z.tgz
     volumes:
-      - ./keycloak/backup/:/db
+      - ./backup/:/db
     deploy:
       restart_policy:
         condition: on-failure
@@ -61,7 +63,7 @@ services:
     networks:
       - my-proxy-net
   keycloak:
-    build: ./keycloak
+    build: ./
     ports:
       - "${KC_HOSTNAME_PORT}:8443"
     environment:

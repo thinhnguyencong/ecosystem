@@ -6,7 +6,7 @@
                     <div class="p-2"><span class="round"><img src="https://thumbs.dreamstime.com/b/default-avatar-profile-image-vector-social-media-user-icon-potrait-182347582.jpg" alt="user" width="40"></span></div>
                     <div class="p-2 comment-text w-100">
                         <h5 class="d-inline">{{ comment.name }}</h5> &nbsp; &nbsp; &nbsp;<small class="date">{{customTime(comment.createdAt)}}</small>
-                        <p class="m-b-5 m-t-10">{{comment.content}}</p>
+                        <p class="m-b-5 m-t-10" v-html="urlify(comment.content)"></p>
                         <a class="attach-text" v-if="comment.attachments.length" role="button" @click="handleShow(comment)">{{ comment.attachments.length }} Attachment(s)</a>
                         <div v-show="comment.isActive">
                             <div class="list-group">
@@ -67,6 +67,12 @@ export default {
             }
             return comments.sort((a, b) => b.createdAt - a.createdAt);
         },
+        urlify(text) {
+            var urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, function(url) {
+                return '<a href="' + url + '"' + ' target="_blank">' + url + '</a>';
+            })
+        }
     },
     created() {
     },

@@ -347,7 +347,7 @@ export const getListRole = async (req, res, next) => {
 	let rolesFind = await Role.find({})
     let roleList = rolesFind.map(role=> ({ _id: role._id.valueOf(), name: role.name, type: role.type}))
 	res.status(200).send({
-		data: roleList.filter(role=> role.type!=="admin" && role.type!=="bod" && role.type!=="chairperson"),
+		data: roleList.filter(role=> role.type!=="admin"),
 		msg: "Get roles successfully"
 	});
 }

@@ -3,10 +3,13 @@ name: ecosystem-service
 services:
   db:
     container_name: mongo
+    env_file: ./.env
     build:
       context: ./mongo
       dockerfile: Dockerfile
     restart: always
+    volumes:
+      - ./mongo/data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
@@ -25,34 +28,34 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@db:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@db:${MONGODB_DOCKER_PORT}/
     networks:
       - proxynet
   wallet-server:
     depends_on:
       - db
-    build: ./api
+    build: ./
     ports:
       - "5555:5555"
     restart: always
     networks:
       - proxynet
   auction-client:
-    build: ./auction-client
+    build: ../auction-client
     ports:
         - "3001:80"
     restart: always
     networks:
       - proxynet
   wallet-client:
-    build: ./wallet-management
+    build: ../wallet-management
     ports:
         - "3000:80"
     restart: always
     networks:
       - proxynet
   dms:
-    build: ./dms
+    build: ../dms
     ports:
         - "3002:80"
     restart: always
