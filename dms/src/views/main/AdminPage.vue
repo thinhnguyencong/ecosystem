@@ -40,11 +40,11 @@
                               <div class="form-group">
                                   <label for="role">Role</label>
                                   <select v-model="userCreateForm.role" class="custom-select">
-                                    <option disabled value="">Choose role...</option>
+                                    <option disabled selected :value="{}">Choose role...</option>
                                     <option v-for="(role, index) in userState.roleList" :key="index" :value="role">{{role.name}}</option>
                                 </select>
                               </div>
-                              <div v-show="userCreateForm.role && userCreateForm.role.type !== 'chairperson' || userCreateForm.role.type !== 'bod'" class="form-group">
+                              <div v-show="userCreateForm.role.type == 'manager' || userCreateForm.role.type == 'employee'" class="form-group">
                                   <label for="department">Department</label>
                                   <select v-model="userCreateForm.dept" class="custom-select">
                                     <option disabled value="">Choose department...</option>
@@ -112,6 +112,9 @@
         await this.$store.dispatch("user/getRoleList") 
       },
       handleCreateUser() {
+        if(this.userCreateForm.role.type == 'bod' || this.userCreateForm.role.type == 'chairperson') {
+          this.userCreateForm.dept = null
+        }
           let data = Object.assign({},{role: this.userCreateForm.role._id, ...this.userCreateForm})
           this.$store.dispatch("admin/createUser", data)
       },

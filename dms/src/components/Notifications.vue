@@ -9,19 +9,29 @@
                     <router-link :to="'/file/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click.native="readNotification(noti._id, noti.read)">  
                         <div v-if="!noti.read">
                             <div class="read list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
-                                <div class="d-flex flex-row">
-                                    <div>
-                                        <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
-                                        <small>{{customTime(noti.createdAt)}}</small>
+                                <div class="row">
+                                    <div class="mdi mdi-checkbox-blank-circle text-primary align-items-center ml-2"></div>
+                                    <div class="col">
+                                        <div>
+                                            <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
+                                            <small>{{customTime(noti.createdAt)}}</small>
+                                        </div>
                                     </div>
-                                    <div class="material-icons text-primary h5 align-items-center">fiber_manual_record</div>
                                 </div>
                             </div>
                         </div>
                         <div v-else>
                             <div class="list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
-                                <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
-                                <small>{{customTime(noti.createdAt)}}</small>
+                                <div class="row">
+                                    <div class="mdi mdi-checkbox-blank-circle-outline text-secondary align-items-center ml-2"></div>
+                                    <div class="col">
+                                        <div>
+                                            <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
+                                            <small>{{customTime(noti.createdAt)}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>    
                     </router-link>
@@ -32,21 +42,31 @@
                     <router-link :to="'/folder/'+ noti.documentId" style="text-decoration: none; color: inherit;" @click.native="readNotification(noti._id, noti.read)">
                         <div v-if="!noti.read">
                             <div class="read list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
-                                <div class="d-flex flex-row">
-                                    <div>
-                                        <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
-                                        <small>{{customTime(noti.createdAt)}}</small>
+                                <div class="row">
+                                    <div class="mdi mdi-checkbox-blank-circle text-primary align-items-center ml-2"></div>
+                                    <div class="col">
+                                        <div>
+                                            <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
+                                            <small>{{customTime(noti.createdAt)}}</small>
+                                        </div>
                                     </div>
-                                    <div class="material-icons text-primary h5 align-items-center">fiber_manual_record</div>
                                 </div>
                             </div>
                         </div>
                         <div v-else>
                             <div class="list-group-item list-group-item-action flex-column align-items-start border-left-none border-right-none">
-                                <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
-                                <small>{{customTime(noti.createdAt)}}</small>
+                                <div class="row">
+                                    <div class="mdi mdi-checkbox-blank-circle-outline text-secondary align-items-center ml-2"></div>
+                                    <div class="col">
+                                        <div>
+                                            <p class="mb-1"><strong>{{ noti.from }}</strong>  {{ noti.content }}</p>
+                                            <small>{{customTime(noti.createdAt)}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             </div>
-                        </div>
+                        </div>    
                         
                     </router-link>
                 </div>
