@@ -2,6 +2,7 @@
 import jwt_decode from "jwt-decode";
 import LandingPage from '../views/main/LandingPage.vue'
 //import LandingPage from '../views/test/LandingPage1.vue'
+import Test from '../views/test/Test.vue'
 import Home from '../views/main/Home.vue'
 import MyFolder from '../views/main/MyFolder.vue'
 import Recent from '../views/main/Recent.vue'
@@ -47,15 +48,12 @@ const routes = [
     name: 'LandingPage',
     component: LandingPage,
 	meta: { requiresAuth: false, requiresAdmin: false },
-	children: [
-		{
-		  path: 'file/:id',
-		  name: 'ModalFile',
-		  component: ModalFile,
-		  props: true,
-		  meta: { requiresAuth: false, requiresAdmin: false, showModal: true }
-		},
-	],
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: Test,
+	meta: { requiresAuth: false, requiresAdmin: false },
   },
   {
     path: '/',
@@ -104,6 +102,7 @@ const routes = [
 	component: NotFound,
 	meta: { requiresAuth: true, requiresAdmin: false }
   },
+ 
  
 
 ]

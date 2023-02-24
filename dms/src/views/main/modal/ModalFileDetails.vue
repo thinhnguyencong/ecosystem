@@ -11,7 +11,7 @@
                         </button>
                         <h5 class="modal-title w-100">{{ file.tokenURI ? JSON.parse(file.tokenURI).name : "" }}</h5>
                         <router-link :to="'..'">
-                            <button @click="test" type="button" class="close" aria-label="Close">
+                            <button type="button" class="close" aria-label="Close">
                                 <p class="h1" aria-hidden="true">&times;</p>
                             </button>
                         </router-link>
@@ -36,8 +36,8 @@
                                         </div>
                                     </div>
                                     <div :class="file.tokenURI !== undefined &&
-                                (JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-                                    ? 'w-100 h-100 overflow-auto border-top' : 'w-100 h-100 border')">
+                                        (JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || JSON.parse(file.tokenURI).fileType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                                            ? 'w-100 h-100 overflow-auto border-top' : 'w-100 h-100 border')">
                                         <div v-if="isLoadingFile">
                                             <div class="spinner-border text-dark" role="status">
                                                 <span class="sr-only">Loading...</span>
@@ -51,8 +51,7 @@
                                     <div v-if="error">{{ error }}</div>
                                 </div>
                                 <div class="col-5 h-100">
-                                    <v-tabs icons-and-text class="h-100" fixed-tabs grow v-model="active"
-                                        color="#f7f7f7">
+                                    <v-tabs icons-and-text class="h-100" fixed-tabs grow v-model="active" color="#f7f7f7">
                                         <v-tabs-slider color="blue"></v-tabs-slider>
                                         <v-tab class="file-detail-tab"
                                             active-class="tab-active text-primary font-weight-bold" :key="0">
@@ -93,8 +92,8 @@
                                                             <p class="font-weight-bold">Upload At :</p>
                                                         </div>
                                                         <div class="col-8">
-                                                            <p>{{(new Date(file.createdAt)).toLocaleTimeString() + " " +
-                                                            (new Date(file.createdAt)).toDateString()}}</p>
+                                                            <p>{{ (new Date(file.createdAt)).toLocaleTimeString() + " " +
+                                                                (new Date(file.createdAt)).toDateString() }}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -111,11 +110,8 @@
                                         <v-tab-item :key="1">
                                             <br>
                                             <div class="border border-muted comment-box">
-                                                <div class="input-group">
-                                                    <textarea v-on:keyup.enter="handleAddComment" v-model="content"
-                                                        placeholder="Write your comment..."
-                                                        class="form-control shadow-none" autofocus="true"></textarea>
-                                                </div>
+                                                <CommentInput ref="commentInput"/>
+
                                                 <!-- <hr class="divider" /> -->
                                                 <div class="d-flex action">
                                                     <div class="p-2 mr-auto">
@@ -132,8 +128,7 @@
 
                                                                             <v-btn flat icon color="indigo" v-on="on">
                                                                                 <v-icon data-toggle="tooltip"
-                                                                                    title="Add attachment"
-                                                                                    color="black">
+                                                                                    title="Add attachment" color="black">
                                                                                     attach_file
                                                                                 </v-icon>
                                                                             </v-btn>
@@ -236,18 +231,15 @@
                                                         </div>
                                                         <div class="col-md-8 text-center">
                                                             <span class="float-md-right">
-                                                                <button
-                                                                    v-if="documentState.fileStatusList?.isLoadingReject"
-                                                                    class="btn btn-danger btn-lg" type="button"
-                                                                    disabled>
+                                                                <button v-if="documentState.fileStatusList?.isLoadingReject"
+                                                                    class="btn btn-danger btn-lg" type="button" disabled>
                                                                     <span class="spinner-border spinner-border-sm"
                                                                         role="status" aria-hidden="true"></span>
                                                                     Rejecting...
                                                                 </button>
                                                                 <span v-else>
                                                                     <button v-if="fileStatus?.canSign"
-                                                                        class="btn btn-danger btn-lg"
-                                                                        aria-disabled="false"
+                                                                        class="btn btn-danger btn-lg" aria-disabled="false"
                                                                         @click="handleReject('sign')">Reject</button>
                                                                     <button v-else-if="fileStatus?.canReview"
                                                                         class="btn btn-danger btn-lg" role="button"
@@ -256,16 +248,14 @@
                                                                 </span>
                                                                 <button
                                                                     v-if="documentState.fileStatusList?.isLoadingSign && fileStatus?.canReview"
-                                                                    class="btn btn-warning btn-lg" type="button"
-                                                                    disabled>
+                                                                    class="btn btn-warning btn-lg" type="button" disabled>
                                                                     <span class="spinner-border spinner-border-sm"
                                                                         role="status" aria-hidden="true"></span>
                                                                     Reviewing...
                                                                 </button>
                                                                 <button
                                                                     v-else-if="documentState.fileStatusList?.isLoadingSign && fileStatus?.canSign"
-                                                                    class="btn btn-success btn-lg" type="button"
-                                                                    disabled>
+                                                                    class="btn btn-success btn-lg" type="button" disabled>
                                                                     <span class="spinner-border spinner-border-sm"
                                                                         role="status" aria-hidden="true"></span>
                                                                     Signing...
@@ -285,8 +275,8 @@
                                                     </div>
                                                 </div>
                                                 <div v-else>
-                                                    <p>Something wrong when loading document status </p> <span><a
-                                                            href="#" @click="handleGetFileStatus">Try Again</a></span>
+                                                    <p>Something wrong when loading document status </p> <span><a href="#"
+                                                            @click="handleGetFileStatus">Try Again</a></span>
                                                 </div>
                                             </div>
                                             <div v-else>
@@ -306,8 +296,7 @@
                         </div>
                     </div>
                     <Transition name="modal">
-                        <ModalShareFile v-if="fileShare?._id" :fileProps="file"
-                            @handleCloseModal="handleCloseModalShare" />
+                        <ModalShareFile v-if="fileShare?._id" :fileProps="file" @handleCloseModal="handleCloseModalShare" />
                     </Transition>
                 </div>
             </div>
@@ -326,10 +315,11 @@ import Treeselect from '@riophae/vue-treeselect'
 import { renderAsync } from "docx-preview/dist/docx-preview"
 import { FILE_TYPE_CAN_BE_PREVIEWED, getClassFileType } from '../../../helpers';
 import ModalShareFile from './ModalShareFile.vue';
-
+import CommentInput from '../../../components/CommentInput.vue';
+import Test from '../../test/Test.vue';
 export default {
     props: ["fileId"],
-    components: { Treeselect, Comment, ModalShareFile },
+    components: { Treeselect, Comment, ModalShareFile, CommentInput, Test },
     data() {
         return {
             resultDecrypt: null,
@@ -341,6 +331,7 @@ export default {
             link: "",
             error: null,
             content: "",
+            tagList: [],
             active: 0,
             normalizer(node) {
                 return {
@@ -388,6 +379,7 @@ export default {
         // socket.on("new notification", (data) => {
         //     console.log("Datar", data);
         // });
+        
     },
     mounted() {
         console.log("111");
@@ -396,14 +388,13 @@ export default {
         }
     },
     methods: {
-        test() {
-            console.log(this.$router);
-            console.log(this.$route);
+        handleChangeComment(content, tagList) {
+            console.log(content, tagList);
         },
         async initData(fileId) {
             this.$set(this, 'isLoadingFile', true);
             if (!this.documentState.treeFolder["my-folder"]) {
-                await this.$store.dispatch("document/getTreeFolder", {type: "my-folder"})
+                await this.$store.dispatch("document/getTreeFolder", { type: "my-folder" })
             }
             try {
                 await this.$store.dispatch("document/getFileById", { id: fileId })
@@ -532,19 +523,29 @@ export default {
             }
         },
         handleAddComment() {
+            let app = this
+            $('textarea.mention').mentionsInput('getMentions', function(data) {
+                app.tagList = data.map(x=> x.id)
+            });
+            $('textarea.mention').mentionsInput('val', function(data) {
+                app.content = data
+            });
             if (!this.content) {
                 alert("Please write some content")
                 return
             }
+            console.log("this.listTag", this.tagList);
             let data = {
                 fileId: this.file._id,
                 content: this.content,
-                attachments: this.attachments
+                attachments: this.attachments,
+                tagList: this.tagList
             }
+            console.log("Data", data);
             this.$store.dispatch("document/addComment", data)
-            this.content = ""
+            this.$refs.commentInput.clearContent("");
             this.attachments = []
-            // this.scrollToEnd()
+            //this.scrollToEnd()
         },
         handleSign(type) {
             this.$swal({
@@ -794,5 +795,8 @@ textarea {
     border-right: 10px solid transparent;
     border-bottom: 13px solid rgb(233, 230, 230);
     margin-top: 5px;
+}
+textarea.form-control:focus {
+    background-color: transparent;
 }
 </style>

@@ -69,8 +69,12 @@ export default {
         },
         urlify(text) {
             var urlRegex = /(https?:\/\/[^\s]+)/g;
+            var tagRegex = /^@\[(.*?)\]/g
             return text.replace(urlRegex, function(url) {
                 return '<a href="' + url + '"' + ' target="_blank">' + url + '</a>';
+            }).replace(tagRegex, function(tag) {
+                console.log(tag);
+                return '<a href="' + tag + '"' + ' target="_blank">' + tag.slice(2, -1) + '</a>';
             })
         }
     },

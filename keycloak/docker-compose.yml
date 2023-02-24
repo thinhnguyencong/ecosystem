@@ -15,6 +15,7 @@ services:
       - "${MYSQL_PORT}:3306"
     volumes:
      - ./init:/docker-entrypoint-initdb.d/:ro
+     - ./data:/var/lib/mysql
     restart: always
     networks:
       - my-proxy-net

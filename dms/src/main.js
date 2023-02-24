@@ -27,6 +27,7 @@ Vue.use(VueSweetalert2);
 Vue.use(Vuetify)
 Vue.use(VueQuillEditor)
 Vue.use(vClickOutside)
+Vue.config.productionTip = false;
 Vue.mixin({
   beforeCreate() {
     if (this.$options.watch) {
