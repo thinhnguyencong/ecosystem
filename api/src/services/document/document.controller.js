@@ -21,6 +21,14 @@ export const getRootFolders = async (req, res, next) => {
 
 	})
 }
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns folder detail by id. Details includes: sub-folder in this folder, folder status, folder files
+ * 
+ */
 export const getFolderById = async (req, res, next) => {
 	let id = req.query.id
 	let ancestors = [];
@@ -131,6 +139,14 @@ export const getFolderById = async (req, res, next) => {
 		})
 	}
 }
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 export const getFoldersInMyFolder = async (req, res, next) => {
 	const userEmail = req.jwtDecoded.email
 	let user = await User.findOne({ email: userEmail })
@@ -559,7 +575,7 @@ export const getAllFiles = async (req, res, next) => {
 }
 
 export const addComment = async (req, res, next) => {
-	let { fileId, content, attachments } = req.body.data
+	let { fileId, content, attachments, tagList } = req.body.data
 	// const web3Connection = await getWeb3()
 	// if(!web3Connection.status) {
 	// 	return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
@@ -601,6 +617,18 @@ export const addComment = async (req, res, next) => {
 		let update = { $push: { comments: newComment } };
 		let newFile = await File.findByIdAndUpdate(fileId, update, { new: true }).lean()
 
+		// notification tag event
+		createNotification(
+			{
+				from: user.name,
+				content: "mentions you in a file.",
+				type: "file",
+				documentId: fileId
+			},
+			[...new Set([...tagList.filter(id => id !== userId)])],
+		)
+
+		// notification comment event
 		createNotification(
 			{
 				from: user.name,
@@ -621,6 +649,8 @@ export const addComment = async (req, res, next) => {
 				[file.owner],
 			)
 		}
+
+		// real-time comment, when 2 user open same file
 		const emitArray = CONNECTED_USERS.filter(
 			(client) => [...newFile.shared, ...[newFile.owner]].includes(client.userId)
 		).filter(x => x.userId !== userId);
@@ -630,7 +660,7 @@ export const addComment = async (req, res, next) => {
 				SOCKET_IO.to(emitUser.socketId).emit("add comment", { fileId: fileId, comment: newComment });
 			}
 		}
-
+		
 		return res.status(200).send({
 			data: {
 				comment: newComment,

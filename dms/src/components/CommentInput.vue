@@ -13,8 +13,6 @@ export default {
         let app = this
         window.$('textarea.mention').mentionsInput({
             onDataRequest: async function (mode, query, callback) {
-                console.log("abcbcbcbcbcb", query);
-                console.log(app.users);
                 if (!app.users.length) {
                     console.log("call API");
                     await app.initData()
@@ -39,29 +37,20 @@ export default {
     },
 
     methods: {
-        initData() {
-            let data = [
-                { id: 1, name: 'Kenneth Auchenberg' },
-                { id: 2, name: 'Jon Froda' },
-                { id: 3, name: 'Anders Pollas' },
-                { id: 4, name: 'Kasper Hulthin' },
-                { id: 5, name: 'Andreas Haugstrup' },
-                { id: 6, name: 'Pete Lacey' },
-                { id: 7, name: 'kenneth@auchenberg.dk' },
-                { id: 8, name: 'Pete Awesome Lacey' },
-                { id: 9, name: 'Kenneth Hulthin' }
-            ]
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this.users = data
-                }, 500)
-            })
+        async initData() {
+            if(!this.adminState.users.length) {
+                await this.$store.dispatch("admin/getAllUsers")
+            }
+            this.users = this.adminState.users.map((user, index) => ({id: user._id, name: user.name.trim()}))
         },
         clearContent(value) {
             this.content = ""
-        }
+        },
 
     },
+    computed: {
+        adminState() {return this.$store.state.admin}
+    }
 }
 </script>
 
