@@ -1,5 +1,5 @@
 version: '3.4'
-name: keycloak
+
 services:
   mysql:
     image: mysql:5.7
