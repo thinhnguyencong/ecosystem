@@ -20,6 +20,7 @@ export const findUser = async (req, res, next) => {
 		let user = await User.findOne({email: userEmail})
 		const {publicAddress, keystore} = user
 		const ks = lightwallet.keystore.deserialize(keystore)
+		// get private key
 		ks.keyFromPassword(process.env.SECRET, async function (err, pwDerivedKey) {
 			ks.generateNewAddress(pwDerivedKey, 1)
 			if (err) throw err;

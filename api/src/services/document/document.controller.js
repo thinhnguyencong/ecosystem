@@ -160,13 +160,8 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 				msg: "Folder not exist"
 			})
 		}
-		// get all descendants folder
-		let myFolderItems = await Folder.find({ owner: userId, parent: { $ne: null }, ancestors: { "$in": [myFolder._id.valueOf()] } }).lean()
-		let myFolderIds = myFolderItems.map(x => x._id.valueOf())
-
-		// filter child folder
-		let result = myFolderItems.filter(item => !item.ancestors.some(a => myFolderIds.includes(a)))
-		result = await Promise.all(result.map(async f => ({ ...f, owner: await getUserInfoById(f.owner) })))
+		let myFolderItems = await Folder.find({parent: myFolder._id.valueOf()}).lean()
+		let result = await Promise.all(myFolderItems.map(async f => ({ ...f,_id: f._id.valueOf(), owner: await getUserInfoById(f.owner) })))
 
 		//get permissioned files
 		let files = await getFile(userId, myFolder.files)
@@ -576,12 +571,6 @@ export const getAllFiles = async (req, res, next) => {
 
 export const addComment = async (req, res, next) => {
 	let { fileId, content, attachments, tagList } = req.body.data
-	// const web3Connection = await getWeb3()
-	// if(!web3Connection.status) {
-	// 	return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
-	// }
-	// const web3 = web3Connection.web3
-	// const dmsContract =  new web3.eth.Contract(DMS.abi, NFT_ADDRESS);
 	const userEmail = req.jwtDecoded.email
 	try {
 		let user = await User.findOne({ email: userEmail })
@@ -589,12 +578,7 @@ export const addComment = async (req, res, next) => {
 		let newAttachment = []
 		let file = await File.findById(fileId).lean()
 		let tokenURI = JSON.parse(file.tokenURI)
-		// let info = await dmsContract.methods.getDocInfo(file.tokenId).call({ from: user.publicAddress });
 
-		// //share attachment for reviewer and signer
-		// if(!info) {
-		// 	return res.status(500).json({msg: "Token ID is invalid"});
-		// }
 		let signerAndReviewerListByAddress = await User.find({ 'publicAddress': { $in: [...new Set([...tokenURI.reviewers, ...tokenURI.signers])] } })
 		let listIdShared = signerAndReviewerListByAddress.map(x => x._id.valueOf())
 		for (let index = 0; index < attachments.length; index++) {

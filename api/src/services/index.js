@@ -16,7 +16,8 @@ const services = express.Router();
 services.use('/wallet', walletRouter);
 
 services.use('/auth', authRouter);
-services.use(tokenMiddleware.tokenVerifier, serviceMiddleware.serviceVerifier) // middleware to verify user credentials when user try to access resources
+// middleware to verify user credentials when user try to access resources
+services.use(tokenMiddleware.tokenVerifier, serviceMiddleware.serviceVerifier) 
 services.use('/user', userRouter);
 services.use('/admin', adminRouter);
 services.use('/auction', auctionRoute)

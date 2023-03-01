@@ -1,63 +1,54 @@
 <template>
-        <textarea placeholder="Write your comment..."
-            class="mention form-control shadow-none border-0" autofocus="true">
-        </textarea>
-
+    <div>
+        <input class="form-control" placeholder="type key here" v-model="key" type="text">
+        <br>
+        <input type="file" accept="*/*" @change="handleUploadFile">
+        <button class="btn btn-primary" @click="handleDownload">Decrypt</button>
+    </div>
 </template>
 <script>
-
+            let key = "6d7755655279537235316e4b6e513239"
+import { decrypt, encrypt } from '../../helpers/encrypt-decrypt';
 export default {
     created() {
-        this.$parent.$on('clear-content', this.clearContent);
+
     },
   mounted() {
-    let app = this
-    window.$('textarea.mention').mentionsInput({
-        onDataRequest: async function (mode, query, callback) {
-            console.log("abcbcbcbcbcb", query);
-            console.log(app.users);
-            if(!app.users.length) {
-                console.log("call API");
-                await app.initData()
-            }
-            let data = app.users
-            data = _.filter(data, function (item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-
-            callback.call(this, data);
-        } ,
-        templates: {
-            mentionItemSyntax: window._.template('@[<%= value %>](<%= type %>:<%= id %>)')
-        },
-        minChars: 1, //Minimum chars to fire the event
-        onCaret: true
-    });
+    
   },
   data () {
     return {
-      users: [],
+      key: "",
     }
   },
 
   methods: {
-    initData() {
-        let data =  [
-            { id: 1, name: 'Kenneth Auchenberg', 'type': 'contact' },
-            { id: 2, name: 'Jon Froda', 'type': 'contact' },
-            { id: 3, name: 'Anders Pollas', 'type': 'contact' },
-            { id: 4, name: 'Kasper Hulthin', 'type': 'contact' },
-            { id: 5, name: 'Andreas Haugstrup', 'type': 'contact' },
-            { id: 6, name: 'Pete Lacey', 'type': 'contact' },
-            { id: 7, name: 'kenneth@auchenberg.dk', 'type': 'contact' },
-            { id: 8, name: 'Pete Awesome Lacey', 'type': 'contact' },
-            { id: 9, name: 'Kenneth Hulthin', 'type': 'contact' }
-        ]
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                this.users = data
-            }, 300)
-        }) 
-    }
-
+    handleUploadFile(event) {
+        const files = event.target.files
+        console.log(files[0]);
+        if (files[0]) {
+            this.file = files[0]
+        }
+    },
+    handleDownload() {
+        let reader = new FileReader();
+        let app = this
+        reader.readAsArrayBuffer(this.file);
+        reader.onloadend = async function () {
+            let msgBytes = new Uint8Array(reader.result);
+            console.log(msgBytes);
+            if (msgBytes && app.key) {
+                let resultDecrypt = decrypt(msgBytes, app.key);
+                console.log("resultDecrypt", resultDecrypt);
+                let blob = new Blob([resultDecrypt.buffer], { type: "application/json" });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                let fileName = "users.json";
+                link.download = fileName;
+                link.click();
+            }
+        }
+    },
   },
 }
 </script>
