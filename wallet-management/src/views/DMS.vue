@@ -97,36 +97,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">
-                        <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
-                        </th>
-                        <td>40 days 2 hrs ago</td>
-                        <td>0x09876c96f802471849..</td>
-                        <td>0xb8262489b64477e886..</td>
-                        <td>0.00028181 BNB</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">
-                        <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
-                        </th>
-                        <td>40 days 2 hrs ago</td>
-                        <td>0x09876c96f802471849..</td>
-                        <td>0xb8262489b64477e886..</td>
-                        <td>0.00028181 BNB</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">
-                        <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
-                        </th>
-                        <td>40 days 2 hrs ago</td>
-                        <td>0x09876c96f802471849..</td>
-                        <td>0xb8262489b64477e886..</td>
-                        <td>0.00028181 BNB</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center" colspan="5" scope="row"><a href="">See more ...</a></td>
-                    </tr>
+                        <tr v-for="(tx, index) in userState?.dmsTransactions">
+                            <th class="truncate" scope="row">
+                                <a target="_blank" :href="'https://testnet.bscscan.com/tx/'+ tx.transactionHash">{{ tx.transactionHash }}</a>
+                            </th>
+                            <td class="truncate">{{  customTime(tx.timestamp) }}</td>
+                            <td class="truncate">{{ tx.from }}</td>
+                            <td class="truncate">{{ tx.to }}..</td>
+                            <td>{{ formatAmount((tx.gasUsed * +tx.gasPrice)/10e17)  }} TBNB</td>
+                        </tr>
                     </tbody>
                 </table>
                 </div>
@@ -135,17 +114,37 @@
             </div> 
         </div>
         <br>
-        <!-- <Folder/> -->
     </div>
     
   </template>
 <script>
-import Folder from '../components/Folder.vue'
 
 export default {
   components: {
-    Folder
-  }
+    
+  },
+  mounted() {
+    if(!this.userState.dmsTransactions.length) {
+      this.$store.dispatch("user/getTransactions", {type: 'service', clientId: "dms" })
+    }
+  },
+  data() {
+    return {
+
+    }
+  },
+  methods: {
+    formatAmount(amount) {
+      return Math.round(amount*10000)/10000
+    },
+    customTime(time) {
+        return dayjs(time*1000).fromNow();
+    },
+  },
+  computed: {
+    userState() {return this.$store.state.user },
+    authState() {return this.$store.state.auth },
+  },
 }
 </script>
 <style scoped>

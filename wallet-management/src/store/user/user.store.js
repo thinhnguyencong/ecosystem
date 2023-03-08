@@ -12,8 +12,9 @@ const initialState = {
 	assets: [],
 	tokenList: {},
 	isLoading: false,
-	privateKey: null
-	
+	privateKey: null,
+	allTransactions: [],
+  dmsTransactions: []
 };
 
 export const user = {
@@ -54,6 +55,19 @@ export const user = {
     },
     removeAsset({commit}, data){
       commit('removeAsset', data);
+    },
+    getTransactions({ commit }, data) {
+      commit('getTransactions');
+      return userService.getTransactions(data)
+      .then(
+        res => {
+          console.log("res", res);
+          commit('getTransactionsSuccess', {res, data});
+        },
+        error => {
+          commit('getTransactionsFailure', error);
+        }
+      );
     },
   },
   mutations: {
@@ -114,6 +128,28 @@ export const user = {
       // state.balance= state.balance - result.data.data
     },
     transferTokenFailure(state, error){
+      state.isLoading = false
+      console.log(error);
+      toast.error(error.response.data.msg ? error.response.data.msg : error.message);
+    },
+    
+    // ------------------getTransactions-----------------------------
+    getTransactions(state){
+      state.isLoading = true
+    },
+    getTransactionsSuccess(state, data){
+      state.isLoading = false;
+      console.log("getTransactions", data.res);
+      if(data.data.type == 'all') {
+        state.allTransactions = data.res.data.data
+      }
+      if(data.data.type == 'service') {
+        state.dmsTransactions = data.res.data.data
+      }
+
+      
+    },
+    getTransactionsFailure(state, error){
       state.isLoading = false
       console.log(error);
       toast.error(error.response.data.msg ? error.response.data.msg : error.message);

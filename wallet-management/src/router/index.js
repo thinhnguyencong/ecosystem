@@ -1,9 +1,7 @@
 
 import LandingPage from '../views/LandingPage.vue'
-import Applications from '../views/Applications.vue'
 import DMS from '../views/DMS.vue'
 import Home from '../views/Home.vue'
-import Directory from '../views/Directory.vue'
 import store from '../store'
 import {UrlParams} from './support/UrlParams'
 
@@ -40,21 +38,9 @@ const routes = [
 
   },
   {
-    path: '/applications',
-    name: 'Applications',
-	component: Applications,
-	meta: { requiresAuth: true }
-  },
-  {
     path: '/dms',
     name: 'Document',
 	component: DMS,
-	meta: { requiresAuth: true }
-  },
-  { 
-	path: '/folder/:id', 
-	name: 'Directory',
-  	component: Directory,
 	meta: { requiresAuth: true }
   },
 ]

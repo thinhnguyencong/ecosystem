@@ -431,18 +431,39 @@ export const getTransactions = async (req, res, next) => {
 			return res.status(500).json({msg: "Cannot connect to Web3 Provider"});
 		}
 		const web3 = web3Connection.web3
-		console.log(req.body.data)
+
 		const userEmail = req.jwtDecoded.email
 		let user = await User.findOne({email: userEmail})
-		let result;
+		let result= [];
 		if(type == 'all') {
-			user.servicesUsed.forEach(service => {
-				service.transactions.forEach(async transaction => {
-					let tx = await web3.eth.getTransaction(transaction)
-					result.push(tx)
-				})
-			})
+			for (const service of user.servicesUsed) {
+				await Promise.all(service.transactions.map(async (transaction) => {
+					let tx = await web3.eth.getTransactionReceipt(transaction)
+					let txGas = await web3.eth.getTransaction(transaction)
+					let block = await web3.eth.getBlock(tx.blockNumber)
+					result.push({...tx, timestamp: block.timestamp, gasPrice: txGas.gasPrice})
+				}));
+			}
 		}
+		else if(type == 'service') {
+			const service = await Service.findOne({client_id: clientId})
+			for (const s of user.servicesUsed) {
+				console.log(service._id.valueOf(), s.serviceId.valueOf());
+				if(service._id.valueOf() == s.serviceId.valueOf()) {
+					console.log(s.transactions);
+					await Promise.all(s.transactions.map(async (transaction) => {
+						let tx = await web3.eth.getTransactionReceipt(transaction)
+						let txGas = await web3.eth.getTransaction(transaction)
+						let block = await web3.eth.getBlock(tx.blockNumber)
+						result.push({...tx, timestamp: block.timestamp, gasPrice: txGas.gasPrice})
+					}));
+				}
+			}
+		}
+		return res.status(200).json({
+			msg: "Get transactions successfully",
+			data: result
+		})
 	} catch (error) {
 		console.log(error);
 	}

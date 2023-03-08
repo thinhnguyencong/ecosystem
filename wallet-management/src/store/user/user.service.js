@@ -18,7 +18,15 @@ function transferToken(data) {
     })
 }
 
+function getTransactions(data) {
+    return sendRequest({
+        url: url+"transactions",
+        method: "GET",
+        params: data
+    })
+}
 export const userService = {
     getUserInfo,
-    transferToken
+    transferToken,
+    getTransactions
 };

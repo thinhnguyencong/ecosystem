@@ -161,6 +161,7 @@ export const getFoldersInMyFolder = async (req, res, next) => {
 			})
 		}
 		let myFolderItems = await Folder.find({parent: myFolder._id.valueOf()}).lean()
+		// get owner info
 		let result = await Promise.all(myFolderItems.map(async f => ({ ...f,_id: f._id.valueOf(), owner: await getUserInfoById(f.owner) })))
 
 		//get permissioned files
@@ -203,7 +204,7 @@ export const getRecentDocuments = async (req, res, next) => {
 		})
 	} else {
 		return res.status(404).send({
-			msg: "Folder not found"
+			msg: "User not found"
 		})
 	}
 
@@ -390,6 +391,7 @@ export const getSharedWithMeFolder = async (req, res, next) => {
 		let idArr = sharedWithMeFolders.map(x => x._id)
 
 		// filter other shared folder to get the "most" parent folder (folder shared above another folder)
+		// For example, "Folder 1" and "Folder 2" both shared with user A, but "Folder 2" is the child of "Folder 1", so the result will only return "Folder 1".
 		for (let index = 0; index < sharedWithMeFolders.length; index++) {
 			let folder = sharedWithMeFolders[index]
 			if (folder.ancestors) {
@@ -869,6 +871,7 @@ export const rejectDoc = async (req, res, next) => {
 					msg: "Error when verify wallet account"
 				})
 			}
+			// reject reviewing document
 			if (type == "review") {
 				let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
 				const nonce = await web3.eth.getTransactionCount(publicAddress)
@@ -942,7 +945,7 @@ export const rejectDoc = async (req, res, next) => {
 						})
 					}
 				})
-			} else if (type == "sign") {
+			} else if (type == "sign") { // reject signing document
 				let privateKey = ks.exportPrivateKey(publicAddress, pwDerivedKey)
 				const nonce = await web3.eth.getTransactionCount(publicAddress)
 				let estimateGasUsed;

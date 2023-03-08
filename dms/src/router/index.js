@@ -15,7 +15,6 @@ import NotFound from '../components/NotFound.vue'
 import store from '../store'
 import {UrlParams} from '../helpers/UrlParams'
 // import { ABE_MODULE } from '../helpers/abe';
-import { sendRequest } from '../helpers/sendRequest';
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Router from 'vue-router';
@@ -149,29 +148,32 @@ const router = new VueRouter({
 // 	}
 // }
 router.beforeEach(async (to, from, next) => {
+	// check if route required authentication
 	if (to.matched.some(record => record.meta.requiresAuth)){
 		const HREF = window.location.href.trim();
 		const urlParams = new UrlParams(HREF);
+
+		// check if browser has auth token or not
 		if (!window.sessionStorage.getItem("authToken")) {
-			//console.log("1");
+			// start "Authorization Code Flow"
 			await oAuth2Flow(urlParams, HREF.split('?')[0]);
 		} else {
-			//console.log("2");
+			// check token again
 			await store.dispatch("auth/reAuth")
 		}
+
+		// check if user isAuthenticated
 		if(store.state.auth.isAuthenticated) {
-			
+			// decode access_token to get 'role' of user (Roles config in Keycloak)
 			let access_token = jwt_decode(window.sessionStorage.getItem("authToken"))
 			if(!access_token?.resource_access?.dms?.roles) {
-				//console.log("3");
 				alert('Your account need to be verified by admin')
 				return next(false)
 			}else {
+				// Set role in vuex store
 				if(access_token.resource_access.dms.roles.includes('admin')) {
-					//console.log("4");
 					await store.dispatch("auth/setRole", "admin") 
 				}else {
-					//console.log("5");
 					await store.dispatch("auth/setRole", "user")
 				}
 				// check if route require admin role

@@ -64,46 +64,19 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">
-                    <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
+                <tr v-for="(tx, index) in userState.allTransactions">
+                  <th class="truncate" scope="row">
+                    <a target="_blank" :href="'https://testnet.bscscan.com/tx/'+ tx.transactionHash">{{ tx.transactionHash }}</a>
                   </th>
-                  <td class="text-truncate">40 days 2 hrs ago</td>
-                  <td>0x09876c96f802471849..</td>
-                  <td>0xb8262489b64477e886..</td>
-                  <td>0.00028181 BNB</td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                    <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
-                  </th>
-                  <td class="text-truncate">40 days 2 hrs ago</td>
-                  <td>0x09876c96f802471849..</td>
-                   <td>0xb8262489b64477e886..</td>
-                  <td>0.00028181 BNB</td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                    <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
-                  </th>
-                  <td class="text-truncate">40 days 2 hrs ago</td>
-                  <td>0x09876c96f802471849..</td>
-                   <td>0xb8262489b64477e886..</td>
-                  <td>0.00028181 BNB</td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                    <a href="">0xa72f7f450356590670a780fbdd7f4b..</a>
-                  </th>
-                  <td class="text-truncate">40 days 2 hrs ago</td>
-                  <td>0x09876c96f802471849..</td>
-                   <td>0xb8262489b64477e886..</td>
-                  <td>0.00028181 BNB</td>
+                  <td class="truncate">{{  customTime(tx.timestamp) }}</td>
+                  <td class="truncate">{{ tx.from }}</td>
+                  <td class="truncate">{{ tx.to }}..</td>
+                  <td>{{ (tx.gasUsed * (+tx.gasPrice))/10e18  }} TBNB</td>
                 </tr>
               </tbody>
             </table>
             </div>
-            <nav aria-label="...">
+            <!-- <nav aria-label="...">
               <ul class="pagination justify-content-end">
                 <li class="page-item disabled">
                   <span class="page-link">Previous</span>
@@ -120,7 +93,7 @@
                   <a class="page-link" href="#">Next</a>
                 </li>
               </ul>
-            </nav>
+            </nav> -->
           </div>
         </div>
       </div>  
@@ -220,6 +193,9 @@ export default {
       this.$store.dispatch("user/removeAsset", address)
       this.$store.dispatch("user/getUserInfo", {tokens: localStorage.getItem("tokenList") })
     },
+    customTime(time) {
+        return dayjs(time*1000).fromNow();
+    },
     handleSendToken() {
       console.log(this.assetSelected);
       // let obj = assets.find(x => x.address === event.target.value)
@@ -260,6 +236,10 @@ export default {
     //this.$store.dispatch("auth/findUser")
     this.$store.dispatch("user/getUserInfo", {tokens: localStorage.getItem("tokenList") })
     this.$store.dispatch("user/getAsset")
+    if(!this.userState.allTransactions.length) {
+      this.$store.dispatch("user/getTransactions", {type: 'all'})
+    }
+    
   },
   computed: {
     userState() {return this.$store.state.user },
@@ -300,5 +280,10 @@ tr {
  .fs-1r {
   font-size: 1rem;
  }
-
+ .truncate {
+      max-width: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 </style>

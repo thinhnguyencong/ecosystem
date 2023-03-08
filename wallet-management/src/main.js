@@ -12,7 +12,7 @@ import "vue-toastification/dist/index.css";
 import Jazzicon from 'vue-jazzicon';
 
 Vue.component('jazzicon', Jazzicon); // or Vue.component(Jazzicon.name, Jazzicon);
-
+dayjs.extend(window.dayjs_plugin_relativeTime);
 // Vue.use(Vuetify)
 // Vue.use(Toast, options);
 new Vue({

@@ -8,9 +8,10 @@ userRouter.get('/', controller.findUser);
 userRouter.get('/info', controller.getUserInfo);
 userRouter.get('/export-private-key', controller.exportPrivateKey);
 userRouter.post('/transfer-token', controller.transferToken);
-userRouter.get('/init-request-key', controller.initRequestKey);
-userRouter.post('/request-key', controller.requestKey);
-userRouter.post('/sign-message', controller.signMessage);
+userRouter.get('/transactions', controller.getTransactions)
+// userRouter.get('/init-request-key', controller.initRequestKey);
+// userRouter.post('/request-key', controller.requestKey);
+// userRouter.post('/sign-message', controller.signMessage);
 
 userRouter.get('/department-list', controller.getListDepartment);
 userRouter.get('/role-list', controller.getListRole);
