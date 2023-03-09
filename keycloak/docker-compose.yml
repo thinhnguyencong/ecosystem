@@ -4,12 +4,9 @@ services:
   mysql:
     image: mysql:5.7
     container_name: mysql
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_TCP_PORT: ${MYSQL_PORT}
     ports:
       - "${MYSQL_PORT}:3306"
@@ -37,6 +34,8 @@ services:
     container_name: mysql-backup
     depends_on:
       - mysql
+    env_file:
+      - .env
     environment:
       DB_SERVER: mysql
       DB_PORT: ${MYSQL_PORT}
@@ -45,9 +44,6 @@ services:
       DB_PASS: ${MYSQL_ROOT_PASSWORD}
       #DB_DUMP_TARGET: back up database to /db or aws S3
       DB_DUMP_TARGET: "/db ${AWS_S3_DESTINATION}"
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
       DB_DUMP_FREQ: 600
       DB_DUMP_BEGIN: '+5'
       DB_DUMP_SAFECHARS: no-colons
@@ -67,15 +63,10 @@ services:
     build: ./
     ports:
       - "${KC_HOSTNAME_PORT}:8443"
+    env_file:
+      - .env
     environment:
-      KC_HOSTNAME: ${KC_HOSTNAME}
-      KC_HOSTNAME_PORT: ${KC_HOSTNAME_PORT}
-      #KC_HOSTNAME_URL: ${KC_HOSTNAME_URL}
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       PROXY_ADDRESS_FORWARDING: "true"
-      # change these values to point to a running mysql instance
-      KC_DB_URL: ${KC_DB_URL}
       KC_DB_USERNAME: ${MYSQL_USER}
       KC_DB_PASSWORD: ${MYSQL_PASSWORD}
     command:

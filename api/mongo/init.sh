@@ -1,1 +1,1 @@
-mongorestore  --db ecosystem ./init/ecosystem
+mongorestore  --db ecosystem init/ecosystem
