@@ -39,9 +39,9 @@
             >
               <div v-if="filters.hasOwnProperty(header.value)">
                 <v-select label="Filter..." flat hide-details small multiple clearable :items="columnValueList(header.value)" v-model="filters[header.value]">
-                  
+
                 </v-select>
-                
+
               </div>
             </th>
           </tr>
@@ -70,7 +70,7 @@
             <strong>{{Object.values(selected).length}} rows selected</strong>
           </td>
           <td :colspan="headers.length" v-else>
-            
+
           </td>
         </template>
     </v-data-table>

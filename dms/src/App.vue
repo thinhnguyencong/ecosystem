@@ -2,7 +2,7 @@
   <div class="app" >
 		<!-- Sidebar -->
 		<Sidebar v-if="store.state.auth.isAuthenticated" />
-    
+
 		<!-- Content -->
 		<div id="layout">
 			<Header v-if="store.state.auth.isAuthenticated" @openNav="openNav" @closeNav="closeNav"/>
@@ -46,25 +46,8 @@ function closeNav() {
 </script>
 
 <style lang="scss">
-:root {
-	--primary: #4d9ceb;
-	--primary-alt: #6594d1;
-	--grey: #64748b;
-	--dark: #1e293b;
-	--dark-alt: #334155;
-	--light: #f1f5f9;
-	--sidebar-width: 300px;
-}
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-	font-family: 'Fira sans', sans-serif;
-}
+@import "@/assets/style/main.scss";
 
-body {
-	background: var(--light);
-}
 button {
 	cursor: pointer;
 	appearance: none;
@@ -74,6 +57,9 @@ button {
 }
 .app {
 	display: flex;
+	max-width: 1440px;
+	width: 100%;
+	margin: 0 auto;
 	main {
 		flex: 1 1 0;
 		padding: 2rem;
@@ -86,8 +72,10 @@ button {
 	transition: margin-left .5s;
 }
 #layout {
-	width: 100%;
 	transition: margin-left .5s; /* If you want a transition effect */
+	max-width: calc(100% - 106px);
+	width: 100%;
+	margin-left: 106px;
 }
 </style>  
 <style lang="scss">

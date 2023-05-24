@@ -1,34 +1,22 @@
 <template>
-	<div>
-        <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
-        <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
-        <ModalUploadFile/>
-        
-        <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
-            <div class="row">
-                <div class="col">
-                    <div class="dropdown">
-                        <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="mdi mdi-plus text-light"></i> New &nbsp;  
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#"><i class="mdi mdi-folder text-dark"></i> New Folder </a>
-                            <a data-toggle="modal" data-target="#modalUploadFile" class="dropdown-item" href="#"><i class="mdi mdi-upload text-dark"></i> Upload File</a>
-                        </div>
-                    </div>
+	<div class="detailFolder">
+        <div class="detail-folder" v-if="!documentState.isLoading">
+            <div class="row dricetoryFlex">
+
+                <div class="col ">
+                    <ModalAddNewFolder v-if="documentState.folder" :parentId="documentState.folder._id"/>
                     <MainView :folders="documentState.children" :files="documentState.folder.files" :layoutProps="layout"/>
+                    <ModalUploadFile/>
+
                 </div>
-                <transition :name="transition">
-                    <div v-if="drawerVisible" class="col-3">
-                        <div style="text-align: right; margin: 5px">
-                            <button class="close" @click="handleDrawer">&#9587;</button>
-                        </div>
-                        <FolderDetail :drawerVisible="drawerVisible"/>
-                    </div>
-                </transition>
+
+                <div class="folder-detail" v-if="isShowDetail">
+
+                    <FolderDetail @ClickOffDetail="isDetail"/>
+                </div>
             </div>
         </div>
-        <div v-else class="pl-4 pr-4">
+        <div v-else class="">
             <div class="spinner-border text-dark" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
@@ -68,6 +56,7 @@ export default {
             layout: null,
             transition: 'slide-fade',
             drawerVisible: false,
+            isShowDetail:false,
         }
     },
     computed: {
@@ -75,6 +64,10 @@ export default {
         authState() {return this.$store.state.auth },
     },
     methods: {
+        isDetail(isShowDetail) {
+            this.isShowDetail = isShowDetail
+        },
+
         async callAPI() {
             await this.$store.dispatch("document/getFolderById", {id: this.$route.params.id})
         },
@@ -108,8 +101,22 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/assets/style/_reset.scss";
 
+.dricetoryFlex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.detailFolder {
+}
+.nav-content {
+  margin: 0;
+}
+.detail-option {
+  border-left: 1px solid var(--border-color);
+}
 /* Prev Scrolling */
 .slide-fade-enter-active,
 .slide-fade-leave-active {

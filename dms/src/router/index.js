@@ -5,6 +5,10 @@ import LandingPage from '../views/main/LandingPage.vue'
 import Test from '../views/test/Test.vue'
 import Home from '../views/main/Home.vue'
 import MyFolder from '../views/main/MyFolder.vue'
+import Hidden from "../views/main/Hidden.vue";
+import Starred from "../views/main/Starred.vue";
+import Sign from "../views/main/Sign.vue";
+import Share from "../views/main/Share.vue";
 import Recent from '../views/main/Recent.vue'
 import ShareWithMe from '../views/main/SharedWithMe.vue'
 import Directory from '../views/main/Directory.vue'
@@ -18,6 +22,7 @@ import {UrlParams} from '../helpers/UrlParams'
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Router from 'vue-router';
+
 
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
@@ -69,18 +74,46 @@ const routes = [
 	children: [fileRoute]
   },
   {
-    path: '/recent',
-    name: 'Recent',
-    component: Recent,
-	meta: { requiresAuth: true, requiresAdmin: false },
-	children: [fileRoute]
-  },
-  {
     path: '/shared-with-me',
     name: 'Shared With Me',
     component: ShareWithMe,
 	meta: { requiresAuth: true, requiresAdmin: false }
   },
+	{
+		path: '/recent',
+		name: 'Recent',
+		component: Recent,
+		meta: { requiresAuth: true, requiresAdmin: false },
+		children: [fileRoute]
+	},
+	{
+		path: '/hidden',
+		name: 'Hidden',
+		component: Hidden,
+		meta: { requiresAuth: true, requiresAdmin: false },
+		children: [fileRoute]
+	},
+	{
+		path: '/share',
+		name: 'Share',
+		component: Share,
+		meta: { requiresAuth: true, requiresAdmin: false },
+		children: [fileRoute]
+	},
+	{
+		path: '/sign',
+		name: 'Sign',
+		component: Sign,
+		meta: { requiresAuth: true, requiresAdmin: false },
+		children: [fileRoute]
+	},
+	{
+		path: '/starred',
+		name: 'Starred',
+		component: Starred,
+		meta: { requiresAuth: true, requiresAdmin: false },
+		children: [fileRoute]
+	},
   {
 	path: '/admin',
     name: 'Admin',
@@ -94,6 +127,7 @@ const routes = [
 	meta: { requiresAuth: true, requiresAdmin: false },
 	children: [fileRoute]
   },
+
   // will match everything and put it under `$route.params.pathMatch`
   { 
 	path: '/:pathMatch(.*)*', 
@@ -101,6 +135,7 @@ const routes = [
 	component: NotFound,
 	meta: { requiresAuth: true, requiresAdmin: false }
   },
+
  
  
 

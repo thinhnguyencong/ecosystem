@@ -10,6 +10,24 @@ import '@mdi/font/css/materialdesignicons.css';
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import "vue-toastification/dist/index.css";
+
+import HighchartsVue from 'highcharts-vue'
+import Highcharts from 'highcharts'
+
+import drilldown from 'highcharts/modules/drilldown'
+import exporting from 'highcharts/modules/exporting'
+import exportData from 'highcharts/modules/export-data'
+import accessibility from 'highcharts/modules/accessibility'
+
+drilldown(Highcharts)
+exporting(Highcharts)
+exportData(Highcharts)
+accessibility(Highcharts)
+
+
+
+
+
 // quill
 import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
@@ -27,6 +45,7 @@ Vue.use(VueSweetalert2);
 Vue.use(Vuetify)
 Vue.use(VueQuillEditor)
 Vue.use(vClickOutside)
+Vue.use(HighchartsVue)
 Vue.config.productionTip = false;
 Vue.mixin({
   beforeCreate() {

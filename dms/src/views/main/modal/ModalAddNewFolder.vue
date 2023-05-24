@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">New Folder</h5>
+                    <h5 class="modal-title">Create New Folder</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -11,14 +11,13 @@
                 <div class="modal-body">
                     <form v-on:submit.prevent="">
                         <div class="form-group">
-                            <label for="name">Folder Name</label>
-                            <input v-on:keyup.enter="handleCreateFolder" v-model="name" type="text" class="form-control" id="newFolderName" placeholder="Folder name" autofocus>
+                            <input v-on:keyup.enter="handleCreateFolder" v-model="name" type="text" class="inputCreate" autocomplete="off" id="newFolderName" placeholder="Folder name" autofocus>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="handleCreateFolder" data-dismiss="modal">Create</button>
+                    <button type="button" class="btn btn-cancel" data-dismiss="modal">Cancel </button>
+                    <button type="button" class="btn btn-create" @click="handleCreateFolder" data-dismiss="modal">Create</button>
                 </div>
             </div>
         </div>
@@ -65,3 +64,45 @@ export default {
       },
     }
   </script>
+<style lang="scss" scoped>
+@import "@/assets/style/_reset.scss";
+@import "@/assets/style/_global.scss";
+.modal-header {
+    border: none;
+}
+.modal-footer {
+    border: none;
+}
+.btn-cancel {
+    padding: 8px 36px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-color--1);
+    background: var(--bgc-folder--icon);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.btn-create {
+    padding: 8px 36px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-color--3);
+    background: var(--text-color-active);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.inputCreate {
+    width: 100%;
+    background: var(--backgroud);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color--1);
+    padding: 8px;
+    &::placeholder {
+        color:var(--text-color-txt) ;
+    }
+    &:focus {
+        border: 1px solid #3C46F5;
+    }
+}
+</style>

@@ -1,41 +1,51 @@
 <template>
-    <div class="topnav d-flex justify-content-between">
-        <div class="mr-auto p-2">
-          <button @click="openNav">
-            <span class="material-icons menu-button">menu</span>
-          </button>
+    <div class="topbar-head">
+        <div class="topbar">
+            <div class="topbar-header">
+                <div class="topbar-item">
+                    <h1 class="title">{{ documentState.folder.name }}</h1>
+                </div>
+                <div class="topbar-item search">
+                    <div class="search-file">
+                        <img id="search-icon" src="@/assets/img/Search.svg" alt="error-search">
+                        <input id="search-input" type="text" placeholder="Search everything">
+                    </div>
+                </div>
+
+                <div class="topbar-item--option">
+                    <div class="icon-option">
+                        <div class="icon-notife--dowload">
+                            <img src="@/assets/img/dowload-detail.svg" alt="error-download">
+                        </div>
+                        <div class="icon-notife">
+                            <button @click="readOneTime" class="icon-badge-container" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="@/assets/img/notification_active.svg" alt="">
+                                <div v-if="showIconBadge" class="icon-badge mt-1 font-weight-bold"></div>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-notification" aria-labelledby="notificationDropdown">
+                                <Notifications/>
+                            </div>
+                        </div>
+                        <div class="user-setting">
+                            <img src="@/assets/img/Settings.svg" alt="error-settings">
+                        </div>
+
+                        <div class="use-iconOption">
+                            <button id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="@/assets/img/Oval.png" alt="">
+
+                            </button>
+                            <div class="dropdown-menu " aria-labelledby="profileDropdown">
+                                <a class="dropdown-item" href="#">{{$store.state.auth.user.name}}</a>
+                                <a class="dropdown-item" type="button" @click="$store.dispatch('auth/logout')">Logout</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="right mr-4">
-            <span class="mr-2">
-              <button @click="readOneTime" class="icon-badge-container" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="material-icons icon-badge-icon"> notifications </span>
-                <div v-if="showIconBadge" class="icon-badge mt-1 font-weight-bold"></div>
-              </button>
-              <div class="dropdown-menu dropdown-menu-right dropdown-notification" aria-labelledby="notificationDropdown">
-                <Notifications/>
-              </div>
-            </span>
-            <span class="ml-2">
-              <button id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="material-icons">account_circle</span>
-              </button>
-              <div class="dropdown-menu " aria-labelledby="profileDropdown">
-                <a class="dropdown-item" href="#">{{$store.state.auth.user.name}}</a>
-                <a class="dropdown-item" type="button" @click="$store.dispatch('auth/logout')">Logout</a>
-              </div>
-          </span>
-        </div> 
-        
-        <div id="mySidebar" class="sidebar">
-          <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
-          <a v-if="$store.state.auth.role==='admin'" href="/admin">Admin</a>
-          <a href="/">Home</a>
-          <a href="/my-folder">My Folder</a>
-          <a href="/shared-with-me">Shared With Me</a>
-          <a class="text-secondary" type="button" @click="$store.dispatch('auth/logout')">
-				    Logout
-          </a>
-        </div>
+
     </div>
 </template>
 <script setup>
@@ -79,6 +89,7 @@
         authState() {
             return this.$store.state.auth;
         },
+        documentState() {return this.$store.state.document },
     },
     watch: {
         '$store.state.user.notifications': {
@@ -94,128 +105,186 @@
   }
 </script>
 <style lang="scss" scoped>
-.topnav {
-  background-color: rgb(255, 255, 255);
-  overflow: hidden;
-  height: 6rem;
+@import "@/assets/style/_theme.scss";
+@import "@/assets/style/_reset.scss";
+.topbar-head {
+    padding: 20px 16px;
+    border-bottom: 0.5px solid var(--border-color);
+    background-color: var(--backgroud);
+    height: 80px;
 }
-.material-icons {
-    font-size: 3rem;
-    color: var(--primary);
+.icon-notife--dowload {
+    cursor: pointer;
 }
-.menu-button {
-  @media only screen and (min-width: 1100px) {
-		display: none;
-	}
-}
-.menu-button:hover {
-  background-color: #dedede;
-  color: var(--light);
-}
-.grid-container {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  gap: 10px;
-}
-.grid-container > div {
-  text-align: center;
-  margin: auto;
-}
-.grid-item-1 {
-  grid-column-start: 1;
-  grid-column-end: 2;
-}
-.grid-item-2 {
-  grid-column-start: 30;
-  grid-column-end: 31;
-}
-.grid-item-3 {
-  grid-column-start: 32;
-  grid-column-end: 33;
-}
-/* The sidebar menu */
-.sidebar {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 0;
-  left: 0;
-  background-color: #111; /* Black*/
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
-}
+//
+topbar {
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 16px;
 
-/* The sidebar links */
-.sidebar a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
+  }
 }
-
-/* When you mouse over the navigation links, change their color */
-.sidebar a:hover {
-  color: #f1f1f1;
+.icon-option{
+    display: flex;
+    align-items: center;
+    gap: 0 40px;
 }
-
-/* Position and style the close button (top right corner) */
-.sidebar .closebtn {
+.search {
+  max-width: 528px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 200px;
+  &-file {
+    padding: 12px 26px;
+  }
+}
+#search-icon {
+  margin-right:19px ;
+  cursor: pointer;
+}
+#search-input {
+    color: var(--text-color--1);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  &::placeholder {
+      color: var(--text-color-input);
+  }
+}
+.title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: 0.02em;
+  color: var(--text-color--1);
+}
+.frame-use {
+  display: flex;
+  align-items: center;
+  gap: 0 40px;
+}
+.user-setting {
+  cursor: pointer;
+}
+.user-icon {
+  cursor: pointer;
+}
+.user-notice {
+  cursor: pointer;
+}
+.topbar-header {
+  position: relative;
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.notification-page {
   position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
+  top: 95px;
+  right: 120px;
+  z-index: 2;
 }
+.notification {
 
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidebar {padding-top: 15px;}
-  .sidebar a {font-size: 18px;}
-}
-.icon-badge-container {
-    position:relative;
-}
+  &-modal {
+    max-width: 496px;
+    width: 100%;
+    background: var(--backgroud);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    &--head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    &--btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
 
-.icon-badge-icon {
-    position: relative;
-    border-radius: 50%;
-    padding: 5px;
 }
-.icon-badge {
-  margin-left: 0.7rem;
-    background-color: red;
-    font-size: 0.9rem;
-    color: white;
+.modal-btn {
+  display: flex;
+  align-items: center;
+  gap: 0 24px;
+
+  &--all {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-color-txt);
+    padding: 4px;
+    width: 80px;
     text-align: center;
-    width:1.2rem;
-    height:1.2rem;
-    border-radius: 50%;
-    position: absolute; /* changed */
-    top: -5px; /* changed */
-    left: 19px; /* changed */
+    background-color: var(--backgroud);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  &--unread {
+    font-weight: 600;
+    font-size: 14px;
+      color: var(--text-color-txt);
+    padding: 4px;
+    width: 80px;
+    text-align: center;
+    background-color: var(--backgroud);
+    border-radius: 10px;
+    cursor: pointer;
+  }
 }
-.right {
-  position: absolute;
-  right: 0px;
-  padding: 2rem;
-}
-.dropdown-notification {
-  width: 25rem;
-  max-height: 40vh;
-  overflow-y: scroll; /* Add the ability to scroll */
-}
-/* Hide scrollbar for Chrome, Safari and Opera */
-.dropdown-notification::-webkit-scrollbar {
-    display: none;
+.modal-viewAll {
+  display: flex;
+  align-items: center;
+  gap: 0 4px;
+  &--txt {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-color-active);
+    cursor: pointer;
+  }
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.dropdown-notification {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.user-item {
+  margin-top: 8px;
+  padding: 8px 12px 16px 12px;
+  border-bottom: 1px solid var(--border-color);
+  &:hover {
+    background: var(--bgc-active-item);
+    border-radius: 12px;
+  }
+  &--flex {
+    display: flex;
+    gap: 0 8px;
+  }
 }
+.user-item:last-child {
+  border: none;
+}
+
+.active {
+  background-color: var(--text-color-active);
+  color: var(--backgroud);
+  transition: all .5s ease-in-out;
+}
+.notification-modal--list {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+}
+.notification-modal--list.hidden {
+  opacity: 0;
+}
+
+.notification-modal--list.previous {
+  opacity: 0;
+  z-index: 0;
+}
+
 </style>

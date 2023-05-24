@@ -379,7 +379,7 @@ export default {
         // socket.on("new notification", (data) => {
         //     console.log("Datar", data);
         // });
-        
+
     },
     mounted() {
         console.log("111");

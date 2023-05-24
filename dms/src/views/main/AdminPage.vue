@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between">
             <div class="p-2">
                 <button class="btn btn-primary" type="button" id="createUserBtn" data-toggle="modal" data-target="#modalCreateUser">
-                    <i class="mdi mdi-plus text-light"></i> New User  
+                    <i class="mdi mdi-plus text-light"></i> New User
                 </button>
             </div>
             <div class="modal fade" id="modalCreateUser" tabindex="-1" role="dialog" aria-labelledby="modalCreateUserTitle" aria-hidden="true">

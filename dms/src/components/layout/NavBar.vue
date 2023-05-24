@@ -1,49 +1,51 @@
 <template>
-    <div>
-        <nav v-if="$route.matched[0].name == 'Home'" aria-label="breadcrumb" class="mt-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
-                    <span class="material-icons align-self-center">home</span>
+    <div class="nav-content">
+
+        <nav v-if="$route.matched[0].name == 'Home'" aria-label="breadcrumb" >
+            <ol class="bgc-navbar">
+                <li class="breadcrumb-item active d-flex flex-row" aria-current="page" >
+                    <div class="folder-account" @click="btnShowModalFile">
+                        <img src="@/assets/img/folder-folder.svg" alt="error-foloderIcon">
+                        <img id="icon-arrorBottom" src="@/assets/img/arrow_bottom.svg" alt="error-icon">
+                        <div class="modal-icon--folder">
+                            <modal-folder-icon v-if="isModalFile"/>
+                        </div>
+                    </div>
                     <span class="mt-1">&nbsp;Home</span>
                 </li>
-                <li class="ml-auto mr-5">
-                    <v-btn @click="switchLayout" flat icon color="indigo">
-                        <v-icon v-if="layout == 'grid'" data-toggle="tooltip" title="" color="black">
-                            list
-                        </v-icon>
-                        <v-icon v-if="layout == 'list'" data-toggle="tooltip" title="" color="black">
-                            grid_view
-                        </v-icon>
-                    </v-btn>
-                </li>
+
             </ol>
         </nav>
-        <nav v-if="$route.matched[0].name == 'My Folder'" aria-label="breadcrumb" class="mt-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
-                    <span class="material-icons">folder</span>
+
+        <nav v-if="$route.matched[0].name == 'My Folder'" aria-label="breadcrumb" >
+            <ol class="bgc-navbar">
+                <li class="breadcrumb-item active d-flex flex-row" aria-current="page" >
+                        <div class="folder-account" @click="btnShowModalFile">
+                            <img src="@/assets/img/folder-folder.svg" alt="error-foloderIcon">
+                            <img id="icon-arrorBottom" src="@/assets/img/arrow_bottom.svg" alt="error-icon">
+                            <div class="modal-icon--folder">
+                                <modal-folder-icon v-if="isModalFile"/>
+                            </div>
+                        </div>
                     <span class="mt-1">&nbsp;My Folder</span>
                 </li>
-                <li class="ml-auto mr-5">
+                <li class="ml-auto option-item">
+                    <div class="folder-Starred">Starred</div>
+                    <img src="@/assets/img/arrow-down.svg" alt="error-arrowDown">
                     <v-btn @click="switchLayout" flat icon color="indigo">
-                        <v-icon v-if="layout == 'grid'" data-toggle="tooltip" title="" color="black">
-                            list
-                        </v-icon>
+                        <img src="@/assets/img/option.svg" alt="error-option" v-if="iconMenu">
                         <v-icon v-if="layout == 'list'" data-toggle="tooltip" title="" color="black">
-                            grid_view
+                            <img src="@/assets/img/star.svg" alt="error-option" v-if="iconMenu">
                         </v-icon>
                     </v-btn>
-                    <v-btn @click="handleDrawer" flat icon color="indigo">
-                        <v-icon data-toggle="tooltip" title="" color="black">
-                            info
-                        </v-icon>
-                    </v-btn>
+
                 </li>
             </ol>
         </nav>
-        <nav v-if="$route.matched[0].name == 'Recent'" aria-label="breadcrumb" class="mt-4">
+
+        <nav v-if="$route.matched[0].name == 'Recent'" aria-label="breadcrumb" >
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
+                <li class="breadcrumb-item active d-flex flex-row " aria-current="page">
                     <span class="material-icons">history</span>
                     <span class="mt-1">&nbsp;Recent</span>
                 </li>
@@ -64,9 +66,9 @@
                 </li>
             </ol>
         </nav>
-        <nav v-if="$route.matched[0].name == 'Shared With Me'" aria-label="breadcrumb" class="mt-4">
+        <nav v-if="$route.matched[0].name == 'Shared With Me'" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active d-flex flex-row ml-4 align-self-center" aria-current="page">
+                <li class="breadcrumb-item active d-flex flex-row" aria-current="page">
                     <span class="material-icons">folder_shared</span>
                     <span class="mt-1">&nbsp;Share With Me</span>
                 </li>
@@ -82,15 +84,27 @@
                 </li>
             </ol>
         </nav>
-        <nav v-if="$route.matched[0].name == 'Directory'" aria-label="breadcrumb" class="mt-4">
-            <ol class="breadcrumb mt-2">
-                <li v-if="documentState.folder.status=='my-folder'" class="ml-4 align-self-center" aria-current="page">
-                    <router-link class="d-flex flex-row" to="/my-folder">
-                        <span class="material-icons">folder</span>
-                        <span class="mt-1">&nbsp;My Folder</span>
+
+
+
+        <nav v-if="$route.matched[0].name == 'Directory'" aria-label="breadcrumb">
+            <ol class="bgc-navbar">
+
+                <li aria-current="page">
+                    <div class="folder-account" @click="btnShowModalFile">
+                        <img src="@/assets/img/folder-folder.svg" alt="error-foloderIcon">
+                        <img id="icon-arrorBottom" src="@/assets/img/arrow_bottom.svg" alt="error-icon">
+                        <div class="modal-icon--folder">
+                            <modal-folder-icon v-if="isModalFile"/>
+                        </div>
+                    </div>
+                </li>
+                <li v-if="documentState.folder.status=='my-folder'"  aria-current="page">
+                    <router-link class="d-flex flex-row folder-name" to="/my-folder">
+                        <span class="">&nbsp;My Folder</span>
                     </router-link>
                 </li>
-                <li v-else-if="documentState.folder.status=='shared-with-me'" class="ml-4 align-self-center" aria-current="page">
+                <li v-else-if="documentState.folder.status=='shared-with-me'"  aria-current="page">
                     <router-link class="d-flex flex-row" to="/shared-with-me">
                         <span class="material-icons">folder_shared</span>
                         <span class="mt-1">&nbsp;Shared with me</span>
@@ -115,39 +129,44 @@
                         </span>
                     </router-link> -->
                 </li>
-                <li v-if="documentState.folder" class="d-flex flex-row align-self-center mt-n-2" aria-current="page">
-                    
-                    <span class="material-icons">
-                        &nbsp;/ <i class="mdi mdi-folder-open text-secondary"></i>
-                    </span>
+                <li v-if="documentState.folder" class="d-flex flex-row bgc-navbar align-self-center" aria-current="page">
+
+                    <div><img src="@/assets/img/arrow_right.svg" alt=""></div>
                     <span class="mt-0-5 text-secondary">
                         &nbsp;{{documentState.folder.name}}
                     </span>
                 </li>
-                <li class="ml-auto mr-5">
-                    <v-btn @click="switchLayout" flat icon color="indigo">
-                        <v-icon v-if="layout == 'grid'" data-toggle="tooltip" title="" color="black">
-                            list
-                        </v-icon>
-                        <v-icon v-if="layout == 'list'" data-toggle="tooltip" title="" color="black">
-                            grid_view
-                        </v-icon>
-                    </v-btn>
-                    <v-btn @click="handleDrawer" flat icon color="indigo">
-                        <v-icon data-toggle="tooltip" title="" color="black">
-                            info
-                        </v-icon>
-                    </v-btn>
-                </li>
+
+<!--                <li class="optionMenuDetail">-->
+<!--                    <v-btn @click="switchLayout" flat icon color="indigo">-->
+<!--                        <v-icon v-if="layout == 'grid'" data-toggle="tooltip" title="" color="black">-->
+<!--                            list-->
+<!--                        </v-icon>-->
+<!--                        <v-icon v-if="layout == 'list'" data-toggle="tooltip" title="" color="black">-->
+<!--                            grid_view-->
+<!--                        </v-icon>-->
+<!--                    </v-btn>-->
+<!--                    <v-btn @click="handleDrawer" flat icon color="indigo">-->
+<!--                        <v-icon data-toggle="tooltip" title="" color="black">-->
+<!--                            info-->
+<!--                        </v-icon>-->
+<!--                    </v-btn>-->
+<!--                </li>-->
             </ol>
         </nav>
     </div>
     
 </template>
+<script setup>
+import ModalFolderIcon from "@/views/main/modal/ModalFolderIcon.vue";
+</script>
 <script>
 import { RouterLink } from 'vue-router';
 import { getLayoutOfPage, setLayoutOfPage } from '../../helpers'
 export default {
+    component() {
+        ModalFolderIcon
+    },
     mounted() {
         let layout = getLayoutOfPage(this.authState.user.publicAddress, this.$route);
         this.layout = layout;
@@ -156,10 +175,22 @@ export default {
     data() {
         return {
             layout: "",
+            isModalFile:false,
+            iconMenu:true
         };
     },
     methods: {
+        isOption(iconMenu) {
+            this.iconMenu = iconMenu
+        },
+        isShowModalFile(isModalFile) {
+            this.isModalFile = isModalFile
+        },
+        btnShowModalFile () {
+            this.isModalFile = ! this.isModalFile
+        },
         switchLayout() {
+            this.iconMenu = ! this.iconMenu
             if (this.layout === "list") {
                 setLayoutOfPage(this.authState.user.publicAddress, this.$route, "grid");
                 this.layout = "grid";
@@ -189,14 +220,76 @@ export default {
             immediate: true
         },
     },
-    components: { RouterLink }
+    components: {ModalFolderIcon, RouterLink }
 }
 </script>
 <style scoped>
-.mt-n-2 {
-    margin-top: -0.2rem;
+@import "@/assets/style/_theme.scss";
+ol , ul {
+    margin: 0;
 }
-.mt-0-5 {
-    margin-top: 0.5rem;
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0 4px;
+}
+.option-item {
+    display: flex;
+    align-items: center;
+    gap:  0 8px;
+}
+.optionMenuDetail {
+    display: flex;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+}
+.bgc-navbar {
+    display: flex;
+    align-items: center;
+    gap: 0 8px;
+    padding: 16px;
+}
+ol,ul {
+    padding: 0;
+}
+
+button::before {
+    background-color: var(--backgroud) !important;
+}
+button::before:focus {
+    background-color: var(--backgroud) !important;
+}
+button::before:active {
+    background-color: var(--backgroud) !important;
+}
+li {
+    list-style: none;
+}
+.folder-name {
+    font-size: 12px;
+    color: var(--text-color-txt);
+
+}
+.folder-account {
+    display: flex;
+    align-items: center;
+    gap:  0 4px;
+    padding: 4px;
+    background: var(--bgc-folder--icon);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    .modal-icon--folder {
+        position: absolute;
+        top: 30px;
+        left: 0;
+    }
+}
+#icon-arrorBottom {
+    width: 8px;
+    height: 8px;
 }
 </style>
