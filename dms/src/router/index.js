@@ -22,6 +22,7 @@ import {UrlParams} from '../helpers/UrlParams'
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Router from 'vue-router';
+import Setting from "@/views/main/Setting.vue";
 
 
 const originalPush = Router.prototype.push;
@@ -104,6 +105,13 @@ const routes = [
 		path: '/sign',
 		name: 'Sign',
 		component: Sign,
+		meta: { requiresAuth: true, requiresAdmin: false },
+		children: [fileRoute]
+	},
+	{
+		path: '/setting',
+		name: 'Setting',
+		component: Setting,
 		meta: { requiresAuth: true, requiresAdmin: false },
 		children: [fileRoute]
 	},

@@ -74,7 +74,7 @@ export default {
 
 .chart-note {
   width: 100%;
-  background-color: #FFFFFF;
+  background-color: var(--backgroud);
   padding: 0 24px;
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
@@ -83,7 +83,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 16px 0;
-    border-bottom: 1px solid #EDEDED;
+    border-bottom: 1px solid var(--border-color);
   }
 }
 ::v-deep .highcharts-exporting-group {
@@ -94,7 +94,7 @@ export default {
 
   width: 100% !important;
   height: 262px !important;
-  background-color: #FFFFFF;
+  background-color: var(--backgroud);
   padding: 6px 0;
   overflow: hidden;
 }
@@ -111,7 +111,7 @@ export default {
   z-index: 1;
   width: 155px;
   height: 155px;
-  background-color: #FFFFFF;
+  background-color: var(--backgroud);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   &--name {
@@ -121,7 +121,7 @@ export default {
     transform: translate(-50%,-50%);
     font-weight: 600;
     font-size: 24px;
-    color: #32373D;
+    color: var(--text-color--2);
   }
   &--count {
     position: absolute;
@@ -130,7 +130,7 @@ export default {
     transform: translate(-50%,-50%);
     font-weight: 600;
     font-size: 40px;
-    color: #12131C;
+    color: var(--text-color--1);
 
   }
 }

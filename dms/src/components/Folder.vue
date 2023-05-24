@@ -57,7 +57,7 @@ export default {
 .folder-item_title {
     font-weight: 600;
     font-size: 14px;
-    color: #12131C;
+    color: var(--text-color--1);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -77,43 +77,43 @@ export default {
 }
 .folder-item_file {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .folder-item_distance {
     width: 4px;
     height: 4px;
-    background-color: #6F7180;
+    background-color: var(--text-color-txt);
     border-radius: 50%;
 }
 .folder-item_MB {
     font-weight: 400;
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .item-icon_number {
 }
 .item-icon_member {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 
 #icon-member {
     z-index: 1;
     width: 24px;
     height: 24px;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     border-radius: 50%;
 }
 #icon-member:nth-child(2) {
     margin-left: -10px;
     z-index: 2;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     border-radius: 50%;
 }
 #icon-member:nth-child(3) {
     margin-left: -10px;
     border-radius: 50%;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     z-index: 3;
 }
 .folder-item-icon {
@@ -131,7 +131,7 @@ export default {
 .border-dropdown {
     padding: 10px 15px;
     border-radius: 50%;
-    border: 1.5px solid #EDEDED;
+    border: 1.5px solid var(--border-color);
     cursor: pointer;
 }
 

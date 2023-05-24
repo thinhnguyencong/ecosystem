@@ -170,13 +170,13 @@ ol , ul {
 
 //
 .my-folder {
-    color:#6F7180 ;
+    color:var(--text-color-txt) ;
     max-width: calc( 100% - 106px);
     float: left;
     display: flex;
 }
 .folder-content {
-    border-right: 1px solid #EDEDED;
+    border-right: 1px solid var(--border-color);
 }
 
 .folder-header-name {
@@ -194,7 +194,7 @@ ol , ul {
 .folder-Starred {
     font-weight: 500;
     font-size: 14px;
-    color: #3C46F5;
+    color: var(--text-color-active);
     cursor: pointer;
 }
 .folder-Starred {
@@ -214,12 +214,12 @@ ol , ul {
     gap: 0 8px;
 }
 .folder-header_name {
-    color: #6F7180;
+    color: var(--text-color-txt);
     font-weiht: 400;
     font-size: 12px;
 }
 .arrow-right {
-    color: #C1C0C9;
+    color: var(--text-color-input);
 
 }
 .BlockChain {
@@ -258,7 +258,7 @@ ol , ul {
     gap: 0 8px;
 }
 .list-folder-active {
-    background-color: #E7F3FF;
+    background-color: var(--bgc-active-menu);
 }
 
 .folder-item_header {
@@ -276,17 +276,17 @@ ol , ul {
 }
 .folder-item_file {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .folder-item_distance {
     width: 4px;
     height: 4px;
-    background-color: #6F7180;
+    background-color: var(--text-color-txt);
     border-radius: 50%;
 }
 .folder-item_MB {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .item-icon_number {
 }
@@ -294,19 +294,19 @@ ol , ul {
     z-index: 1;
     width: 24px;
     height: 24px;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     border-radius: 50%;
 }
 #icon-member:nth-child(2) {
     margin-left: -10px;
     z-index: 2;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     border-radius: 50%;
 }
 #icon-member:nth-child(3) {
     margin-left: -10px;
     border-radius: 50%;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     z-index: 3;
 }
 .item-icon_Eval {
@@ -317,7 +317,7 @@ ol , ul {
 }
 .item-icon_member {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .folder-item-icon {
     display: flex;
@@ -334,7 +334,7 @@ ol , ul {
 .border-dropdown {
     padding: 10px 15px;
     border-radius: 50%;
-    border: 1.5px solid #EDEDED;
+    border: 1.5px solid var(--border-color);
     cursor: pointer;
 }
 
@@ -361,7 +361,7 @@ ol , ul {
 .files-Starred {
     font-weight: 500;
     font-size: 14px;
-    color: #3C46F5;
+    color: var(--text-color-active);
     cursor: pointer;
 }
 .files-Starred {
@@ -381,11 +381,11 @@ ol , ul {
     gap: 0 8px;
 }
 .files-header_name {
-    color: #6F7180;
+    color: var(--text-color-txt);
     font-size: 12px;
 }
 .arrow-right {
-    color: #C1C0C9;
+    color: var(--text-color-input);
 
 }
 .BlockChain {
@@ -411,8 +411,8 @@ ol , ul {
     width: calc( 100% / 5 - 16px );
 }
 .item-files_border {
-    background: #FBFCFD;
-    border: 1px solid #EDEDED;
+    background: var(--bgc-item);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
 }
 .item-files{
@@ -420,7 +420,7 @@ ol , ul {
     justify-content: center;
     align-items: center;
     padding: 39px 85px;
-    background-color: #FAFAFA;
+    background-color: var(--bgc-item--folder);
     border-radius: 12px;
 }
 .list-files{
@@ -433,9 +433,9 @@ ol , ul {
 .list-files-item {
     width: calc( 100% / 5 - 16px );
     padding: 16px;
-    border: 1px solid #EDEDED;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    background: #FAFAFA;
+    background: var(--bgc-item--folder);
     cursor: pointer;
 }
 
@@ -453,17 +453,17 @@ ol , ul {
 }
 .files-item_file {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .files-item_distance {
     width: 4px;
     height: 4px;
-    background-color: #6F7180;
+    background-color: var(--text-color-txt);
     border-radius: 50%;
 }
 .files-item_MB {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 
 #icon-file {
@@ -483,7 +483,7 @@ ol , ul {
 
 //
 .my-folder {
-    color:#6F7180 ;
+    color:var(--text-color-txt) ;
     width: calc( 100% - 106px);
     float: right;
 }
@@ -510,7 +510,7 @@ ol , ul {
 .folder-Starred {
     font-weight: 500;
     font-size: 14px;
-    color: #3C46F5;
+    color: var(--text-color-active);
     cursor: pointer;
 }
 .folder-Starred {
@@ -530,11 +530,11 @@ ol , ul {
     gap: 0 8px;
 }
 .folder-header_name {
-    color: #6F7180;
+    color: var(--text-color-txt);
     font-size: 12px;
 }
 .arrow-right {
-    color: #C1C0C9;
+    color: var(--text-color-input);
 
 }
 .BlockChain {
@@ -577,43 +577,43 @@ ol , ul {
 }
 .folder-item_file {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .folder-item_distance {
     width: 4px;
     height: 4px;
-    background-color: #6F7180;
+    background-color: var(--text-color-txt);
     border-radius: 50%;
 }
 .folder-item_MB {
     font-weight: 400;
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .item-icon_number {
 }
 .item-icon_member {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 
 #icon-member {
     z-index: 1;
     width: 24px;
     height: 24px;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     border-radius: 50%;
 }
 #icon-member:nth-child(2) {
     margin-left: -10px;
     z-index: 2;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     border-radius: 50%;
 }
 #icon-member:nth-child(3) {
     margin-left: -10px;
     border-radius: 50%;
-    border: 1.5px solid #FFFFFF;
+    border: 1.5px solid var(--backgroud);
     z-index: 3;
 }
 .folder-item-icon {
@@ -631,7 +631,7 @@ ol , ul {
 .border-dropdown {
     padding: 10px 15px;
     border-radius: 50%;
-    border: 1.5px solid #EDEDED;
+    border: 1.5px solid var(--border-color);
     cursor: pointer;
 }
 
@@ -658,7 +658,7 @@ ol , ul {
 .files-Starred {
     font-weight: 500;
     font-size: 14px;
-    color: #3C46F5;
+    color: var(--text-color-active);
     cursor: pointer;
 }
 .files-Starred {
@@ -678,12 +678,12 @@ ol , ul {
     gap: 0 8px;
 }
 .files-header_name {
-    color: #6F7180;
+    color: var(--text-color-txt);
     font-size: 12px;
     line-height: 16px;
 }
 .arrow-right {
-    color: #C1C0C9;
+    color: var(--text-color-input);
 
 }
 .BlockChain {
@@ -716,8 +716,8 @@ ol , ul {
 }
 
 .item-files_border {
-    background: #FAFAFA;
-    border: 1px solid #EDEDED;
+    background: var(--bgc-item--folder);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
 }
 .item-files{
@@ -725,7 +725,7 @@ ol , ul {
     justify-content: center;
     align-items: center;
     padding: 39px 85px;
-    background-color: #FAFAFA;
+    background-color: var(--bgc-item--folder);
     border-radius: 12px;
 }
 .list-files{
@@ -738,9 +738,9 @@ ol , ul {
 .list-files-item {
     width: calc( 100% / 6 - 16px );
     padding: 16px;
-    border: 1px solid #EDEDED;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    background: #FAFAFA;
+    background: var(--bgc-item--folder);
     cursor: pointer;
 }
 
@@ -759,17 +759,17 @@ ol , ul {
 .files-item_file {
     font-weight: 400;
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .files-item_distance {
     width: 4px;
     height: 4px;
-    background-color: #6F7180;
+    background-color: var(--text-color-txt);
     border-radius: 50%;
 }
 .files-item_MB {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 
 #icon-file {
@@ -795,7 +795,7 @@ ol , ul {
 }
 #border-dropdown {
     padding: 12px 10px;
-    border: 1px solid #EDEDED;
+    border: 1px solid var(--border-color);
     border-radius: 500px;
 }
 #sucss {
@@ -810,7 +810,7 @@ ol , ul {
     position: absolute;
     top: 30px;
     right: 0;
-    background: #FFFFFF;
+    background: var(--backgroud);
     box-shadow: 0 40px 64px -12px rgba(0, 0, 0, 0.08), 0px 0px 14px -4px rgba(0, 0, 0, 0.05), 0px 32px 48px -8px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     min-width: 238px;
@@ -831,7 +831,7 @@ ol , ul {
     position: relative;
 }
 .activeMenu {
-    background: #E7F3FF;
+    background: var(--bgc-active-menu);
     border-radius: 12px;
 }
 #inputOption {
@@ -840,13 +840,13 @@ ol , ul {
     float: right;
     font-weight: 500;
     font-size: 14px;
-    color: #3C46F5;
+    color: var(--text-color-active);
     pointer-events: none;
     user-select: none;
     &::placeholder {
         font-weight: 500;
         font-size: 14px;
-        color: #3C46F5;
+        color: var(--text-color-active);
     }
 }
 #inputOption::-webkit-input-placeholder {
