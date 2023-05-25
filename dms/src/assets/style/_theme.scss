@@ -1,10 +1,6 @@
 :root {
   /* Font family */
   --font:'Manrope', sans-serif;
-
-}
-
-.light {
   /* Các biến của light theme */
   --text-color-title: #12131C;
   --text-color-txt: #6F7180;
@@ -21,16 +17,37 @@
   --bgc-modal:#00000099;
   /* border */
   --border-color: #EDEDED;
+
+}
+/*
+
+.light {
+  !* Các biến của light theme *!
+  --text-color-title: #12131C;
+  --text-color-txt: #6F7180;
+  --text-color-active: #3C46F5;
+  --text-color-input: #C1C0C9;
+  --arrow-right: #C1C0C9;
+  !* background *!
+  --background: #FFFFFF;
+  --bgc-menu: #FFFFFF;
+  --bgc-item: #FBFCFD;
+  --bgc-active-menu: #E7F3FF;
+  --bgc-active-item: #EEEEEE;
+  --bgc-item--folder:#FAFAFA;
+  --bgc-modal:#00000099;
+  !* border *!
+  --border-color: #EDEDED;
 }
 
 .dark {
-  /* Các biến của dark theme */
+  !* Các biến của dark theme *!
   --text-color-title: #EDEDED;
   --text-color-txt: #939EAB;
   --text-color-active: #C3C9D6;
   --text-color-input: #3E3E3E;
   --arrow-right: #3E3E3E;
-  /* background */
+  !* background *!
   --background: #000000;
   --bgc-menu: #000000;
   --bgc-item: #111111;
@@ -38,6 +55,6 @@
   --bgc-active-item: #333333;
   --bgc-item--folder:#EAEAEA;
   --bgc-modal:#000000CC;
-  /* border */
+  !* border *!
   --border-color: #BBBBBB;
-}
+}*/

@@ -19,6 +19,8 @@ import exporting from 'highcharts/modules/exporting'
 import exportData from 'highcharts/modules/export-data'
 import accessibility from 'highcharts/modules/accessibility'
 
+import i18n from './lang/i18n'
+
 drilldown(Highcharts)
 exporting(Highcharts)
 exportData(Highcharts)
@@ -39,6 +41,9 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 // tree select
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import vClickOutside from 'v-click-outside'
+import {en} from "vuetify/es5/locale";
+
+
 
 dayjs.extend(window.dayjs_plugin_relativeTime);
 Vue.use(VueSweetalert2);
@@ -60,8 +65,14 @@ Vue.mixin({
     }
   },
 });
-new Vue({
+
+
+const app = new Vue({
     router,
     store,
+    i18n,
     render: (h) => h(App)
-  }).$mount('#app')
+  }).$mount('#app');
+
+store.$app = app;
+export default app;

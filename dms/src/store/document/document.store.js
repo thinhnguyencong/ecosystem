@@ -22,7 +22,8 @@ const initialState = {
   pendingDocs: [],
   signedDocs: [],
   recentFolders: [],
-  recentFiles: []
+  recentFiles: [],
+
 };
 
 export const document = {

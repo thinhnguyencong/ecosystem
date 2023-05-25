@@ -1,0 +1,35 @@
+{
+  "menu": {
+    "Home": "Home",
+    "MyFolder": "My Folder",
+    "Share": "Share",
+    "Sign": "Sign",
+    "Starred": "Starred",
+    "Hidden": "Hidden",
+    "Recent": "Recent"
+  },
+  "setting" : {
+    "lang": "Language",
+    "Notifications": "Notifications",
+    "noticeTxt": "Get your important notifications from documents, comments,... ",
+    "notiVolumn": "Allow notifications to play sounds",
+    "showNoti": "Show notifications on the lock screen",
+    "pushNoti": "Push Notifications",
+    "displayNew": "Display new important notifications in the screen.",
+
+    "notificationsFeed": "Notifications Feed",
+    "ChooseTo": "Choose to get different types of notifications.",
+
+    "NotiFrom": "Notifications from your documents.",
+    "NotiSign": "Notifications from documents that you need to sign.",
+    "NotificationsFrom": "Notifications from your comments or when someone mentions you in a comment.",
+    "NotiDocuments.": "Notifications from other’s approved documents.",
+
+
+    "General": "General",
+    "Security": "Security",
+    "Appearance": "Appearance",
+    "Billing": "Billing",
+    "AboutUs": "AboutUs"
+  }
+}

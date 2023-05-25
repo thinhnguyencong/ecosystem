@@ -1,79 +1,82 @@
 <template>
-	<aside :class="`${is_expanded ? 'is-expanded' : ''}`">
-<!--		<div class="menu-toggle-wrap">-->
-<!--			<button class="menu-toggle" @click="ToggleMenu">-->
-<!--				<span class="material-icons md-18">keyboard_arrow_right</span>-->
-<!--			</button>-->
-<!--		</div>-->
+	<div >
+		<aside :class=" `${is_expanded ? 'is-expanded' : '' }` " >
+			<!--		<div class="menu-toggle-wrap">-->
+			<!--			<button class="menu-toggle" @click="ToggleMenu">-->
+			<!--				<span class="material-icons md-18">keyboard_arrow_right</span>-->
+			<!--			</button>-->
+			<!--		</div>-->
 
-		<router-link to="/" >
-			<div class="logo">
-				<img :src="logoURL" alt="Vue" />
+			<router-link to="/" >
+				<div class="logo">
+					<img :src="logoURL" alt="Vue" />
+				</div>
+			</router-link>
+
+			<div class="menu">
+				<router-link v-if="authState.role === 'admin'" to="/admin" :class="authState.active === 'admin' ? 'button sidebar-active' : 'button'">
+					<span class="material-icons">admin_panel_settings</span>
+					<span class="text">Admin</span>
+				</router-link>
+				<router-link to="/" :class="authState.active === 'home' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" class="custom-icon" src="@/assets/img/home.svg" alt="error-home">
+					</div>
+
+					<span class="text">{{ $t('menu.Home') }}</span>
+				</router-link>
+				<router-link to="/my-folder" :class="authState.active === 'my-folder' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" src="@/assets/img/folder.svg" alt="error-folder">
+					</div>
+					<span class="text">{{ $t('menu.MyFolder') }}</span>
+				</router-link>
+				<router-link to="/share" :class="authState.active === 'share' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" src="@/assets/img/share.svg" alt="error-share">
+					</div>
+					<span class="text">{{ $t('menu.Share') }}</span>
+				</router-link>
+				<router-link to="/sign" :class="authState.active === 'sign' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" src="@/assets/img/sign.svg" alt="error-sign">
+					</div>
+					<span class="text">{{ $t('menu.Sign') }}</span>
+				</router-link>
+				<router-link to="/starred" :class="authState.active === 'starred' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" src="@/assets/img/star.svg" alt="error-starred">
+					</div>
+					<span class="text">{{ $t('menu.Starred') }}</span>
+				</router-link>
+				<router-link to="/hidden" :class="authState.active === 'hidden' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" src="@/assets/img/hidden.svg" alt="error-hidden">
+					</div>
+					<span class="text">{{ $t('menu.Hidden') }}</span>
+				</router-link>
+				<router-link to="/recent" :class="authState.active === 'recent' ? 'button sidebar-active' : 'button'">
+					<div class="iconMenu">
+						<img id="iconMenu" src="@/assets/img/clock.svg" alt="error-clock">
+					</div>
+					<span class="text">{{ $t('menu.Recent') }}</span>
+				</router-link>
+
+
+				<!--			<router-link to="/shared-with-me" :class="authState.active === 'shared-with-me' ? 'button sidebar-active' : 'button'">-->
+				<!--				<span class="material-icons">folder_shared</span>-->
+				<!--				<span class="text">Shared With Me</span>-->
+				<!--			</router-link>-->
+
+
 			</div>
-		</router-link>
 
-		<div class="menu">
-			<router-link v-if="authState.role === 'admin'" to="/admin" :class="authState.active === 'admin' ? 'button sidebar-active' : 'button'">
-				<span class="material-icons">admin_panel_settings</span>
-				<span class="text">Admin</span>
-			</router-link>
-			<router-link to="/" :class="authState.active === 'home' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" class="custom-icon" src="@/assets/img/home.svg" alt="error-home">
-				</div>
-
-				<span class="text">Home</span>
-			</router-link>
-			<router-link to="/my-folder" :class="authState.active === 'my-folder' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" src="@/assets/img/folder.svg" alt="error-folder">
-				</div>
-				<span class="text">My Folder</span>
-			</router-link>
-			<router-link to="/share" :class="authState.active === 'share' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" src="@/assets/img/share.svg" alt="error-share">
-				</div>
-				<span class="text">share</span>
-			</router-link>
-			<router-link to="/sign" :class="authState.active === 'sign' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" src="@/assets/img/sign.svg" alt="error-sign">
-				</div>
-				<span class="text">sign</span>
-			</router-link>
-			<router-link to="/starred" :class="authState.active === 'starred' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" src="@/assets/img/star.svg" alt="error-starred">
-				</div>
-				<span class="text">starred</span>
-			</router-link>
-			<router-link to="/hidden" :class="authState.active === 'hidden' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" src="@/assets/img/hidden.svg" alt="error-hidden">
-				</div>
-				<span class="text">hidden</span>
-			</router-link>
-			<router-link to="/recent" :class="authState.active === 'recent' ? 'button sidebar-active' : 'button'">
-				<div class="iconMenu">
-					<img id="iconMenu" src="@/assets/img/clock.svg" alt="error-clock">
-				</div>
-				<span class="text">Recent</span>
-			</router-link>
+			<div class="flex"></div>
 
 
-<!--			<router-link to="/shared-with-me" :class="authState.active === 'shared-with-me' ? 'button sidebar-active' : 'button'">-->
-<!--				<span class="material-icons">folder_shared</span>-->
-<!--				<span class="text">Shared With Me</span>-->
-<!--			</router-link>-->
+		</aside>
+	</div>
 
-
-		</div>
-
-		<div class="flex"></div>
-		
-
-	</aside>
 </template>
 
 <script setup>
@@ -89,6 +92,10 @@ const is_expanded = ref(localStorage.getItem("is_expanded") === "true")
 </script>
 <script>
 export default {
+	data() {
+		return {
+		}
+	},
   methods: {
     handleLogout() {
       this.$store.dispatch("auth/logout")
@@ -105,6 +112,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/style/_theme.scss";
+
 aside {
 	position: fixed;
 	background-color: var(--backgroud);
@@ -236,7 +244,9 @@ aside {
 		color: var(--text-color-active) !important;
 	}
 }
-
+.text {
+	color: var(--text-color-title) ;
+}
 .custom-icon.active {
 	filter: invert(1);
 	color: var(--text-color-active);

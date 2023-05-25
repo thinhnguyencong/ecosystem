@@ -3,7 +3,7 @@
 input[type="radio"] {
   cursor: pointer;
   appearance: none;
-  background-color: var(--backgroud);
+  background-color: var(--background);
   border: 1px solid var(--border-color);
   border-radius: 50%;
   width: 20px;
@@ -11,7 +11,7 @@ input[type="radio"] {
   margin-right: 10px;
 }
 input[type="radio"]:checked {
-  background-color: var(--backgroud);
+  background-color: var(--background);
   border: 5px solid var(--text-color-active);
 }
 
@@ -33,7 +33,7 @@ input[type="checkbox"]:checked {
 }
 input[type="checkbox"]:checked::before {
   content: "\2714";
-  color: var(--backgroud);
+  color: var(--background);
   font-size: 12px;
   text-align: center;
   display: block;
@@ -46,7 +46,7 @@ input[type="checkbox"]:checked::before {
 input[type="checkbox"] {
   cursor: pointer;
   appearance: none;
-  background-color: var(--backgroud);
+  background-color: var(--background);
   border: 2px solid var(--text-color--1);
   border-radius:4px;
   width: 17px;
@@ -55,12 +55,12 @@ input[type="checkbox"] {
 
 }
 input[type="checkbox"]:checked {
-  background-color: #3C46F5;
-  border: 2px solid #3C46F5;
+  background-color: var(--text-color-active);
+  border: 2px solid var(--text-color-active);
 }
 input[type="checkbox"]:checked::before {
   content: "\2714";
-  color: var(--backgroud);
+  color: var(--background);
   font-size: 12px;
   text-align: center;
   display: block;
@@ -91,7 +91,7 @@ tr th input[type="checkbox"]:checked {
 }
 tr th input[type="checkbox"]:checked::before {
   content: "\2714";
-  color: var(--backgroud);
+  color: var(--background);
   font-size: 12px;
   text-align: center;
   display: block;
@@ -104,8 +104,8 @@ tr th input[type="checkbox"]:checked::before {
 input[type="checkbox"] {
   cursor: pointer;
   appearance: none;
-  background-color: var(--backgroud);
-  border: 2px solid var(--text-color--1);
+  background-color: var(--background);
+  border: 2px solid var(--text-color-title);
   border-radius:4px;
   width: 17px;
   height: 17px;
@@ -114,11 +114,11 @@ input[type="checkbox"] {
 }
 input[type="checkbox"]:checked {
   background-color: var(--text-color-active);
-  border: 2px solid var(--text-color);
+  border: 2px solid var(--text-color-active);
 }
 tr td input[type="checkbox"]:checked::before {
   content: "\2714";
-  color: var(--backgroud);
+  color: var(--background);
   font-size: 12px;
   text-align: center;
   display: block;

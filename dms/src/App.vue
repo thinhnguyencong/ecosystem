@@ -1,5 +1,5 @@
 <template>
-  <div class="app" >
+  <div class="app">
 		<!-- Sidebar -->
 		<Sidebar v-if="store.state.auth.isAuthenticated" />
 
@@ -33,6 +33,10 @@ function closeNav() {
 </script>
 <script>
 	export default {
+		data() {
+			return {
+			}
+		},
 		created() {
 			socket.on("connect_error", (err) => {
 				console.log("Socket io error", err);
@@ -47,6 +51,7 @@ function closeNav() {
 
 <style lang="scss">
 @import "@/assets/style/main.scss";
+
 
 button {
 	cursor: pointer;
@@ -79,6 +84,10 @@ button {
 }
 </style>  
 <style lang="scss">
+
+
+
+
 .ql-align-right {
 	text-align: right;
 }

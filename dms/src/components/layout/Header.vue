@@ -27,7 +27,9 @@
                             </div>
                         </div>
                         <div class="user-setting">
-                            <img src="@/assets/img/Settings.svg" alt="error-settings">
+                            <router-link to="/Setting" :class="authState.active === 'setting' ? 'button sidebar-active' : 'button'">
+                                <img src="@/assets/img/Settings.svg" alt="error-settings">
+                            </router-link>
                         </div>
 
                         <div class="use-iconOption">
@@ -68,7 +70,7 @@
     },
     data() {
       return {
-        showIconBadge: false
+        showIconBadge: false,
       }
     },
     methods: {

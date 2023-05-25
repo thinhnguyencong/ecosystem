@@ -1,6 +1,5 @@
 <template>
-    <div class="nav-content">
-
+    <div class="nav-content" >
         <nav v-if="$route.matched[0].name == 'Home'" aria-label="breadcrumb" >
             <ol class="bgc-navbar">
                 <li class="breadcrumb-item active d-flex flex-row" aria-current="page" >
@@ -176,7 +175,7 @@ export default {
         return {
             layout: "",
             isModalFile:false,
-            iconMenu:true
+            iconMenu:true,
         };
     },
     methods: {

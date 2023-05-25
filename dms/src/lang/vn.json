@@ -1,0 +1,33 @@
+{
+  "menu": {
+    "Home": "Trang chủ",
+    "MyFolder": "Thư mục",
+    "Share": "Chia sẻ",
+    "Sign": "Dấu hiệu",
+    "Starred": "Gắn sao",
+    "Hidden": "Ẩn giấu",
+    "Recent": "Gần đây"
+  },
+  "setting" : {
+    "lang": "Ngôn ngữ",
+    "Notifications": "Thông báo",
+    "noticeTxt": "Nhận thông báo quan trọng của bạn từ tài liệu, nhận xét,...",
+    "notiVolumn": "Cho phép thông báo phát âm thanh",
+    "showNoti": "Hiện thông báo trên màn hình khóa",
+    "pushNoti": "thông báo đẩy",
+    "displayNew": "Hiển thị các thông báo quan trọng mới trong màn hình.",
+    "notificationsFeed": "Nguồn cấp dữ liệu thông báo",
+    "ChooseTo": "Chọn để nhận các loại thông báo khác nhau.",
+
+
+
+
+    "General": "Tổng quan",
+    "Security": "Bảo vệ",
+    "Appearance": "Vẻ bề ngoài",
+    "Billing": "Thanh toán",
+    "AboutUs": "Về chúng tôi"
+
+
+  }
+}

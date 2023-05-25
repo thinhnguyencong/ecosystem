@@ -92,7 +92,6 @@ export default {
             drawerVisible: false,
             showModal: false,
             transition: 'slide-fade',
-
             itemSelectedID:null
         }
     },

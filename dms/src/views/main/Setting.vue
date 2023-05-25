@@ -1,5 +1,5 @@
 <template>
-    <div class="setting" >
+    <div class="setting">
         <div class="setting-last">
             <div
                 v-for="(setting, index) in settings"
@@ -8,8 +8,8 @@
                 :class="{ activebgc: setting.active }"
                 @click="selectSetting(index)"
             >
-                <img :src="setting.img" alt="error-setting">
-                <div class="item-setting--txt" :class="{ activebgc: setting.active }" >{{ setting.text }}</div>
+                <img src="" :src="setting.img">
+                <div class="item-setting--txt" :class="{ activebgc: setting.active }" >{{ $t(setting.text) }}</div>
             </div>
         </div>
         <div ref="settingLast" class="setting-firl" >
@@ -18,7 +18,7 @@
                 <div class="head-setting--langg">
                     <div class="lang-title">General</div>
                     <div class="lang-txt">
-                        <div class="lang-txt--name">Language</div>
+                        <div class="lang-txt--name"> {{ $t('setting.lang') }}</div>
 
                         <div class="lang-txt--dropdown">
                             <div class="lang-icon" @click="btnClickShowLang()">
@@ -41,6 +41,7 @@
                                     :key="index"
                                     class="lang-item"
                                     :class="{ BGCLangItem: language.active}"
+                                    :value="language.code"
                                     @click="changeLanguage(language)"
                                 >
                                     <div v-if="language.CheckLang" class="lang-item--icon"><img v-show="language.active" id="checkLang" :class="{ 'checkLang-icon': language.active }" :src="language.check" alt="language-icon"> </div>
@@ -57,11 +58,11 @@
 
             <div  class="notificationn" :class="{ activeTabs: activeIndex === 1 }" >
                 <div class="check-notice">
-                    <div class="lang-title">Notifications</div>
+                    <div class="lang-title">{{ $t('setting.Notifications') }}</div>
                     <div class="lang-txt">
                         <div class="lang-txt--notifice">
                             <img src="@/assets/img/notification_active.svg" alt="">
-                            <div class="lang-txt--Noti"> Notifications </div>
+                            <div class="lang-txt--Noti"> {{ $t('setting.Notifications') }} </div>
                         </div>
                         <div class="lang-txt--check">
                             <div class="roller-checkbox">
@@ -74,14 +75,14 @@
                     </div>
                 </div>
                 <div class="check-notice--txt">
-                    <div class="notice--txt" >Get your important notifications from documents, comments,... </div>
-                    <div v-if="isChecked" class="notice--check" :class="{ 'animated': isChecked }">
-                        <input id="checkNoti" type="checkbox" :checked="isChecked">
-                        <label for="checkNoti">Allow notifications to play sounds</label>
-                    </div>
-                    <div v-if="isChecked" class="notice--check" :class="{ 'animated': isChecked }">
-                        <input id="checkNoti2" type="checkbox" :checked="isChecked">
-                        <label for="checkNoti2">Show notifications on the lock screen</label>
+                    <div class="notice--txt" >{{ $t('setting.noticeTxt') }}</div>
+                    <div class="notiShow">
+                        <div v-if="isChecked" class="notice--check" :class="{ 'animated': isChecked }">
+                            <noti-feed class="label-notice" id="checkNoti" label="Cho phép thông báo phát âm thanh" :isChecked="isChecked" />
+                        </div>
+                        <div v-if="isChecked" class="notice--check" :class="{ 'animated': isChecked }">
+                            <noti-feed class="label-notice" id="checkNoti2" label="Hiện thông báo trên màn hình khóa" :isChecked="isChecked" />
+                        </div>
                     </div>
                 </div>
 
@@ -89,7 +90,7 @@
                     <div class="lang-txt">
                         <div class="lang-txt--notifice">
                             <img src="@/assets/img/pushNoti.svg" alt="">
-                            <div class="lang-txt--Noti"> Push Notifications </div>
+                            <div class="lang-txt--Noti"> {{ $t('setting.pushNoti') }}</div>
                         </div>
                         <div class="lang-txt--check">
                             <div class="roller-checkbox">
@@ -100,14 +101,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="notice--txt">Display new important notifications in the screen.</div>
+                    <div class="notice--txt">{{ $t('setting.displayNew') }}</div>
                 </div>
 
                 <div class="check-notice">
                     <div class="lang-txt">
                         <div class="lang-txt--notifice">
                             <img src="@/assets/img/notiFeed.svg" alt="">
-                            <div class="lang-txt--Noti"> Notifications Feed </div>
+                            <div class="lang-txt--Noti"> {{ $t('setting.notificationsFeed') }}</div>
                         </div>
                         <div class="lang-txt--check">
                             <div class="roller-checkbox">
@@ -118,40 +119,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="notice--txt notice--feed" >Choose to get different types of notifications.</div>
+                    <div class="notice--txt notice--feed" >{{ $t('setting.ChooseTo') }}</div>
 
                 </div>
+
                 <div class="check-notice--txt">
-                    <div v-if="isCheckeds" class="notice--check opacityNotice" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti">Notifications from your documents.</label>
-                    </div>
-                    <div v-if="isCheckeds" class="notice--check opacityNotice" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti2" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti2">Notifications from documents that you need to sign.</label>
-                    </div>
-                    <div v-if="isCheckeds" class="notice--check" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti3" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti3">Notifications from your comments or when someone mentions you in a comment.</label>
-                    </div>
-                    <div v-if="isCheckeds" class="notice--check" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti4" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti4">Notifications from other’s approved documents.</label>
-                    </div>
-                    <div v-if="isCheckeds" class="notice--check" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti5" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti5">Notifications from other’s rejected documents.</label>
-                    </div>
-                    <div v-if="isCheckeds" class="notice--check" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti6" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti6">Notifications from other’s documents you signed.</label>
-                    </div>
-                    <div v-if="isCheckeds" class="notice--check" :class="{ 'animated': isCheckeds }">
-                        <input id="checkNoti7" type="checkbox" :checked="isCheckeds">
-                        <label for="checkNoti7">System notifications</label>
-                    </div>
+                        <div v-if="isCheckeds" class="list-notiFeed" :class="{ 'animated': isChecked }" >
+                            <noti-feed id="checkNoti" label="Notifications from your documents." :isChecked="isCheckeds" />
+                            <noti-feed id="checkNoti2" label="Notifications from documents that you need to sign." :isChecked="isCheckeds" />
+                            <noti-feed id="checkNoti3" label="Notifications from your comments or when someone mentions you in a comment." :isChecked="isCheckeds" />
+                            <noti-feed id="checkNoti4" label="Notifications from other’s approved documents." :isChecked="isCheckeds" />
+                            <noti-feed id="checkNoti5" label="Notifications from other’s rejected documents." :isChecked="isCheckeds" />
+                            <noti-feed id="checkNoti6" label="Notifications from other’s documents you signed." :isChecked="isCheckeds" />
+                            <noti-feed id="checkNoti7" label="System notifications" :isChecked="isCheckeds" />
+                        </div>
                 </div>
-
                 <div class="check-notice">
                     <div class="lang-txt">
                         <div class="lang-txt--notifice">
@@ -169,7 +151,7 @@
                     </div>
                     <div class="notice--txt notice--feed" >Display new important notifications in the screen.</div>
                 </div>
-                <div class="check-notice--txt">
+                <div class="check-notice--txt noti-email">
                     <div v-if="isCheckEmail" class="notice--check" :class="{ 'animated': isCheckEmail }">
                         <input id="checkNoti" type="checkbox" :checked="isCheckEmail">
                         <label for="checkNoti">Notifications from your documents.</label>
@@ -476,13 +458,34 @@
 
 
 </template>
+
 <script>
 import modalHistory from '@/components/modalHistory/ModalHistory.vue'
 import modalActiveSess from "@/components/modalHistory/ModalActiveSess.vue";
+import svgIcon from "@/components/SvgIcon.vue";
+
+import Settingsss from '@/assets/img/Settingsss.svg';
+import notifiActive from '@/assets/img/notification_active.svg';
+import setSecurity from '@/assets/img/setting-security.svg';
+import setPearance from '@/assets/img/setting-appearance.svg';
+import setBilling from '@/assets/img/setting-billing.svg';
+import Detail from '@/assets/img/Detail.svg';
+
+import sucss from '@/assets/img/sucss.svg';
+import langEN from '@/assets/img/langEN.svg';
+import langVN from '@/assets/img/langVN.svg';
+
+import NotiFeed from "@/components/NotiFeed.vue";
+
+
 export default {
     components:{
         modalHistory,
-        modalActiveSess
+        modalActiveSess,
+        svgIcon,
+        NotiFeed,
+        Settingsss,
+        notifiActive
     },
     data() {
         return {
@@ -501,17 +504,18 @@ export default {
             activeIndex: null,
             isShowHistory:false,
             settings: [
-                { img:require("@/assets/img/Settingsss.svg"), text: "General", active: false },
-                { img:require("@/assets/img/notification_active.svg"), text: "General", active: false },
-                { img:require("@/assets/img/setting-security.svg"), text: "Security", active: false },
-                { img:require("@/assets/img/setting-appearance.svg"), text: "Appearance", active: false },
-                { img:require("@/assets/img/setting-billing.svg"), text: "Billing", active: false },
-                { img:require("@/assets/img/Detail.svg"), text: "About us", active: false }
+                { img: Settingsss, text: "General", active: false },
+                { img: notifiActive, text: "Notifications", active: false },
+                { img: setSecurity, text: "Security", active: false },
+                { img: setPearance, text: "Appearance", active: false },
+                { img: setBilling, text: "Billing", active: false },
+                { img: Detail, text: "About us", active: false }
             ],
             languages: [
-                { code: 'en',check:require("@/assets/img/sucss.svg"), name: 'English', icon: require("@/assets/img/langEN.svg"),CheckLang:true },
-                { code: 'fr',check:require("@/assets/img/sucss.svg"),name: 'Vietnamese', icon: require("@/assets/img/langVN.svg"),CheckLang:true },
+                { code: 'en',check:sucss, name: 'English', icon: langEN,CheckLang:true },
+                { code: 'vn',check:sucss,name: 'Vietnamese', icon: langVN,CheckLang:true },
             ],
+
 
         }
     },
@@ -519,16 +523,17 @@ export default {
         // btn chuyển màu nền theo dạng light và dark
         selectedTheme(newTheme) {
             if (newTheme === 'light') {
-                document.documentElement.classList.toggle('dark', false);
                 document.documentElement.classList.toggle('light', true);
+                document.documentElement.classList.toggle('dark', false);
             } else if (newTheme === 'dark') {
                 document.documentElement.classList.toggle('light', false);
                 document.documentElement.classList.toggle('dark', true);
             }
         },
         // btn chuyển đổi ảnh nền
-        selectedBGC(value) {
-            if (value === 'none') {
+        selectedBGC() {
+            console.log("zxc")
+/*            if (value === 'none') {
                 document.body.style.backgroundImage = 'none';
             } else if (value === 'BG1') {
                 document.body.style.backgroundImage = 'url(@/assets/img/bgc1.png)';
@@ -536,13 +541,26 @@ export default {
                 document.body.style.backgroundImage = 'url(@/assets/img/bgc2.png)';
             } else if (value === 'BG3') {
                 document.body.style.backgroundImage = 'url(@/assets/img/bgc3.png)';
-            }
+            }*/
         }
     },
     created() {
         this.currentLanguage = this.languages[0];
     },
     methods: {
+        // btn thay đổi ngôn ngữ
+        changeLanguage(language) {
+            this.languages.forEach((lang) => {
+                lang.active = false;
+            });
+            this.$i18n.locale = language.code;
+            language.active = true;
+
+            this.currentLanguage = language;
+            this.$store.dispatch("lang/setLang",event.target.getAttribute('value'));
+            this.activeLang = !this.activeLang;
+        },
+
         btnShowBGC() {
             this.isShowBGC = !this.isShowBGC
         },
@@ -565,15 +583,7 @@ export default {
         btnClickShowLang() {
             this.activeLang = !this.activeLang;
         },
-        // btn thay đổi ngôn ngữ
-        changeLanguage(language) {
-            this.languages.forEach((lang) => {
-                lang.active = false;
-            });
-            language.active = true;
-            this.currentLanguage = language;
-            this.activeLang = !this.activeLang;
-        },
+
         // btn đánh index từng item trong menu của setting
         selectSetting(index) {
             this.settings.forEach((setting, i) => {
@@ -592,10 +602,35 @@ export default {
     },
 }
 </script>
+<style lang="scss">
+.setting-last-item{
+    .currenIcon {
+        background: red;
+        &* svg {
+            fill: var(--text-color-active) !important;
+            filter: var(--text-color-active) !important;
+        }
+    }
+}
+
+</style>
 
 <style lang="scss" scoped>
 @import "@/assets/style/_reset.scss";
 @import "@/assets/style/_global.scss";
+
+
+
+.list-notiFeed {
+    margin-bottom: 16px;
+    display: grid;
+    gap: 16px;
+}
+.noti-email {
+    display: grid;
+    gap: 16px;
+    font-weight: 500;
+}
 
 .setting {
   padding: 16px;
@@ -783,16 +818,17 @@ label {
   font-weight: 600;
   font-size: 12px;
   color: var(--text-color-txt);
-  margin: 0 0 16px 32px;
-
+    margin-bottom: 16px;
 }
 .notice--check {
-  margin: 0 0 16px 32px;
   display: flex;
-  align-items: center;
-  gap: 0 8px;
+  gap: 16px 8px;
 }
-
+.notiShow {
+    margin-bottom: 16px;
+    display: grid;
+    gap: 16px 0;
+}
 .check-notice--txt:last-child {
   border: none;
 }
@@ -894,7 +930,7 @@ label {
 
 .activeTabs {
   position: relative;
-  background-color: var(--backgroud);
+  background-color: var(--background);
   border-radius: 4px;
 }
 
