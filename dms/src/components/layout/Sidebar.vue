@@ -16,50 +16,50 @@
 			<div class="menu">
 				<router-link v-if="authState.role === 'admin'" to="/admin" :class="authState.active === 'admin' ? 'button sidebar-active' : 'button'">
 					<span class="material-icons">admin_panel_settings</span>
-					<span class="text">Admin</span>
+					<span class="text txtMenu">Admin</span>
 				</router-link>
 				<router-link to="/" :class="authState.active === 'home' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" class="custom-icon" src="@/assets/img/home.svg" alt="error-home">
 					</div>
 
-					<span class="text">{{ $t('menu.Home') }}</span>
+					<span class="text txtMenu">{{ $t('menu.Home') }}</span>
 				</router-link>
 				<router-link to="/my-folder" :class="authState.active === 'my-folder' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" src="@/assets/img/folder.svg" alt="error-folder">
 					</div>
-					<span class="text">{{ $t('menu.MyFolder') }}</span>
+					<span class="text txtMenu">{{ $t('menu.MyFolder') }}</span>
 				</router-link>
 				<router-link to="/share" :class="authState.active === 'share' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" src="@/assets/img/share.svg" alt="error-share">
 					</div>
-					<span class="text">{{ $t('menu.Share') }}</span>
+					<span class="text txtMenu">{{ $t('menu.Share') }}</span>
 				</router-link>
 				<router-link to="/sign" :class="authState.active === 'sign' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" src="@/assets/img/sign.svg" alt="error-sign">
 					</div>
-					<span class="text">{{ $t('menu.Sign') }}</span>
+					<span class="text txtMenu">{{ $t('menu.Sign') }}</span>
 				</router-link>
 				<router-link to="/starred" :class="authState.active === 'starred' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" src="@/assets/img/star.svg" alt="error-starred">
 					</div>
-					<span class="text">{{ $t('menu.Starred') }}</span>
+					<span class="text txtMenu">{{ $t('menu.Starred') }}</span>
 				</router-link>
 				<router-link to="/hidden" :class="authState.active === 'hidden' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" src="@/assets/img/hidden.svg" alt="error-hidden">
 					</div>
-					<span class="text">{{ $t('menu.Hidden') }}</span>
+					<span class="text txtMenu">{{ $t('menu.Hidden') }}</span>
 				</router-link>
 				<router-link to="/recent" :class="authState.active === 'recent' ? 'button sidebar-active' : 'button'">
 					<div class="iconMenu">
 						<img id="iconMenu" src="@/assets/img/clock.svg" alt="error-clock">
 					</div>
-					<span class="text">{{ $t('menu.Recent') }}</span>
+					<span class="text txtMenu">{{ $t('menu.Recent') }}</span>
 				</router-link>
 
 
@@ -112,6 +112,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/style/_theme.scss";
+.txtMenu {
+	color: var(--text-color-title) !important;
+}
+
 
 aside {
 	position: fixed;

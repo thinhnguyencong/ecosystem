@@ -3,108 +3,217 @@
         <div v-if="layout == 'grid'" class="item-folder--flex">
             <div class="folder-border">
                 <div v-if="folders.length" class="itemFlex">
-                    <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
-                    <span class="folder-title">Folders</span>
-                    <div class="item-grid-card">
-                        <div class="folder-add" :class="{ activeDetailFolder: itemSelectedID  }">
-                            <div class="item-folder_border">
-                                <div class="item-folder">
-                                    <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#">
-                                        <img class="iconAdd" src="@/assets/img/folderAdd.svg" alt="error-folderAdd">
-                                    </a>
+                    <div class="navBar-head">
+                        <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer" />
+                    </div>
+                    <div class="list-item-folder">
+                        <span class="folder-title">Folders</span>
+                        <div class="item-grid-card">
+                            <div class="folder-add" :class="{ activeDetailFolder: itemSelectedID  }">
+                                <div class="item-folder_border">
+                                    <div class="item-folder">
+                                        <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#">
+                                            <img class="iconAdd" src="@/assets/img/folderAdd.svg" alt="error-folderAdd">
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
+                            <div v-for="(folder, index) in folders" class="tile" :class="{ activeDetailFolder: itemSelectedID }">
+                                <div class="float-right" >
+                                    <div class="dropdown">
+                                        <div class="optionFolder" @click="openDropdown(folder._id)">
+                                            <img src="@/assets/img/folder-option.svg" alt=""  >
+                                        </div>
+                                        <div v-click-outside="(event) => closeDropdown(folder._id, event)"
+                                             v-if="showMenu == folder._id" :id="'myDropdown-' + folder._id"
+                                             class="list-group" >
+
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                               @click="handleOpenModalShare(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/share2.svg" alt="error-icon">
+                                                    <span class="modal-item--name">Share</span>
+                                                </div>
+                                            </a>
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/star.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Add to Starred</div>
+                                                </div>
+                                            </a>
+
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/link.svg" alt="error-link">
+                                                    <div class="modal-item--name">Copy link</div>
+                                                </div>
+                                            </a>
+
+                                            <a @click="handleDownloadFolder(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/arrow-down.svg" alt="error-arrowDown">
+                                                    <span class="modal-item--name">Download</span>
+                                                </div>
+                                            </a>
+
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/copyfile.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Copy to</div>
+                                                </div>
+                                            </a>
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                               @click="handleOpenModalRename(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/share.svg" alt="error-icon">
+                                                    <span class="modal-item--name">Rename</span>
+                                                </div>
+                                            </a>
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/moveto.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Move to</div>
+                                                </div>
+
+                                            </a>
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/Detail.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Detail</div>
+                                                </div>
+                                            </a>
+                                            <a @click="handleHideFolder(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/hidden.svg" alt="error-icon">
+                                                    <span class="modal-item--name">Hide</span>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="folder" :class="{ bgcItem : itemSelectedID === folder.id}" @dblclick="handleAccessFolder(folder._id)" @click="showOptionFolder(folder)" >
+                                    <FolderVue class="list-folder-item" :key="index" :folder="folder" />
+                                </div>
+                            </div>
+
+
                         </div>
-                        <div v-for="(folder, index) in folders" class="tile" :class="{ activeDetailFolder: itemSelectedID }">
-                            <div class="float-right" >
-                                <div class="dropdown">
-                                    <div class="optionFolder" @click="openDropdown(folder._id)">
-                                        <img src="@/assets/img/folder-option.svg" alt=""  >
-                                    </div>
-                                    <div v-click-outside="(event) => closeDropdown(folder._id, event)"
-                                         v-if="showMenu == folder._id" :id="'myDropdown-' + folder._id"
-                                         class="list-group" >
-
-                                        <a v-if="folder.owner && folder.owner._id == authState.user._id"
-                                           @click="handleOpenModalShare(folder)"
-                                           class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/share2.svg" alt="error-icon">
-                                                <span class="modal-item--name">Share</span>
-                                            </div>
-                                        </a>
-                                        <a class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/star.svg" alt="error-icon">
-                                                <div class="modal-item--name">Add to Starred</div>
-                                            </div>
-                                        </a>
-
-                                        <a class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/link.svg" alt="error-link">
-                                                <div class="modal-item--name">Copy link</div>
-                                            </div>
-                                        </a>
-
-                                        <a @click="handleDownloadFolder(folder)"
-                                           class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/arrow-down.svg" alt="error-arrowDown">
-                                                <span class="modal-item--name">Download</span>
-                                            </div>
-                                        </a>
-
-                                        <a class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/copyfile.svg" alt="error-icon">
-                                                <div class="modal-item--name">Copy to</div>
-                                            </div>
-                                        </a>
-                                        <a v-if="folder.owner && folder.owner._id == authState.user._id"
-                                           @click="handleOpenModalRename(folder)"
-                                           class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/share.svg" alt="error-icon">
-                                                <span class="modal-item--name">Rename</span>
-                                            </div>
-                                        </a>
-                                        <a class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/moveto.svg" alt="error-icon">
-                                                <div class="modal-item--name">Move to</div>
-                                            </div>
-
-                                        </a>
-                                        <a class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/Detail.svg" alt="error-icon">
-                                                <div class="modal-item--name">Detail</div>
-                                            </div>
-                                        </a>
-                                        <a @click="handleHideFolder(folder)"
-                                           class="modal-item">
-                                            <div class="modal-item--option">
-                                                <img src="@/assets/img/hidden.svg" alt="error-icon">
-                                                <span class="modal-item--name">Hide</span>
-                                            </div>
-                                        </a>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="folder" :class="{ bgcItem : itemSelectedID === folder.id}" @dblclick="handleAccessFolder(folder._id)" @click="showOptionFolder(folder)" >
-                                <FolderVue class="list-folder-item" :key="index" :folder="folder" />
-                            </div>
+                        <div class="folder-bottom">
+                            <a href="#">
+                                <img id="border-dropdown" src="@/assets/img/arrow_bottom.svg" alt="error-arrowDown">
+                            </a>
                         </div>
                     </div>
 
-                    <div class="folder-bottom">
-                        <a href="#">
-                            <img id="border-dropdown" src="@/assets/img/arrow_bottom.svg" alt="error-arrowDown">
-                        </a>
+                    <div class="list-item--file">
+                        <span class="folder-title">Folders</span>
+                        <div class="item-grid-card">
+                            <div class="folder-add" :class="{ activeDetailFolder: itemSelectedID  }">
+                                <div class="item-folder_border">
+                                    <div class="item-folder">
+                                        <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item" href="#">
+                                            <img class="iconAdd" src="@/assets/img/folderAdd.svg" alt="error-folderAdd">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-for="(folder, index) in folders" class="tile" :class="{ activeDetailFolder: itemSelectedID }">
+                                <div class="float-right" >
+                                    <div class="dropdown">
+                                        <div class="optionFolder" @click="openDropdown(folder._id)">
+                                            <img src="@/assets/img/folder-option.svg" alt=""  >
+                                        </div>
+                                        <div v-click-outside="(event) => closeDropdown(folder._id, event)"
+                                             v-if="showMenu == folder._id" :id="'myDropdown-' + folder._id"
+                                             class="list-group" >
+
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                               @click="handleOpenModalShare(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/share2.svg" alt="error-icon">
+                                                    <span class="modal-item--name">Share</span>
+                                                </div>
+                                            </a>
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/star.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Add to Starred</div>
+                                                </div>
+                                            </a>
+
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/link.svg" alt="error-link">
+                                                    <div class="modal-item--name">Copy link</div>
+                                                </div>
+                                            </a>
+
+                                            <a @click="handleDownloadFolder(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/arrow-down.svg" alt="error-arrowDown">
+                                                    <span class="modal-item--name">Download</span>
+                                                </div>
+                                            </a>
+
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/copyfile.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Copy to</div>
+                                                </div>
+                                            </a>
+                                            <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                               @click="handleOpenModalRename(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/share.svg" alt="error-icon">
+                                                    <span class="modal-item--name">Rename</span>
+                                                </div>
+                                            </a>
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/moveto.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Move to</div>
+                                                </div>
+
+                                            </a>
+                                            <a class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/Detail.svg" alt="error-icon">
+                                                    <div class="modal-item--name">Detail</div>
+                                                </div>
+                                            </a>
+                                            <a @click="handleHideFolder(folder)"
+                                               class="modal-item">
+                                                <div class="modal-item--option">
+                                                    <img src="@/assets/img/hidden.svg" alt="error-icon">
+                                                    <span class="modal-item--name">Hide</span>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="folder" :class="{ bgcItem : itemSelectedID === folder.id}" @dblclick="handleAccessFolder(folder._id)" @click="showOptionFolder(folder)" >
+                                    <FolderVue class="list-folder-item" :key="index" :folder="folder" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="folder-bottom">
+                            <a href="#">
+                                <img id="border-dropdown" src="@/assets/img/arrow_bottom.svg" alt="error-arrowDown">
+                            </a>
+                        </div>
                     </div>
+
 
                 </div>
                 <div class="folder-detail" v-show="isShowDetail">
@@ -121,8 +230,11 @@
         </div>
 
         <div v-if="layout == 'list'">
-                          <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer"/>
+                          <div class="navBar-head">
+                              <NavBar @onLayoutChange="onLayoutChange" @handleDrawer="handleDrawer" />
+                          </div>
             <div class="table-responsive">
+
                 <!-- folders search -->
                 <div class="folders-input">
                     <div class="folders-input--add">
@@ -137,6 +249,10 @@
                     <div class="folders-input--search">
                         <img src="@/assets/img/search.svg" alt="error-icon">
                         <input type="text" placeholder="Search ">
+                    </div>
+                    <div class="folders-input--person">
+                        <img src="@/assets/img/fileFormat.svg" alt="error-icon">
+                        <input type="text" placeholder="File format ">
                     </div>
                     <div class="folders-input--person">
                         <img src="@/assets/img/person.svg" alt="error-icon">
@@ -162,7 +278,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in folders"
+                        <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in FoldersList"
                             :key="folder._id">
                             <td>
                                 <input id="rd1" type="checkbox" name="rd" check>
@@ -265,6 +381,212 @@
                         </tr>
                     </tbody>
                 </table>
+                <!--  paging -->
+                <div class="paging">
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ 'disabled': current_page === 1 }">
+                            <a class="page-link border-boundary" href="#" @click="goToPageFolder(current_page - 1)">
+                                <img id="arrow-left" src="@/assets/img/arrow_left.svg" alt="">
+                            </a>
+                        </li>
+                        <li v-for="page in totalFolderPages" :key="page" class="page-item" :class="{ 'active': page === current_page }">
+                            <a class="page-link" href="#" @click="goToPageFolder(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link border-boundary" href="#" @click="goToPageFolder(current_page + 1)">
+                                <img id="arrow-right" src="@/assets/img/arrow_right.svg" alt="">
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="paging-record">
+
+                        <div class="modalRecord">
+                            <combobox v-model="pageSize"/>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- upload file   -->
+                <div class="file-title">File</div>
+                <!-- folders search -->
+                <div class="folders-input">
+                    <div class="folders-input--add">
+                        <a data-toggle="modal" data-target="#modalCreateFolder" class="dropdown-item flexItem" href="#">
+                            <div class="folders-add--table"> + </div>
+                            <div class="folders-input--add">
+
+                                <div class="folders-input--txt">Add new folder</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="folders-input--search">
+                        <img src="@/assets/img/search.svg" alt="error-icon">
+                        <input type="text" placeholder="Search ">
+                    </div>
+                    <div class="folders-input--person">
+                        <img src="@/assets/img/fileFormat.svg" alt="error-icon">
+                        <input type="text" placeholder="File format ">
+                    </div>
+                    <div class="folders-input--person">
+                        <img src="@/assets/img/person.svg" alt="error-icon">
+                        <input type="text" placeholder="Person ">
+                    </div>
+                    <div class="folders-input--date">
+                        <img src="@/assets/img/date.svg" alt="error-icon">
+                        <input type="text" placeholder="Dates ">
+                    </div>
+                </div>
+                <!-- folders search -->
+
+                <table id="listTable" class="table table-hover" data-pagination="true">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="checkboxTable">
+                            <div class="head-item--checkbox"><input id="rd1" type="checkbox" name="rd" check></div>
+                        </th>
+                        <th scope="col">Name &nbsp; <i class="mdi mdi-arrow-down text-dark"></i></th>
+                        <th scope="col">Created by </th>
+                        <th scope="col">Size </th>
+                        <th scope="col">Create </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+                    <tr role='button' @click="handleAccessFolder(folder._id)" v-for="(folder) in FilesList"
+                        :key="folder._id">
+                        <td>
+                            <input id="rd1" type="checkbox" name="rd" check>
+                        </td>
+                        <td class="truncate" scope="row">
+                            {{ folder.name }}
+                        </td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>{{(new Date(folder.createdAt)).toDateString()}}</td>
+                        <td>
+                            <img src="@/assets/img/star.svg" alt="error-icon">
+                        </td>
+                        <td @click.stop="">
+                            <div class="dropdown optionTable">
+                                <div class="align-self-center" @click="openDropdown(folder._id)">
+                                    <v-btn flat icon color="indigo">
+                                        <v-icon data-toggle="tooltip" title="" color="#818181">
+                                            more_vert
+                                        </v-icon>
+                                    </v-btn>
+                                </div>
+                                <div v-click-outside="(event) => closeDropdown(folder._id, event)"
+                                     v-if="showMenu == folder._id" :id="'myDropdown-' + folder._id"
+                                     class="dropdown-content">
+                                    <div class="list-group">
+                                        <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                           @click="handleOpenModalRename(folder)"
+                                           class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">drive_file_rename_outline</i>
+                                                <span class="mt-2">Rename</span>
+                                            </p>
+                                        </a>
+                                        <a v-if="folder.owner && folder.owner._id == authState.user._id"
+                                           @click="handleOpenModalShare(folder)"
+                                           class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">person_add</i>
+                                                <span class="mt-2">Share</span>
+                                            </p>
+                                        </a>
+                                        <a @click="handleDownloadFolder(folder)"
+                                           class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">download</i>
+                                                <span class="mt-2">Download</span>
+                                            </p>
+                                        </a>
+                                        <a @click="handleHideFolder(folder)"
+                                           class="list-group-item list-group-item-action">
+                                            <p class="h6 align-items-center d-flex">
+                                                <i class="material-icons">visibility_off</i>
+                                                <span class="mt-2">Hide</span>
+                                            </p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <router-link tag="tr" class="item cursor-pointer" v-for="(file) in files" :key="file._id"
+                                 :to="$route.path == '/' ? `${$route.path}file/${file._id}` : `${$route.path}/file/${file._id}`">
+                        <th class="truncate" scope="row">
+                            <i :class="getClassFileType(JSON.parse(file.tokenURI).fileType)"></i>{{
+                                JSON.parse(file.tokenURI).name
+                            }}
+                        </th>
+                        <td>{{ file.tokenId }}</td>
+                        <td>{{
+                                file.lastAccess ? dayjs(file.lastAccess).format('HH:mm DD/MM/YYYY') : (new
+                                Date(file.createdAt)).toDateString()
+                            }}</td>
+                        <td :class="getClassStatus(file.status)">{{ file.status }}</td>
+                        <td>{{ file.owner.name }}</td>
+                        <td>{{ niceBytes((JSON.parse(file.tokenURI).size))}}</td>
+                        <td>
+                            <v-btn flat icon color="indigo">
+                                <v-icon data-toggle="tooltip" title="" color="black">
+                                    visibility
+                                </v-icon>
+                            </v-btn>
+                            <span v-if="isLoadingDownload.id == file._id && isLoadingDownload.value"
+                                  class="spinner-border text-dark mr-2 mt-2" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </span>
+                            <span v-else @click.stop="" @click="download(file)">
+                                    <v-btn flat icon color="indigo">
+                                        <v-icon data-toggle="tooltip" title="" color="black">
+                                            download
+                                        </v-icon>
+                                    </v-btn>
+                                </span>
+                        </td>
+                    </router-link>
+                    <tr v-if="(files.length + folders.length == 0)">
+                        <td class="text-center" colspan="6" scope="row">
+                            <h5>Empty</h5>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!--  paging -->
+                <div class="paging">
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ 'disabled': current_page === 1 }">
+                            <a class="page-link border-boundary" href="#" @click="goToPage(current_page - 1)">
+                                <img id="arrow-left" src="@/assets/img/arrow_left.svg" alt="">
+                            </a>
+                        </li>
+                        <li v-for="page in totalPages" :key="page" class="page-item" :class="{ 'active': page === current_page }">
+                            <a class="page-link" href="#" @click="goToPage(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link border-boundary" href="#" @click="goToPage(current_page + 1)">
+                                <img id="arrow-right" src="@/assets/img/arrow_right.svg" alt="">
+                            </a>
+                        </li>
+                    </ul>
+
+
+
+
+
+                    <div class="paging-record">
+                        <div class="modalRecord">
+                            <combobox v-model="pageSize"/>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -299,6 +621,7 @@ import ModalShareFolder from '../views/main/modal/ModalShareFolder.vue';
 import JSZip from "jszip"
 import FolderDetail from "@/components/FolderDetail.vue";
 import NavBar from "@/components/layout/NavBar.vue";
+import combobox from "@/components/combobox.vue"
 </script>
 
 <script>
@@ -337,6 +660,50 @@ export default {
             itemSelected: {},
             isShowOption:false,
             isShowDetail:false,
+            current_page: 1,
+            pageSize: 5,
+            listFile:[
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+                {
+                    id:1,
+                    title:'test1',
+                    name:'thinh',
+                },
+            ],
 
             fileList:[
                 {
@@ -408,6 +775,14 @@ export default {
         this.layout = this.layoutProps;
     },
     methods: {
+        goToPage(page) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.current_page = page;
+            }
+        },
+        goToPageFolder(page) {
+            this.current_page = page;
+        },
         isDetail(isShowDetail) {
             this.isShowDetail = isShowDetail
         },
@@ -554,6 +929,23 @@ export default {
     computed: {
         documentState() { return this.$store.state.document; },
         authState() { return this.$store.state.auth; },
+
+        totalPages() {
+            return Math.ceil(this.listFile.length / this.pageSize);
+        },
+        FilesList() {
+            const start = (this.current_page - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.listFile.slice(start, end);
+        },
+        FoldersList() {
+            const start = (this.current_page - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.folders.slice(start, end);
+        },
+        totalFolderPages() {
+            return Math.ceil(this.folders.length / this.pageSize);
+        },
     },
     watch: {
         "$route": {
@@ -569,11 +961,77 @@ export default {
             }
         },
     },
-    components: { ModalRenameFolder, ModalShareFolder }
+    components: { ModalRenameFolder, ModalShareFolder,combobox }
 }
 </script>
 <style lang="scss" scoped>
 @import "@/assets/style/_theme.scss";
+
+.navBar-head {
+    padding: 0 16px;
+}
+
+.file-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text-color-title);
+    margin-bottom: 16px;
+}
+.paging {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin:16px 0;
+    &-record {
+        position: absolute;
+        right: 0;
+        padding: 6px 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        cursor: pointer;
+    }
+}
+.record-number-txt {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-color-txt);
+}
+#paging-dropdown {
+    width: 12px;
+    height: 6px;
+}
+.record-number {
+    display: flex;
+    align-items: center;
+    gap: 0 8px;
+}
+
+.border-boundary {
+    border: none !important;
+}
+#arrow-right {
+    width: 10px;
+}
+#arrow-left {
+    width: 10px;
+}
+::v-deep .page-item {
+    padding: 0 8px;
+}
+::v-deep .page-link {
+    border-radius: 8px;
+    padding: 8px 15px !important;
+    color: var(--text-color-txt);
+    border: 1px solid var(--border-color);
+    &:hover {
+        background-color: var(--background);
+    }
+    &:focus {
+        box-shadow: none !important;
+    }
+}
+
 
 .item-detail {
     display: flex;
@@ -589,7 +1047,7 @@ export default {
 }
 .dropdown-item {
     &:hover {
-        background-color: var(--backgroud);
+        background-color: var(--background);
     }
 }
 .iconAddDetail {
@@ -618,16 +1076,16 @@ export default {
 input[type="radio"] {
     cursor: pointer;
     appearance: none;
-    background-color: #FFFFFF;
-    border: 1px solid #EDEDED;
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
     border-radius: 50%;
     width: 20px;
     height: 20px;
     margin-right: 10px;
 }
 input[type="radio"]:checked {
-    background-color: #FFFFFF;
-    border: 5px solid #3C46F5;
+    background-color: var(--background);
+    border: 5px solid var(--text-color-active);
 }
 
 
@@ -648,7 +1106,7 @@ input[type="checkbox"]:checked {
 }
 input[type="checkbox"]:checked::before {
     content: "\2714";
-    color: #FFFFFF;
+    color: var(--background);
     font-size: 12px;
     text-align: center;
     display: block;
@@ -661,8 +1119,8 @@ input[type="checkbox"]:checked::before {
 input[type="checkbox"] {
     cursor: pointer;
     appearance: none;
-    background-color: #FFFFFF;
-    border: 2px solid #12131C;
+    background-color: var(--background);
+    border: 2px solid var(--text-color-title);
     border-radius:4px;
     width: 17px;
     height: 17px;
@@ -670,12 +1128,12 @@ input[type="checkbox"] {
 
 }
 input[type="checkbox"]:checked {
-    background-color: #3C46F5;
-    border: 2px solid #3C46F5;
+    background-color: var(--text-color-active);
+    border: 2px solid var(--text-color-active);
 }
 input[type="checkbox"]:checked::before {
     content: "\2714";
-    color: #FFFFFF;
+    color: var(--background);
     font-size: 12px;
     text-align: center;
     display: block;
@@ -742,10 +1200,10 @@ table tr td {
     }
     input {
         background-color: #F7F7F8;
-        color: #12131C;
+        color: var(--text-color-title);
         border-radius: 20px;
         &::placeholder {
-            color: #C1C0C9;
+            color: var(--text-color-input);
         }
     }
 }
@@ -757,22 +1215,22 @@ table tr td {
     align-items: center;
     gap:  0 8px;
     &:hover {
-        background-color: var(--backgroud);
+        background-color: var(--background);
     }
     &:active {
-        background-color: var(--backgroud);
+        background-color: var(--background);
     }
 }
 .flexItem {
     display: flex;
     align-items: center;
     gap:  0 8px;
-    background-color: var(--backgroud);
+    background-color: var(--background);
     &:hover {
-        background-color: var(--backgroud);
+        background-color: var(--background);
     }
     &:active {
-        background-color: var(--backgroud);
+        background-color: var(--background);
     }
 }
 .optionTable {
@@ -785,7 +1243,7 @@ table tr td {
     padding: 3px 9px;
     border-radius: 8px;
     background-color: var(--text-color-active);
-    color: var(--backgroud);
+    color: var(--background);
     cursor: pointer;
 }
 
@@ -814,7 +1272,7 @@ tr th input[type="checkbox"]:checked {
 }
 tr th input[type="checkbox"]:checked::before {
     content: "\2714";
-    color: #FFFFFF;
+    color: var(--background);
     font-size: 12px;
     text-align: center;
     display: block;
@@ -827,8 +1285,8 @@ tr th input[type="checkbox"]:checked::before {
 input[type="checkbox"] {
     cursor: pointer;
     appearance: none;
-    background-color: #FFFFFF;
-    border: 2px solid #12131C;
+    background-color: var(--background);
+    border: 2px solid var(--text-color-title);
     border-radius:4px;
     width: 17px;
     height: 17px;
@@ -836,12 +1294,12 @@ input[type="checkbox"] {
 
 }
 input[type="checkbox"]:checked {
-    background-color: #3C46F5;
-    border: 2px solid #3C46F5;
+    background-color: var(--text-color-active);
+    border: 2px solid var(--text-color-active);
 }
 tr td input[type="checkbox"]:checked::before {
     content: "\2714";
-    color: #FFFFFF;
+    color: var(--background);
     font-size: 12px;
     text-align: center;
     display: block;
@@ -853,7 +1311,7 @@ tr td input[type="checkbox"]:checked::before {
 
 .bgcItem {
     background: var(--bgc-hover);
-    border: 1px solid #EDEDED;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
 }
 .activeDetailFolder {
@@ -961,7 +1419,7 @@ ul, li {
 .files-Starred {
     font-weight: 500;
     font-size: 14px;
-    color: #3C46F5;
+    color: var(--text-color-active);
     cursor: pointer;
 }
 .files-Starred {
@@ -981,24 +1439,24 @@ ul, li {
     gap: 0 8px;
 }
 .files-header_name {
-    color: #6F7180;
+    color: var(--text-color-txt);
     font-size: 12px;
     line-height: 16px;
 }
 .arrow-right {
-    color: #C1C0C9;
+    color: var(--text-color-input);
 
 }
 .BlockChain {
     font-weight: 600;
     font-size: 12px;
-    color: #12131C;
+    color: var(--text-color-title);
 
 }
 .folder-item_title {
     font-weight: 600;
     font-size: 14px;
-    color: #12131C;
+    color: var(--text-color-title);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -1007,7 +1465,7 @@ ul, li {
 .files-title {
     font-weight: 700;
     font-size: 18px;
-    color: #12131C;
+    color: var(--text-color-title);
     margin-bottom: 16px;
 }
 
@@ -1021,8 +1479,8 @@ ul, li {
     width: calc( 100% / 6 - 16px );
 }
 .item-files_border {
-    background: #FAFAFA;
-    border: 1px solid #EDEDED;
+    background: var(--bgc-item--folder);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
 }
 .item-files{
@@ -1030,7 +1488,7 @@ ul, li {
     justify-content: center;
     align-items: center;
     padding: 39px 85px;
-    background-color: #FAFAFA;
+    background-color: var(--bgc-item--folder);
     border-radius: 12px;
 }
 .list-files{
@@ -1042,9 +1500,9 @@ ul, li {
 .list-files-item {
     width: calc( 100% / 6 - 16px );
     padding: 16px;
-    border: 1px solid #EDEDED;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    background: #FAFAFA;
+    background: var(--bgc-item--folder);
     cursor: pointer;
 }
 
@@ -1063,17 +1521,17 @@ ul, li {
 .files-item_file {
     font-weight: 400;
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 .files-item_distance {
     width: 4px;
     height: 4px;
-    background-color: #6F7180;
+    background-color: var(--text-color-txt);
     border-radius: 50%;
 }
 .files-item_MB {
     font-size: 12px;
-    color: #6F7180;
+    color: var(--text-color-txt);
 }
 
 #icon-file {
@@ -1083,7 +1541,7 @@ ul, li {
 .files-item_title {
     font-weight: 600;
     font-size: 14px;
-    color: #12131C;
+    color: var(--text-color-title);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -1102,7 +1560,7 @@ ul, li {
     top: 2.5rem;
     right: 0;
     padding: 24px;
-    background: #FFFFFF;
+    background: var(--background);
     border-radius: 16px;
     min-width: 240px;
     width: 100%;
@@ -1116,7 +1574,7 @@ ul, li {
             gap: 0 12px;
             cursor: pointer;
             &:hover {
-                background: #EEEEEE;
+                background: var(--bgc-active-item);
                 border-radius: 12px;
             }
         }

@@ -8,12 +8,14 @@
               </div>
           </router-link>
           <div class="modal-icon--list">
-              <router-link to="">
+
                   <div class="modal-item--folder">
                       <img id="arrow-right" src="@/assets/img/arrow_right.svg" alt="error-icon">
+                     <router-link to="/my-folder">
                       <div class="modal-item--text">My Folder</div>
+                    </router-link>
                   </div>
-              </router-link>
+
               <router-link to="">
                   <div class="modal-item--folder">
                       <img id="arrow-right" src="@/assets/img/arrow_right.svg" alt="error-icon">
@@ -58,7 +60,7 @@
 .modall {
     position: absolute;
     width:214px;
-    background: var(--backgroud);
+    background: var(--background);
     box-shadow: 0 40px 64px -12px rgba(0, 0, 0, 0.08), 0px 0px 14px -4px rgba(0, 0, 0, 0.05), 0px 32px 48px -8px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(16px);
     border-radius: 12px;
@@ -84,12 +86,17 @@
 
     .modal-item--text {
         font-size: 12px;
-        color: var(--text-color--2);
+        color: var(--text-color-txt);
     }
     .modal-item--folder {
         display: flex;
         align-items: center;
         gap: 0 8px;
+
+        img {
+            width: 10px;
+            height: 10px;
+        }
     }
     #arrow-bottom {
         width: 10px;
@@ -97,7 +104,7 @@
     }
     .modal-icon--home {
         font-size: 12px;
-        color: var(--text-color--2);
+        color: var(--text-color-txt);
     }
 }
 li {

@@ -44,21 +44,7 @@
             <li class="detail-path">
                 <div class="detail-path_title">Path</div>
                 <div class="detail-path_txt">
-                    <div class="detail-path_folder">
-                        My Folder
-                    </div>
-                    <span class="detail-path_folder">
-                              <img src="@/assets/img/arrow_right.svg" alt="error-arrow_right">
-                            </span>
-                    <div class="detail-path_folder">
-                        Block chain
-                    </div>
-                    <span class="detail-path_folder">
-                              <img src="@/assets/img/arrow_right.svg" alt="error-arrow_right">
-                            </span>
-                    <div class="detail-path_folder">
-                        NFT
-                    </div>
+                    <NavBar @onLayoutChange="onLayoutChange" class="formPath"/>
                 </div>
             </li>
             <li class="detail-structure">
@@ -142,7 +128,10 @@
     
 </template>
 <script>
+import NavBar from "@/components/layout/NavBar.vue";
+
 export default {
+    components: {NavBar},
     props: ['drawerVisible'],
     data() {
         return {
@@ -156,7 +145,20 @@ export default {
     methods: {
         btnOfDetail() {
             this.$emit("ClickOffDetail", false)
-        }
+        },
+        handleDrawer() {
+            console.log(this.drawerVisible);
+            this.drawerVisible = !this.drawerVisible
+            console.log(this.drawerVisible);
+            if(this.drawerVisible) {
+                this.transition = 'slide-fade-reverse'
+            }else {
+                this.transition = 'slide-fade'
+            }
+        },
+        onLayoutChange(layout) {
+            this.layout = layout
+        },
     },
     watch: {
         drawerVisible: {
@@ -173,6 +175,10 @@ export default {
 <style lang="scss" scoped>
 @import "@/assets/style/_reset.scss";
 @import "@/assets/style/_global.scss";
+
+.formPath {
+    padding: 0 !important;
+}
 
 
 // folder detail

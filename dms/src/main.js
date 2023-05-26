@@ -19,7 +19,12 @@ import exporting from 'highcharts/modules/exporting'
 import exportData from 'highcharts/modules/export-data'
 import accessibility from 'highcharts/modules/accessibility'
 
+
 import i18n from './lang/i18n'
+
+
+
+
 
 drilldown(Highcharts)
 exporting(Highcharts)

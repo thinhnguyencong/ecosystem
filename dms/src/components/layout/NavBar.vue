@@ -1,6 +1,6 @@
 <template>
     <div class="nav-content" >
-        <nav v-if="$route.matched[0].name == 'Home'" aria-label="breadcrumb" >
+        <nav v-if="$route.matched[0].name == 'Home'" aria-label="breadcrumb"  class="nav-content--home">
             <ol class="bgc-navbar">
                 <li class="breadcrumb-item active d-flex flex-row" aria-current="page" >
                     <div class="folder-account" @click="btnShowModalFile">
@@ -10,11 +10,13 @@
                             <modal-folder-icon v-if="isModalFile"/>
                         </div>
                     </div>
-                    <span class="mt-1">&nbsp;Home</span>
+                    <span class="mt-1 txtMenu">&nbsp;Home</span>
                 </li>
-
             </ol>
         </nav>
+
+
+
 
         <nav v-if="$route.matched[0].name == 'My Folder'" aria-label="breadcrumb" >
             <ol class="bgc-navbar">
@@ -42,11 +44,12 @@
             </ol>
         </nav>
 
+
         <nav v-if="$route.matched[0].name == 'Recent'" aria-label="breadcrumb" >
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active d-flex flex-row " aria-current="page">
                     <span class="material-icons">history</span>
-                    <span class="mt-1">&nbsp;Recent</span>
+                    <span class="mt-1 txtMenu">&nbsp;Recent</span>
                 </li>
                 <li class="ml-auto mr-5">
                     <v-btn @click="switchLayout" flat icon color="indigo">
@@ -100,19 +103,19 @@
                 </li>
                 <li v-if="documentState.folder.status=='my-folder'"  aria-current="page">
                     <router-link class="d-flex flex-row folder-name" to="/my-folder">
-                        <span class="">&nbsp;My Folder</span>
+                        <span class="txtMenu">&nbsp;My Folder</span>
                     </router-link>
                 </li>
                 <li v-else-if="documentState.folder.status=='shared-with-me'"  aria-current="page">
                     <router-link class="d-flex flex-row" to="/shared-with-me">
                         <span class="material-icons">folder_shared</span>
-                        <span class="mt-1">&nbsp;Shared with me</span>
+                        <span class="mt-1 txtMenu">&nbsp;Shared with me</span>
                     </router-link>
                 </li>
                 <li v-else class="align-self-center ml-4" aria-current="page">
                     <router-link class="d-flex flex-row" to="/">
                         <span class="material-icons">folder</span>
-                        <span class="mt-1">&nbsp;Home </span>
+                        <span class="mt-1 txtMenu">&nbsp;Home </span>
                     </router-link>
                 </li>
                 <li v-for="(folder, index) in documentState.ancestors" :key="index" class="align-self-center" aria-current="page">
@@ -224,6 +227,11 @@ export default {
 </script>
 <style scoped>
 @import "@/assets/style/_theme.scss";
+
+.nav-content--home {
+    padding: 16px;
+}
+
 ol , ul {
     margin: 0;
 }
@@ -237,34 +245,27 @@ ol , ul {
     align-items: center;
     gap:  0 8px;
 }
-.optionMenuDetail {
-    display: flex;
-    position: absolute;
-    top: 16px;
-    right: 16px;
-
-}
 .bgc-navbar {
     display: flex;
     align-items: center;
     gap: 0 8px;
-    padding: 16px;
 }
 ol,ul {
     padding: 0;
 }
 
 button::before {
-    background-color: var(--backgroud) !important;
+    background-color: var(--background) !important;
 }
 button::before:focus {
-    background-color: var(--backgroud) !important;
+    background-color: var(--background) !important;
 }
 button::before:active {
-    background-color: var(--backgroud) !important;
+    background-color: var(--background) !important;
 }
+
 li {
-    list-style: none;
+    list-style: none !important;
 }
 .folder-name {
     font-size: 12px;
@@ -276,7 +277,7 @@ li {
     align-items: center;
     gap:  0 4px;
     padding: 4px;
-    background: var(--bgc-folder--icon);
+    background: var(--bgc-item--folder);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;

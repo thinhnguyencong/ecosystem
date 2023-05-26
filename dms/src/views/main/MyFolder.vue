@@ -9,6 +9,7 @@
                       <div class="folder-list" >
                           <MainView class="list-folder-item" :folders="documentState.children" :files="documentState.folder.files" :layoutProps="layout"  />
                       </div>
+
                   </div>
               </div>
           </div>
@@ -16,18 +17,7 @@
 
 
 <!---->
-        <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading">
-            <div class="row">
-                <div class="col">
-                    <div class="dropdown">
-                        <button class="btn btn-primary btn-lg" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="mdi mdi-plus text-light"></i> New &nbsp;
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="pl-4 pr-4 pt-3" v-if="!documentState.isLoading"> </div>
         <div v-else class="pl-4 pr-4">
             <div class="spinner-border text-dark" role="status">
                 <span class="sr-only">Loading...</span>
@@ -101,14 +91,7 @@ export default {
         authState() {return this.$store.state.auth },
     },
     methods: {
-        btnShowCheckBox(id) {
-          this.isShowDetail = !this.isShowDetail
-            this.itemSelectedID = id
-            console.log(this.itemSelectedID = id)
-        },
-        isShowDetailClick(isShowDetail) {
-          this.isShowDetail = isShowDetail
-        },
+
         async callAPI() {
             this.$store.dispatch("auth/sidebarActive", "my-folder")
             await this.$store.dispatch("document/getMyFolders") 
@@ -144,7 +127,6 @@ export default {
 ol , ul {
     margin: 0;
 }
-
 
 
 .myFolder {
